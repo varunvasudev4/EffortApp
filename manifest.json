@@ -1,0 +1,22 @@
+{
+  "name": "Effort App",
+  "short_name": "EffortApp",
+  "description": "Effort App Track daily effort and log tasks and dashboard on that",
+  "start_url": "/EffortApp/",
+  "display": "standalone",
+  "background_color": "#f5f5f3",
+  "theme_color": "#1D9E75",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

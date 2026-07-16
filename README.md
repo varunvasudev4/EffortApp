@@ -1,2 +1,2 @@
-# EffortApp
-EffortLogging and Dashboard
+# Task-Logger
+Uses to log daily tasks
