@@ -364,6 +364,18 @@ background: var(--bg-secondary);
     flex-direction:column;
 }
 
+/* CSS-simulated fullscreen fallback for browsers that don't support the
+   Fullscreen API on non-video elements (iPhone Safari and Chrome, both
+   WebKit-based, do not support Element.requestFullscreen() on divs). */
+.log-panel.fullscreen-sim{
+    position:fixed;
+    top:0; left:0;
+    width:100vw;
+    height:100dvh;
+    z-index:9999;
+    background:var(--bg);
+}
+
 .log-panel.fullscreen .log-wrap{
     flex:1;
     max-height:none !important;
@@ -3384,19 +3396,68 @@ function toggleLogTable() {
   applyLogTableState();
 }
 
+let _logFullscreenSim = false;
+
+function _fsRequest(el) {
+  const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
+  return fn ? fn.call(el) : null;
+}
+function _fsExit() {
+  const fn = document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen;
+  return fn ? fn.call(document) : null;
+}
+function _fsElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+// iPhone Safari and Chrome (both WebKit) don't support the Fullscreen API
+// on non-video elements at all, so feature-detect rather than just trying
+// and catching — there's nothing to catch, the method is simply absent.
+function _fsSupported() {
+  const el = document.documentElement;
+  return !!(el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen);
+}
+
 async function toggleLogFullscreen() {
   const panel = document.getElementById("log-panel");
   const btn = document.getElementById("log-fullscreen-btn");
   const icon = btn.querySelector("i");
 
-  if (!document.fullscreenElement) {
-    await panel.requestFullscreen();
+  if (!_fsSupported()) {
+    // CSS-simulated fullscreen fallback (iPhone Safari/Chrome).
+    _logFullscreenSim = !_logFullscreenSim;
+    if (_logFullscreenSim) {
+      panel.classList.add("fullscreen", "fullscreen-sim");
+      document.body.classList.add("log-fullscreen");
+      icon.className = "ti ti-minimize";
+      showFsChip();
+    } else {
+      panel.classList.remove("fullscreen", "fullscreen-sim");
+      document.body.classList.remove("log-fullscreen");
+      icon.className = "ti ti-maximize";
+      const chip = document.getElementById("fs-action-chip");
+      if (chip) chip.classList.remove("show");
+    }
+    return;
+  }
 
-    panel.classList.add("fullscreen");
-    document.body.classList.add("log-fullscreen");
-    icon.className = "ti ti-minimize";
+  if (!_fsElement()) {
+    try {
+      await _fsRequest(panel);
+      panel.classList.add("fullscreen");
+      document.body.classList.add("log-fullscreen");
+      icon.className = "ti ti-minimize";
+    } catch (err) {
+      // Native request rejected (e.g. blocked outside a direct user
+      // gesture) — fall back to the CSS-simulated mode instead of failing
+      // silently.
+      _logFullscreenSim = true;
+      panel.classList.add("fullscreen", "fullscreen-sim");
+      document.body.classList.add("log-fullscreen");
+      icon.className = "ti ti-minimize";
+      showFsChip();
+    }
   } else {
-    await document.exitFullscreen();
+    await _fsExit();
   }
 }
 
@@ -6184,7 +6245,7 @@ document.addEventListener('keydown', e => {
   }
 });
 
-document.addEventListener("fullscreenchange", () => {
+function _onFullscreenChange() {
 
   const panel = document.getElementById("log-panel");
   const btn = document.getElementById("log-fullscreen-btn");
@@ -6194,7 +6255,7 @@ document.addEventListener("fullscreenchange", () => {
 
   const icon = btn.querySelector("i");
 
-  if (document.fullscreenElement) {
+  if (_fsElement()) {
 
       panel.classList.add("fullscreen");
       document.body.classList.add("log-fullscreen");
@@ -6202,7 +6263,7 @@ document.addEventListener("fullscreenchange", () => {
 
       if (chip) showFsChip();
 
-  } else {
+  } else if (!_logFullscreenSim) {
 
       panel.classList.remove("fullscreen");
       document.body.classList.remove("log-fullscreen");
@@ -6212,18 +6273,26 @@ document.addEventListener("fullscreenchange", () => {
 
   }
 
-});
+}
+// Standard event, plus the older WebKit-prefixed one still used by some
+// Safari versions when the Fullscreen API IS available (e.g. iPad/macOS).
+document.addEventListener("fullscreenchange", _onFullscreenChange);
+document.addEventListener("webkitfullscreenchange", _onFullscreenChange);
+
+function _isLogFullscreenActive() {
+  return !!_fsElement() || _logFullscreenSim;
+}
 
 document.addEventListener("mousemove", () => {
-    if (document.fullscreenElement) showFsChip();
+    if (_isLogFullscreenActive()) showFsChip();
 });
 
 document.addEventListener("touchstart", () => {
-    if (document.fullscreenElement) showFsChip();
+    if (_isLogFullscreenActive()) showFsChip();
 });
 
 document.addEventListener("wheel", () => {
-    if (document.fullscreenElement) showFsChip();
+    if (_isLogFullscreenActive()) showFsChip();
 });
 </script>
 
