@@ -63,6 +63,10 @@ if ('serviceWorker' in navigator) {
   --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-head: 'Space Grotesk', 'IBM Plex Sans', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  /* Scrollbar */
+  --scroll-track: var(--bg-secondary);
+  --scroll-thumb: var(--border-md);
+  --scroll-thumb-hover: var(--blue-mid);
 }
 /* System preference fallback — only applies when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
@@ -91,6 +95,10 @@ if ('serviceWorker' in navigator) {
   --purple-bg: #221f35; --purple-mid: #8b7fd1; --purple-dark: #b0a8e8;
   --bg-primary: #1c2230;
   --shadow: 0 1px 2px rgba(0,0,0,0.3);
+  /* Scrollbar */
+  --scroll-track: var(--bg-secondary);
+  --scroll-thumb: rgba(255,255,255,.28);
+  --scroll-thumb-hover: var(--blue-mid);
 }
 /* Explicit light theme — set via the theme toggle, overrides system preference */
 :root[data-theme="light"] {
@@ -104,6 +112,10 @@ if ('serviceWorker' in navigator) {
   --red-bg: #f6dede; --red-mid: #b1403c;
   --bg-primary: #fffdf8;
   --shadow: 0 1px 2px rgba(38,33,26,0.08), 0 2px 8px rgba(38,33,26,0.05);
+  /* Scrollbar */
+  --scroll-track: var(--bg-secondary);
+  --scroll-thumb: var(--border-md);
+  --scroll-thumb-hover: var(--blue-mid);
 }
 
 body {
@@ -801,8 +813,41 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 
 /* ── Scrollbar styling for table on touch ── */
-.log-wrap::-webkit-scrollbar { height: 4px; }
-.log-wrap::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; }
+/* .log-wrap::-webkit-scrollbar { height: 4px; }
+.log-wrap::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; } */
+
+/* ===== Theme Scrollbars ===== */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scroll-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb);
+    border: 2px solid var(--scroll-track);
+    border-radius: 20px;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scroll-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--scroll-track);
+}
 
 
 /* ── CSV Export/Import modal ── */
