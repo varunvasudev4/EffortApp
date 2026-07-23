@@ -1727,8 +1727,22 @@ let logTableSortDir = 'asc';
 
 // ── Sticky Action column collapse/expand preference ────────────────────────
 const LOG_ACTIONS_COLLAPSED_KEY = 'ttl_logActionsCollapsed';
-const LOG_ACTIONS_COL_WIDTH_EXPANDED = 76;
+// 20px cell padding (12px left / 8px right) + 30px per button + 4px gap between buttons.
+// A fixed 76px floor covers the header's "Action" label + collapse toggle even when a day
+// has zero action buttons (future dates).
+const LOG_ACTIONS_COL_WIDTH_MIN = 76;
 const LOG_ACTIONS_COL_WIDTH_COLLAPSED = 40;
+const LOG_ACTIONS_BTN = 30, LOG_ACTIONS_GAP = 4, LOG_ACTIONS_CELL_PADDING = 20;
+// Mirrors the button conditions in updateLogTable's actionButtonsHtml: present day can show
+// up to 5 (edit, continue, reopen, recurring, delete); past days only continue + recurring;
+// future days show none. Keeping the column narrow on past/future days (and wide only when
+// present-day rows actually need it) is the point — a static width sized for the worst case
+// wasted space everywhere else.
+function maxActionButtonsForDay(isPresentDay, isFutureDay) {
+  if (isFutureDay) return 0;
+  if (isPresentDay) return 5;
+  return 2; // past day
+}
 function ltLoadBool(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -1740,7 +1754,12 @@ function ltSaveBool(key, val) {
   try { localStorage.setItem(key, val ? '1' : '0'); } catch(e) {}
 }
 let logActionsCollapsed = ltLoadBool(LOG_ACTIONS_COLLAPSED_KEY, false);
-function logActionsColWidth() { return logActionsCollapsed ? LOG_ACTIONS_COL_WIDTH_COLLAPSED : LOG_ACTIONS_COL_WIDTH_EXPANDED; }
+function logActionsColWidth(isPresentDay, isFutureDay) {
+  if (logActionsCollapsed) return LOG_ACTIONS_COL_WIDTH_COLLAPSED;
+  const n = maxActionButtonsForDay(isPresentDay, isFutureDay);
+  const contentWidth = n > 0 ? (n * LOG_ACTIONS_BTN + (n - 1) * LOG_ACTIONS_GAP) : 0;
+  return Math.max(LOG_ACTIONS_COL_WIDTH_MIN, LOG_ACTIONS_CELL_PADDING + contentWidth);
+}
 function toggleLogActionsColumn() {
   logActionsCollapsed = !logActionsCollapsed;
   ltSaveBool(LOG_ACTIONS_COLLAPSED_KEY, logActionsCollapsed);
@@ -3101,7 +3120,7 @@ function defaultLogColumnWidth(c) {
 // an explicit width — the user's persisted width if they've resized it, otherwise a sensible
 // default — because table-layout:fixed splits *unset* columns evenly rather than sizing them
 // to content, which without a default left every unresized column looking the same width.
-function buildLogTableColgroup(cols) {
+function buildLogTableColgroup(cols, isPresentDay, isFutureDay) {
   const table = document.getElementById('log-table');
   const thead = table && table.querySelector(':scope > thead');
   if (!table || !thead) return;
@@ -3113,11 +3132,11 @@ function buildLogTableColgroup(cols) {
   colgroup.innerHTML = cols.map(c => {
     const w = logTableColWidths[c.key] || defaultLogColumnWidth(c);
     return `<col data-col="${c.key}" style="width:${w}px">`;
-  }).join('') + `<col data-col="__actions" style="width:${logActionsColWidth()}px">`;
+  }).join('') + `<col data-col="__actions" style="width:${logActionsColWidth(isPresentDay, isFutureDay)}px">`;
 }
 
 // Builds the header row with sort/pin/resize affordances per column.
-function buildLogTheadRow(cols) {
+function buildLogTheadRow(cols, isPresentDay, isFutureDay) {
   const theadRow = document.getElementById('log-thead-row');
   if (!theadRow) return;
   theadRow.innerHTML = cols.map(c => {
@@ -3126,7 +3145,7 @@ function buildLogTheadRow(cols) {
       `<span class="col-sort-arrow">${arrow}</span>` +
       `<button type="button" class="col-pin-icon" data-col="${c.key}" title="Pin column">${LOG_TABLE_PIN_ICON_SVG}</button>` +
       `<span class="col-resize-handle"></span></th>`;
-  }).join('') + `<th data-col="__actions" style="width:${logActionsColWidth()}px">` +
+  }).join('') + `<th data-col="__actions" style="width:${logActionsColWidth(isPresentDay, isFutureDay)}px">` +
     `<span class="log-actions-th-inner">` +
       `<span class="log-actions-th-label">${logActionsCollapsed ? '' : 'Action'}</span>` +
       `<button type="button" class="log-actions-collapse-btn" onclick="toggleLogActionsColumn()" ` +
@@ -3295,8 +3314,8 @@ function updateLogTable() {
 
   // Render header row dynamically from configured columns (locked columns keep their
   // fixed labels; configurable columns use the user's renamed label if set).
-  buildLogTableColgroup(cols);
-  buildLogTheadRow(cols);
+  buildLogTableColgroup(cols, isPresentDay, isFutureDay);
+  buildLogTheadRow(cols, isPresentDay, isFutureDay);
 
   tbody.innerHTML = filtered.map(e => {
     const task = tasks.find(t=>t.id===e.taskId);
