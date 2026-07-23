@@ -216,6 +216,7 @@ body {
   border-radius: var(--radius-md); background: var(--bg-secondary);
   color: var(--text-primary); font-size: 12px; font-family: var(--font-mono);
   outline: none; transition: border-color 0.15s;
+  width:100%;
 }
 .meta-select:focus, .meta-input:focus { border-color: var(--blue-mid); }
 .meta-select:disabled, .meta-input:disabled { opacity: 0.6; }
@@ -223,7 +224,7 @@ body {
 .meta-field-project .meta-select { min-width: 130px; }
 .meta-field-nature  .meta-select { min-width: 130px; }
 .meta-field-module  .meta-input  { width: 160px; }
-.msdd { position: relative; display: inline-block; min-width: 140px; }
+.msdd { position: relative; display: inline-block; min-width: 140px;width:100%; }
 .msdd-trigger {
   width: 100%; text-align: left; cursor: pointer; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis;
@@ -1144,7 +1145,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 
 <!-- Masters modal -->
 <div class="modal-overlay hidden" id="masters-modal">
-  <div class="modal" id="masters-modal-box" style="max-width:480px">
+  <div class="modal" id="masters-modal-box" style="max-width:560px">
     <div class="modal-header">
       <div class="modal-title"><i class="ti ti-settings" style="vertical-align:-2px;margin-right:6px"></i>Edit Masters</div>
       <button class="btn-icon" onclick="closeMasters()"><i class="ti ti-x"></i></button>
@@ -3435,7 +3436,7 @@ function switchTab(tab) {
   // The Lists tab and Columns tab now have their own dedicated, self-contained controls.
   if (addSec) addSec.style.display = 'none';
   const box = document.getElementById('masters-modal-box');
-  if (box) box.style.maxWidth = (tab === 'columns' || tab === 'lists') ? '600px' : '480px';
+  if (box) box.style.maxWidth = (tab === 'columns' || tab === 'lists') ? '600px' : '560px';
   renderMastersContent();
 }
 // ── Columns tab: configure log table / task card columns ───────────────────
