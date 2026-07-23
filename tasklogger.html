@@ -287,7 +287,7 @@ body {
   transition: max-height 0.35s ease;
 }
 .log-wrap.expanded {
-  max-height: 9999px;
+  max-height: 480px;
   overflow-y: auto;
 }
 .log-collapse-icon { transition: transform 0.25s; display: inline-block; }
@@ -309,7 +309,7 @@ tbody tr { border-bottom: 1px solid var(--border); }
 tbody tr:last-child { border-bottom: none; }
 tbody td { padding: 9px 12px; color: var(--text-secondary); vertical-align: middle; white-space: nowrap; }
 tbody td:first-child { color: var(--text-primary); font-weight: 500; }
-.td-desc { white-space: normal; min-width: 180px; max-width: 280px; }
+.td-desc { min-width: 180px; max-width: 280px; }
 .cell-running { color: var(--green-dark); font-weight: 500; }
 .cell-dur { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--blue-mid); }
 
@@ -369,6 +369,44 @@ tbody td:first-child { color: var(--text-primary); font-weight: 500; }
 }
 .log-actions-menu.hidden { display: none; }
 .log-actions-menu .actions { flex-direction: column; align-items: stretch; }
+
+/* ── Custom tooltip (replaces native browser title tooltips) — ported from the
+   Dashboard's table tooltip implementation: same markup, positioning, and
+   overflow-edge handling, restyled with the TTL design tokens so it matches
+   both the Light and Dark themes automatically via CSS variables. ── */
+#appTooltip {
+  position: fixed;
+  z-index: 10050;
+  max-width: 320px;
+  background: var(--bg);
+  color: var(--text-primary);
+  border: 1px solid var(--blue-mid);
+  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.4;
+  white-space: pre-line;
+  word-break: break-word;
+  box-shadow: var(--shadow), 0 10px 30px rgba(0,0,0,0.25);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+#appTooltip.visible { opacity: 1; transform: translateY(0); }
+#appTooltip::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  width: 8px; height: 8px;
+  background: var(--bg);
+  border: 1px solid var(--blue-mid);
+  border-top: none; border-left: none;
+  transform: rotate(45deg);
+}
+#appTooltip.tip-below::after { top: -5px; transform: rotate(225deg); }
+#appTooltip.tip-above::after { bottom: -5px; transform: rotate(45deg); }
 
 /* Complete modal — description + final meta confirm */
 .modal-overlay {
@@ -870,6 +908,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 </style>
 </head>
 <body>
+<div id="appTooltip" role="tooltip"></div>
 
 <div class="app-constrained">
   <div class="header">
@@ -1380,6 +1419,66 @@ const DEFAULT_NATURES = [
   'Support','Meeting','R&D','Documentation','Customer Support','Configuration'
 ];
 const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
+
+// ── App-styled tooltip: replaces native browser title tooltips everywhere,
+// including truncated log-table cell text. Ported from the Dashboard's
+// initCustomTooltips implementation (same positioning/overflow-edge logic),
+// with one addition: for .log-table cells, the tooltip only shows when the
+// cell's text is actually clipped by the ellipsis (scrollWidth > clientWidth),
+// per the Log Table's "only when truncated" requirement. Tooltips on other
+// titled elements (buttons, icons, etc.) keep the Dashboard's original
+// always-show-on-hover behavior. ──
+(function initCustomTooltips() {
+  const tip = document.getElementById('appTooltip');
+  if (!tip) return;
+  let currentTarget = null;
+
+  function positionTooltip(el) {
+    const rect = el.getBoundingClientRect();
+    tip.classList.remove('tip-above', 'tip-below');
+    const tipRect = tip.getBoundingClientRect();
+    let top = rect.top - tipRect.height - 10;
+    let below = false;
+    if (top < 8) { top = rect.bottom + 10; below = true; }
+    let left = rect.left;
+    const maxLeft = window.innerWidth - tipRect.width - 12;
+    if (left > maxLeft) left = Math.max(8, maxLeft);
+    if (left < 8) left = 8;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+    tip.classList.add(below ? 'tip-below' : 'tip-above');
+  }
+
+  document.addEventListener('mouseover', (e) => {
+    const el = e.target.closest ? e.target.closest('[title], [data-tooltip-text]') : null;
+    if (!el || el === currentTarget) return;
+    let text = el.getAttribute('title');
+    if (text) {
+      el.removeAttribute('title'); // suppress the native browser tooltip, but keep the text for next time
+      el.dataset.tooltipText = text;
+    } else {
+      text = el.dataset.tooltipText;
+    }
+    if (!text) return;
+    // Log-table cells/headers only get a tooltip when their content is actually truncated.
+    if (el.matches('.log-table td, .log-table th') && el.scrollWidth <= el.clientWidth) return;
+    currentTarget = el;
+    tip.textContent = text;
+    positionTooltip(el);
+    tip.classList.add('visible');
+  });
+
+  document.addEventListener('mouseout', (e) => {
+    if (!currentTarget) return;
+    if (!e.relatedTarget || !currentTarget.contains(e.relatedTarget)) {
+      tip.classList.remove('visible');
+      currentTarget = null;
+    }
+  });
+
+  window.addEventListener('scroll', () => { tip.classList.remove('visible'); currentTarget = null; }, true);
+  window.addEventListener('resize', () => { tip.classList.remove('visible'); currentTarget = null; });
+})();
 
 // Log table columns. ALL columns are fully configurable: rename, reorder, show/hide,
 // and change input type (text / list / date with format). Date, Employee Name, Effort,
@@ -3370,21 +3469,23 @@ function updateLogTable() {
 
     const cells = cols.map(c => {
       if (c.key === 'description') {
-        return `<td class="td-desc" data-col="${c.key}">${esc(e.heading || (isRunning ? '— pending on completion —' : ''))}</td>`;
+        const descVal = e.heading || (isRunning ? '— pending on completion —' : '');
+        return `<td class="td-desc" data-col="${c.key}" title="${esc(descVal)}">${esc(descVal)}</td>`;
       }
       if (c.key === 'remark') {
-        return `<td class="td-desc" data-col="${c.key}">${esc(e.remark || '')}</td>`;
+        const remarkVal = e.remark || '';
+        return `<td class="td-desc" data-col="${c.key}" title="${esc(remarkVal)}">${esc(remarkVal)}</td>`;
       }
       if (c.key === 'effort') {
-        const minsCell = e.durationSecs!==null
-          ? `<span class="cell-dur">${Math.ceil(e.durationSecs/60)}</span>`
-          : (task ? Math.ceil(liveElapsedSecs(task)/60) : '—');
-        return `<td data-col="${c.key}">${minsCell}</td>`;
+        const minsVal = e.durationSecs!==null ? Math.ceil(e.durationSecs/60) : (task ? Math.ceil(liveElapsedSecs(task)/60) : '—');
+        const minsCell = e.durationSecs!==null ? `<span class="cell-dur">${minsVal}</span>` : minsVal;
+        return `<td data-col="${c.key}" title="${minsVal}">${minsCell}</td>`;
       }
       if (c.key === 'status') {
-        return `<td data-col="${c.key}">${esc(statusText)}</td>`;
+        return `<td data-col="${c.key}" title="${esc(statusText)}">${esc(statusText)}</td>`;
       }
-      return `<td data-col="${c.key}">${esc(getEntryValueForColumn(e, task, c.key))}</td>`;
+      const colVal = getEntryValueForColumn(e, task, c.key);
+      return `<td data-col="${c.key}" title="${esc(colVal)}">${esc(colVal)}</td>`;
     }).join('');
 
     const rowTask = tasks.find(t => t.id === e.taskId);
