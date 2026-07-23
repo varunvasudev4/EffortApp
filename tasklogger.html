@@ -18,6 +18,8 @@
 </script>
 <link rel="icon" href="./favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json" />
 <script>
 if ('serviceWorker' in navigator) {
@@ -32,67 +34,80 @@ if ('serviceWorker' in navigator) {
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #f5f5f3;
-  --bg-tertiary: #efefec;
-  --text-primary: #1a1a18;
-  --text-secondary: #6b6b66;
-  --text-tertiary: #9e9e99;
-  --border: rgba(0,0,0,0.10);
-  --border-md: rgba(0,0,0,0.20);
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --green-bg: #E1F5EE;
-  --green-mid: #1D9E75;
-  --green-dark: #0F6E56;
-  --amber-bg: #FAEEDA;
-  --amber-mid: #BA7517;
-  --amber-dark: #854F0B;
-  --blue-bg: #E6F1FB;
-  --blue-mid: #185FA5;
-  --blue-dark: #0C447C;
-  --red-bg: #FCEBEB;
-  --red-mid: #A32D2D;
-  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+  --bg: #fffdf8;
+  --bg-secondary: #f7f0dd;
+  --bg-tertiary: #ede1c3;
+  --text-primary: #26211a;
+  --text-secondary: #5a4f3c;
+  --text-tertiary: #8a7f68;
+  --border: rgba(38,33,26,0.16);
+  --border-md: rgba(38,33,26,0.30);
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --green-bg: #dcefe8;
+  --green-mid: #2f8f76;
+  --green-dark: #1f6350;
+  --amber-bg: #f3e9c9;
+  --amber-mid: #a3821f;
+  --amber-dark: #7a5f13;
+  --blue-bg: #fbe2d3;
+  --blue-mid: #c94f1f;
+  --blue-dark: #9c3c15;
+  --red-bg: #f6dede;
+  --red-mid: #b1403c;
+  --purple-bg: #e6e1f5;
+  --purple-mid: #6a5cb0;
+  --purple-dark: #4f4386;
+  --bg-primary: #fffdf8;
+  --shadow: 0 1px 2px rgba(38,33,26,0.08), 0 2px 8px rgba(38,33,26,0.05);
+  --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-head: 'Space Grotesk', 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
 }
 /* System preference fallback — only applies when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --bg: #1c1c1a; --bg-secondary: #262624; --bg-tertiary: #2e2e2c;
-    --text-primary: #f0efe8; --text-secondary: #a0a09a; --text-tertiary: #6b6b66;
-    --border: rgba(255,255,255,0.10); --border-md: rgba(255,255,255,0.20);
-    --green-bg: #04342C; --green-mid: #5DCAA5; --green-dark: #9FE1CB;
-    --amber-bg: #412402; --amber-mid: #EF9F27; --amber-dark: #FAC775;
-    --blue-bg: #042C53; --blue-mid: #378ADD; --blue-dark: #85B7EB;
-    --red-bg: #501313; --red-mid: #F09595;
-    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+    --bg: #1c2230; --bg-secondary: #232a3d; --bg-tertiary: #0c0e13;
+    --text-primary: #edeff4; --text-secondary: #8b93a7; --text-tertiary: #5b6478;
+    --border: #2e3549; --border-md: #454f6b;
+    --green-bg: #1c332e; --green-mid: #3fab8f; --green-dark: #7fd4bc;
+    --amber-bg: #2b2a1f; --amber-mid: #d1b954; --amber-dark: #e8cf7a;
+    --blue-bg: #3a2a20; --blue-mid: #e8622c; --blue-dark: #ff8f5c;
+    --red-bg: #331f1f; --red-mid: #d9534f;
+    --purple-bg: #221f35; --purple-mid: #8b7fd1; --purple-dark: #b0a8e8;
+    --bg-primary: #1c2230;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3);
   }
 }
 /* Explicit dark theme — set via the theme toggle, overrides system preference */
 :root[data-theme="dark"] {
-  --bg: #1c1c1a; --bg-secondary: #262624; --bg-tertiary: #2e2e2c;
-  --text-primary: #f0efe8; --text-secondary: #a0a09a; --text-tertiary: #6b6b66;
-  --border: rgba(255,255,255,0.10); --border-md: rgba(255,255,255,0.20);
-  --green-bg: #04342C; --green-mid: #5DCAA5; --green-dark: #9FE1CB;
-  --amber-bg: #412402; --amber-mid: #EF9F27; --amber-dark: #FAC775;
-  --blue-bg: #042C53; --blue-mid: #378ADD; --blue-dark: #85B7EB;
-  --red-bg: #501313; --red-mid: #F09595;
-  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
+  --bg: #1c2230; --bg-secondary: #232a3d; --bg-tertiary: #0c0e13;
+  --text-primary: #edeff4; --text-secondary: #8b93a7; --text-tertiary: #5b6478;
+  --border: #2e3549; --border-md: #454f6b;
+  --green-bg: #1c332e; --green-mid: #3fab8f; --green-dark: #7fd4bc;
+  --amber-bg: #2b2a1f; --amber-mid: #d1b954; --amber-dark: #e8cf7a;
+  --blue-bg: #3a2a20; --blue-mid: #e8622c; --blue-dark: #ff8f5c;
+  --red-bg: #331f1f; --red-mid: #d9534f;
+  --purple-bg: #221f35; --purple-mid: #8b7fd1; --purple-dark: #b0a8e8;
+  --bg-primary: #1c2230;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 /* Explicit light theme — set via the theme toggle, overrides system preference */
 :root[data-theme="light"] {
-  --bg: #ffffff; --bg-secondary: #f5f5f3; --bg-tertiary: #efefec;
-  --text-primary: #1a1a18; --text-secondary: #6b6b66; --text-tertiary: #9e9e99;
-  --border: rgba(0,0,0,0.10); --border-md: rgba(0,0,0,0.20);
-  --green-bg: #E1F5EE; --green-mid: #1D9E75; --green-dark: #0F6E56;
-  --amber-bg: #FAEEDA; --amber-mid: #BA7517; --amber-dark: #854F0B;
-  --blue-bg: #E6F1FB; --blue-mid: #185FA5; --blue-dark: #0C447C;
-  --red-bg: #FCEBEB; --red-mid: #A32D2D;
-  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
+  --bg: #fffdf8; --bg-secondary: #f7f0dd; --bg-tertiary: #ede1c3;
+  --text-primary: #26211a; --text-secondary: #5a4f3c; --text-tertiary: #8a7f68;
+  --border: rgba(38,33,26,0.16); --border-md: rgba(38,33,26,0.30);
+  --green-bg: #dcefe8; --green-mid: #2f8f76; --green-dark: #1f6350;
+  --amber-bg: #f3e9c9; --amber-mid: #a3821f; --amber-dark: #7a5f13;
+  --blue-bg: #fbe2d3; --blue-mid: #c94f1f; --blue-dark: #9c3c15;
+  --purple-bg: #e6e1f5; --purple-mid: #6a5cb0; --purple-dark: #4f4386;
+  --red-bg: #f6dede; --red-mid: #b1403c;
+  --bg-primary: #fffdf8;
+  --shadow: 0 1px 2px rgba(38,33,26,0.08), 0 2px 8px rgba(38,33,26,0.05);
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: var(--font-ui);
   background: var(--bg-tertiary); color: var(--text-primary);
   min-height: 100vh; padding: 2rem 1rem 4rem; line-height: 1.6;
 }
@@ -105,23 +120,26 @@ body {
   display: flex; align-items: flex-start; justify-content: space-between;
   margin-bottom: 1.5rem; gap: 12px;
 }
-.title { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
-.subtitle { font-size: 13px; color: var(--text-tertiary); margin-top: 3px; }
+.title { font-family: var(--font-head); font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
+.subtitle { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); margin-top: 5px; letter-spacing: 0.02em; }
 .header-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
 /* Buttons */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 14px; border: 1px solid var(--border-md);
+  padding: 8px 14px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg);
-  color: var(--text-primary); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: background 0.15s; white-space: nowrap;
-  box-shadow: var(--shadow); font-family: inherit;
+  color: var(--text-primary); font-size: 12.5px; font-weight: 500;
+  cursor: pointer; transition: border-color 0.15s, background 0.15s; white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06); font-family: var(--font-mono); letter-spacing: 0.02em;
 }
-.btn:hover { background: var(--bg-secondary); }
+.btn:hover { background: var(--bg-secondary); border-color: var(--text-tertiary); }
 .btn i { font-size: 15px; }
-.btn-primary { background: var(--green-mid); color: #fff; border-color: var(--green-dark); }
-.btn-primary:hover { background: var(--green-dark) !important; }
+.btn-primary {
+  background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid);
+  font-weight: 600; box-shadow: 0 0 0 3px var(--blue-bg), 0 2px 10px rgba(232,98,44,0.25);
+}
+.btn-primary:hover { background: var(--blue-dark) !important; border-color: var(--blue-dark) !important; }
 .btn-icon {
   display: flex; align-items: center; justify-content: center;
   width: 30px; height: 30px; border: 1px solid var(--border);
@@ -142,12 +160,17 @@ body {
 .btn-delete:hover { border-color: var(--red-mid); color: var(--red-mid); background: var(--red-bg) !important; }
 .btn-danger { background: var(--red-bg); color: var(--red-mid); border-color: var(--red-mid); }
 .btn-danger:hover { background: var(--red-mid) !important; color: #fff; }
+.btn-highlight {
+  background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid); font-weight: 600;
+  box-shadow: 0 0 0 3px var(--blue-bg), 0 2px 10px rgba(232,98,44,0.3);
+}
+.btn-highlight:hover { background: var(--blue-dark) !important; border-color: var(--blue-dark) !important; }
 
 /* Task card */
 .task-card {
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 12px 14px;
-  margin-bottom: 10px; transition: border-color 0.2s; box-shadow: var(--shadow);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+  margin-bottom: 10px; transition: border-color 0.2s; box-shadow: none;
 }
 .task-card.running { border-color: var(--green-mid); }
 .task-card.paused  { border-color: var(--amber-mid); }
@@ -162,16 +185,16 @@ body {
 .task-input:disabled { color: var(--text-secondary); }
 
 .timer-display {
-  font-size: 13px; font-weight: 700; color: var(--text-tertiary);
+  font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text-tertiary);
   min-width: 62px; text-align: right; font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em; flex-shrink: 0;
+  letter-spacing: 0.02em; flex-shrink: 0;
 }
 .timer-display.running { color: var(--green-dark); }
 .timer-display.paused  { color: var(--amber-dark); }
 
 .status-badge {
-  font-size: 11px; padding: 3px 9px; border-radius: 20px;
-  font-weight: 500; white-space: nowrap; flex-shrink: 0;
+  font-family: var(--font-mono); font-size: 10.5px; padding: 2px 9px; border-radius: 20px;
+  font-weight: 500; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.02em;
 }
 .badge-idle    { background: var(--bg-secondary); color: var(--text-tertiary); }
 .badge-running { background: var(--green-bg);  color: var(--green-dark); }
@@ -184,17 +207,17 @@ body {
 .task-meta { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; align-items: flex-end; }
 .meta-field { display: flex; flex-direction: column; gap: 3px; }
 .meta-label {
-  font-size: 10px; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
 }
 .meta-label .req { color: var(--red-mid); margin-left: 2px; }
 .meta-select, .meta-input {
-  padding: 5px 8px; border: 1px solid var(--border-md);
+  padding: 6px 9px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg-secondary);
-  color: var(--text-primary); font-size: 12px; font-family: inherit;
+  color: var(--text-primary); font-size: 12px; font-family: var(--font-mono);
   outline: none; transition: border-color 0.15s;
 }
-.meta-select:focus, .meta-input:focus { border-color: var(--green-mid); }
+.meta-select:focus, .meta-input:focus { border-color: var(--blue-mid); }
 .meta-select:disabled, .meta-input:disabled { opacity: 0.6; }
 .meta-select.invalid, .meta-input.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
 .meta-field-project .meta-select { min-width: 130px; }
@@ -234,16 +257,16 @@ body {
 .log-panel {
   background: var(--bg); border: 1px solid var(--border);
   border-radius: var(--radius-lg); margin-top: 1.5rem;
-  box-shadow: var(--shadow); overflow: hidden;
+  box-shadow: none; overflow: hidden;
   width: 100%;
 }
 .log-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
   background: var(--bg-secondary); gap: 10px; flex-wrap: wrap;
 }
-.log-title { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-.log-count { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
+.log-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.log-count { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-tertiary); margin-top: 2px; }
 .log-header-actions { display: flex; gap: 8px; }
 .log-wrap {
   overflow-x: auto; width: 100%;
@@ -258,24 +281,81 @@ body {
 .log-collapse-icon.open { transform: rotate(90deg); }
 .log-collapse-btn {
   display: flex; align-items: center; gap: 5px;
-  font-size: 13px; font-weight: 500; color: var(--text-secondary);
-  cursor: pointer; background: none; border: none; font-family: inherit; padding: 0;
+  font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary);
+  cursor: pointer; background: none; border: none; padding: 0;
 }
-.log-collapse-btn:hover { color: var(--text-primary); }
-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
+.log-collapse-btn:hover { color: var(--blue-mid); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 900px; }
 thead th {
   text-align: left; padding: 8px 12px; color: var(--text-tertiary);
-  font-weight: 500; font-size: 10px; text-transform: uppercase;
-  letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 0.08em; border-bottom: 1px solid var(--border);
   background: var(--bg-secondary); white-space: nowrap;
 }
 tbody tr { border-bottom: 1px solid var(--border); }
 tbody tr:last-child { border-bottom: none; }
-tbody td { padding: 8px 12px; color: var(--text-secondary); vertical-align: middle; white-space: nowrap; }
+tbody td { padding: 9px 12px; color: var(--text-secondary); vertical-align: middle; white-space: nowrap; }
 tbody td:first-child { color: var(--text-primary); font-weight: 500; }
 .td-desc { white-space: normal; min-width: 180px; max-width: 280px; }
 .cell-running { color: var(--green-dark); font-weight: 500; }
-.cell-dur { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-primary); }
+.cell-dur { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--blue-mid); }
+
+/* ── Log table column interactions (sort / resize / pin / sticky) — scoped to
+   .log-table only, so no other table in the app is affected. ── */
+.log-table { table-layout: fixed; }
+.log-table th { position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 26px; }
+.log-table td { overflow: hidden; text-overflow: ellipsis; }
+.log-table th.log-th-sortable { cursor: pointer; user-select: none; }
+.log-table th.log-th-sortable:hover { color: var(--text-primary); }
+.log-table .col-sort-arrow { font-size: 9px; color: var(--blue-mid); margin-left: 4px; }
+.log-table .col-resize-handle {
+  position: absolute; top: 0; right: 0; width: 8px; height: 100%; cursor: col-resize; user-select: none;
+  touch-action: none; z-index: 2;
+}
+.log-table .col-resize-handle::after {
+  content: ''; position: absolute; top: 2px; bottom: 2px; right: 3px; width: 2px; background: var(--border-md);
+}
+.log-table .col-resize-handle:hover::after, .log-table .col-resize-handle.active::after { background: var(--blue-mid); }
+.log-table .col-pin-icon {
+  position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+  background: none; border: none; color: var(--text-tertiary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; line-height: 1; padding: 2px; z-index: 2; opacity: .55;
+}
+.log-table .col-pin-icon:hover { color: var(--text-primary); opacity: 1; }
+.log-table .col-pin-icon.pin-left { color: var(--blue-mid); opacity: 1; }
+.log-table .col-pin-icon.pin-right { color: var(--green-mid); opacity: 1; }
+.log-table thead th { position: sticky; top: 0; z-index: 5; background: var(--bg-secondary); }
+.log-table .pinned-col { position: sticky !important; z-index: 2; background: var(--bg); }
+.log-table thead th.pinned-col { z-index: 8; background: var(--bg-secondary); }
+.log-table .pinned-col-edge-left { box-shadow: 2px 0 0 var(--border); }
+.log-table .pinned-col-edge-right { box-shadow: -2px 0 0 var(--border); }
+
+/* ── Sticky Action column — always pinned to the right, independent of the
+   user-configurable column pinning above, with a collapse/expand toggle. ── */
+.log-table th[data-col="__actions"],
+.log-table td[data-col="__actions"] {
+  position: sticky; right: 0; z-index: 6; background: var(--bg);
+  box-shadow: -2px 0 0 var(--border); padding-right: 8px;
+  white-space: normal; overflow: visible;
+}
+.log-table thead th[data-col="__actions"] {
+  z-index: 9; background: var(--bg-secondary); padding: 8px 8px;
+}
+.log-actions-th-inner { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.log-actions-th-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; }
+.log-actions-collapse-btn {
+  background: none; border: none; color: var(--text-tertiary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; padding: 2px; line-height: 1;
+}
+.log-actions-collapse-btn:hover { color: var(--text-primary); }
+.log-actions-collapsed-cell { position: sticky; right: 0; text-align: center; }
+.log-actions-menu {
+  position: absolute; top: 100%; right: 4px; margin-top: 4px;
+  background: var(--bg); border: 1px solid var(--border-md); border-radius: var(--radius-md);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18); padding: 6px; z-index: 30; min-width: 40px;
+}
+.log-actions-menu.hidden { display: none; }
+.log-actions-menu .actions { flex-direction: column; align-items: stretch; }
 
 /* Complete modal — description + final meta confirm */
 .modal-overlay {
@@ -284,34 +364,34 @@ tbody td:first-child { color: var(--text-primary); font-weight: 500; }
 }
 .modal-overlay.hidden { display: none; }
 .modal {
-  background: var(--bg); border-radius: var(--radius-lg);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25); width: 100%; max-width: 520px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 520px;
   max-height: 90vh; display: flex; flex-direction: column;
 }
 .modal-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 20px; border-bottom: 1px solid var(--border);
 }
-.modal-title { font-size: 15px; font-weight: 600; }
+.modal-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; }
 .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
 .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
 
 .complete-field { margin-bottom: 14px; }
 .complete-label {
-  display: block; font-size: 11px; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 5px;
+  display: block; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 5px;
 }
 .complete-label .req { color: var(--red-mid); }
 .complete-select, .complete-input, .complete-textarea {
   width: 100%; padding: 8px 10px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg-secondary);
-  color: var(--text-primary); font-size: 13px; font-family: inherit; outline: none;
+  color: var(--text-primary); font-size: 13px; font-family: var(--font-mono); outline: none;
   transition: border-color 0.15s;
 }
-.complete-select:focus, .complete-input:focus, .complete-textarea:focus { border-color: var(--green-mid); }
+.complete-select:focus, .complete-input:focus, .complete-textarea:focus { border-color: var(--blue-mid); }
 .complete-select.invalid, .complete-input.invalid, .complete-textarea.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
 .complete-textarea { resize: vertical; min-height: 72px; }
-.et-body-tpl { font-size: 12px; font-family: monospace; color: var(--text-primary); background: var(--bg-secondary); }
+.et-body-tpl { font-size: 12px; font-family: var(--font-mono); color: var(--text-primary); background: var(--bg-secondary); }
 
 #tour-backdrop.hidden { display: none; }
 #tour-bubble.hidden  { display: none; }
@@ -375,7 +455,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .search-result-item:last-child { border-bottom: none; }
 .search-result-item:hover, .search-result-item.active { background: var(--bg-secondary); }
 .search-result-date {
-  font-size: 11px; color: var(--text-tertiary);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
   white-space: nowrap; padding-top: 2px; min-width: 72px;
 }
 .search-result-body { flex: 1; min-width: 0; }
@@ -385,7 +465,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .search-result-heading em { font-style: normal; color: var(--blue-mid); background: var(--blue-bg); border-radius: 2px; padding: 0 1px; }
 .search-result-meta {
-  font-size: 11px; color: var(--text-tertiary); margin-top: 2px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .search-empty { padding: 28px 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; }
@@ -410,8 +490,8 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   background: var(--green-bg); border-radius: var(--radius-md);
   margin-bottom: 16px; border: 1px solid var(--green-mid);
 }
-.timer-summary-time { font-size: 20px; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
-.timer-summary-label { font-size: 12px; color: var(--green-dark); }
+.timer-summary-time { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
+.timer-summary-label { font-family: var(--font-mono); font-size: 12px; color: var(--green-dark); }
 
 /* Masters modal */
 .masters-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -420,7 +500,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   background: transparent; cursor: pointer; font-size: 13px; font-weight: 500;
   color: var(--text-secondary); font-family: inherit; transition: all 0.15s;
 }
-.tab-btn.active { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
+.tab-btn.active { background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid); font-weight: 600; }
 .master-list { display: flex; flex-direction: column; gap: 6px; }
 .master-item {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px;
@@ -443,7 +523,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   border-radius: var(--radius-md); background: var(--bg);
   color: var(--text-primary); font-size: 13px; font-family: inherit; outline: none;
 }
-.master-add-input:focus { border-color: var(--green-mid); }
+.master-add-input:focus { border-color: var(--blue-mid); }
 
 /* Confirm */
 .confirm-overlay {
@@ -452,10 +532,10 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .confirm-overlay.hidden { display: none; }
 .confirm-box {
-  background: var(--bg); border-radius: var(--radius-lg);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.25); width: 100%; max-width: 340px; padding: 24px 20px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 340px; padding: 24px 20px;
 }
-.confirm-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.confirm-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
 .confirm-msg { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
 .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
@@ -464,19 +544,19 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .date-picker-wrap {
   display: flex; align-items: center; gap: 6px;
   background: var(--bg); border: 1px solid var(--border-md);
-  border-radius: var(--radius-md); padding: 6px 10px;
-  box-shadow: var(--shadow); cursor: pointer;
+  border-radius: var(--radius-md); padding: 7px 10px;
+  box-shadow: none; cursor: pointer;
 }
 .date-picker-wrap:hover { background: var(--bg-secondary); }
 .date-picker-wrap i { font-size: 15px; color: var(--text-secondary); flex-shrink:0; }
 .date-picker-input {
   border: none; outline: none; background: transparent;
-  font-family: inherit; font-size: 13px; font-weight: 500;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 500;
   color: var(--text-primary); cursor: pointer; min-width: 0;
 }
 .date-picker-input::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; width: 0; }
 .date-today-badge {
-  font-size: 10px; padding: 2px 7px; border-radius: 20px;
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 7px; border-radius: 20px;
   background: var(--green-bg); color: var(--green-dark); font-weight: 600;
   white-space: nowrap; flex-shrink: 0;
 }
@@ -489,14 +569,14 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   display: none; position: fixed; bottom: 20px; right: 20px;
   background: var(--green-mid); color: #fff; padding: 8px 14px;
   border-radius: var(--radius-md); font-size: 12px; font-weight: 500;
-  box-shadow: var(--shadow); z-index: 50;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 50;
 }
 .wake-notice.show { display: block; }
 
 .task-card.future-task { opacity: 0.85; border-style: dashed; border-color: var(--purple-mid); }
 .future-badge {
   display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600; color: var(--purple-mid);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--purple-mid);
   background: var(--purple-bg); padding: 4px 9px; border-radius: 20px;
   white-space: nowrap;
 }
@@ -522,11 +602,11 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .username-prompt-overlay.hidden { display: none; }
 .username-prompt-box {
-  background: var(--bg); border-radius: var(--radius-lg);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.3); width: 100%; max-width: 360px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 360px;
   padding: 28px 24px;
 }
-.username-prompt-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.username-prompt-title { font-family: var(--font-head); font-size: 19px; font-weight: 700; margin-bottom: 6px; }
 .username-prompt-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
 
 
@@ -535,7 +615,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   position: fixed; bottom: 20px; left: 20px;
   background: var(--bg); border: 1px solid var(--border-md);
   border-radius: var(--radius-lg); padding: 10px 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   z-index: 40; min-width: 170px;
   transition: border-color 0.3s;
 }
@@ -546,7 +626,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .work-dot.active { background: var(--green-mid); }
 .work-time {
-  font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+  font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums; color: var(--text-primary);
   line-height: 1.1;
 }
@@ -557,15 +637,15 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   position: fixed; bottom: 20px; right: 20px;
   background: var(--bg); border: 1px solid var(--border-md);
   border-radius: var(--radius-lg); padding: 10px 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   z-index: 40; min-width: 170px;
   transition: border-color 0.3s;
 }
 .break-widget.on-break { border-color: var(--amber-mid); }
 .break-widget.off-hours { border-color: var(--border); opacity: 0.6; }
 .break-label {
-  font-size: 10px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 3px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 3px;
   display: flex; align-items: center; gap: 5px;
 }
 .break-dot {
@@ -574,13 +654,13 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .break-dot.active { background: var(--amber-mid); }
 .break-time {
-  font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+  font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums; color: var(--text-primary);
   line-height: 1.1;
 }
 .break-time.on-break { color: var(--amber-dark); }
 .break-sub {
-  font-size: 10px; color: var(--text-tertiary); margin-top: 2px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 2px;
 }
 
 
@@ -727,11 +807,11 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 /* ── CSV Export/Import modal ── */
 .csv-modal-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
 .csv-field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.csv-label { font-size: 11px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.csv-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
 .csv-input { padding: 7px 10px; border: 1px solid var(--border-md); border-radius: var(--radius-md);
-  background: var(--bg-secondary); color: var(--text-primary); font-family: inherit; font-size: 13px; outline: none; }
-.csv-input:focus { border-color: var(--green-mid); }
-.csv-section-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;
+  background: var(--bg-secondary); color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; outline: none; }
+.csv-input:focus { border-color: var(--blue-mid); }
+.csv-section-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
   padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .csv-import-drop {
   border: 2px dashed var(--border-md); border-radius: var(--radius-md);
@@ -795,7 +875,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
       </div>
     </div>
     <div class="log-wrap">
-      <table>
+      <table id="log-table" class="log-table">
         <thead>
           <tr id="log-thead-row">
           </tr>
@@ -1064,7 +1144,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 
 <!-- Masters modal -->
 <div class="modal-overlay hidden" id="masters-modal">
-  <div class="modal" id="masters-modal-box" style="max-width:560px">
+  <div class="modal" id="masters-modal-box" style="max-width:480px">
     <div class="modal-header">
       <div class="modal-title"><i class="ti ti-settings" style="vertical-align:-2px;margin-right:6px"></i>Edit Masters</div>
       <button class="btn-icon" onclick="closeMasters()"><i class="ti ti-x"></i></button>
@@ -1617,6 +1697,71 @@ function fmtDuration(secs) {
 function esc(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ── Log table column interaction state (sort / resize / pin) ───────────────
+// Migrated from the Effort Manifest Dashboard's generic column manager. Unlike the
+// Dashboard's static per-table column sets, the Task Logger's visible columns come
+// from masters.logColumns (Master Settings) and can change at runtime, so the log
+// table's header/colgroup are rebuilt on every updateLogTable() call and these
+// interactions are re-wired each time rather than set up once at load.
+const LOG_TABLE_WIDTHS_KEY = 'ttl_logTableColWidths';
+const LOG_TABLE_PINNED_KEY = 'ttl_logTablePinned';
+const LOG_TABLE_PIN_ICON_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>';
+
+function ltLoadObj(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return Object.assign({}, fallback);
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : Object.assign({}, fallback);
+  } catch(e) { return Object.assign({}, fallback); }
+}
+function ltSaveObj(key, obj) {
+  try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {}
+}
+
+let logTableColWidths = ltLoadObj(LOG_TABLE_WIDTHS_KEY, {});
+let logTableColPinned = ltLoadObj(LOG_TABLE_PINNED_KEY, {});
+let logTableSortCol = null; // null = no sort applied, keep natural entry order
+let logTableSortDir = 'asc';
+
+// ── Sticky Action column collapse/expand preference ────────────────────────
+const LOG_ACTIONS_COLLAPSED_KEY = 'ttl_logActionsCollapsed';
+const LOG_ACTIONS_COL_WIDTH_EXPANDED = 76;
+const LOG_ACTIONS_COL_WIDTH_COLLAPSED = 40;
+function ltLoadBool(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    return raw === '1';
+  } catch(e) { return fallback; }
+}
+function ltSaveBool(key, val) {
+  try { localStorage.setItem(key, val ? '1' : '0'); } catch(e) {}
+}
+let logActionsCollapsed = ltLoadBool(LOG_ACTIONS_COLLAPSED_KEY, false);
+function logActionsColWidth() { return logActionsCollapsed ? LOG_ACTIONS_COL_WIDTH_COLLAPSED : LOG_ACTIONS_COL_WIDTH_EXPANDED; }
+function toggleLogActionsColumn() {
+  logActionsCollapsed = !logActionsCollapsed;
+  ltSaveBool(LOG_ACTIONS_COLLAPSED_KEY, logActionsCollapsed);
+  updateLogTable();
+}
+// Per-row "more actions" menu, used only in collapsed mode. Only one menu is open
+// at a time; clicking elsewhere on the page closes it.
+function toggleLogRowActionsMenu(evt, rowIdx) {
+  evt.preventDefault();
+  evt.stopPropagation();
+  const menu = document.getElementById('log-actions-menu-' + rowIdx);
+  if (!menu) return;
+  const wasHidden = menu.classList.contains('hidden');
+  document.querySelectorAll('.log-actions-menu').forEach(m => m.classList.add('hidden'));
+  if (wasHidden) menu.classList.remove('hidden');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.log-actions-menu') && !e.target.closest('.log-actions-toggle')) {
+    document.querySelectorAll('.log-actions-menu').forEach(m => m.classList.add('hidden'));
+  }
+});
 
 // ── Log table column configuration helpers ─────────────────────────────────
 function getLogColumns() {
@@ -2917,19 +3062,241 @@ function applyLogTableState() {
   if (icon) icon.style.visibility = isToday ? 'visible' : 'hidden';
 }
 
+// Sorts log entries for display only — click-to-sort, not persisted, and never
+// mutates logEntries itself. Reuses getEntryValueForColumn so the sort key always
+// matches what's actually shown in the cell (existing per-column value logic is
+// untouched).
+function sortLogEntriesForDisplay(entries) {
+  if (!logTableSortCol) return entries;
+  const key = logTableSortCol;
+  const dir = logTableSortDir;
+  return entries.slice().sort((a, b) => {
+    const taskA = tasks.find(t => t.id === a.taskId);
+    const taskB = tasks.find(t => t.id === b.taskId);
+    let av, bv;
+    if (key === 'date') { av = a.startTs; bv = b.startTs; }
+    else if (key === 'effort') { av = getEntryValueForColumn(a, taskA, 'effort'); bv = getEntryValueForColumn(b, taskB, 'effort'); }
+    else { av = String(getEntryValueForColumn(a, taskA, key) || '').toLowerCase(); bv = String(getEntryValueForColumn(b, taskB, key) || '').toLowerCase(); }
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+// Sensible starting widths, mirroring the Dashboard's per-table defaultWidths map for its
+// known columns. Task Logger columns are dynamic (custom columns can be added via Master
+// Settings), so unknown keys fall back to a width based on the column's type.
+const LOG_TABLE_DEFAULT_WIDTHS = {
+  date: 100, employee: 130, project: 130, module: 150, nature: 120,
+  ticket: 120, description: 260, effort: 90, status: 110, remark: 180
+};
+function defaultLogColumnWidth(c) {
+  if (LOG_TABLE_DEFAULT_WIDTHS[c.key]) return LOG_TABLE_DEFAULT_WIDTHS[c.key];
+  if (c.type === 'date') return 110;
+  if (c.type === 'list' || c.type === 'multilist') return 130;
+  return 150; // generic text fallback for custom columns
+}
+
+// Builds/updates the <colgroup> to match the currently visible columns. Every column gets
+// an explicit width — the user's persisted width if they've resized it, otherwise a sensible
+// default — because table-layout:fixed splits *unset* columns evenly rather than sizing them
+// to content, which without a default left every unresized column looking the same width.
+function buildLogTableColgroup(cols) {
+  const table = document.getElementById('log-table');
+  const thead = table && table.querySelector(':scope > thead');
+  if (!table || !thead) return;
+  let colgroup = table.querySelector(':scope > colgroup');
+  if (!colgroup) {
+    colgroup = document.createElement('colgroup');
+    table.insertBefore(colgroup, thead);
+  }
+  colgroup.innerHTML = cols.map(c => {
+    const w = logTableColWidths[c.key] || defaultLogColumnWidth(c);
+    return `<col data-col="${c.key}" style="width:${w}px">`;
+  }).join('') + `<col data-col="__actions" style="width:${logActionsColWidth()}px">`;
+}
+
+// Builds the header row with sort/pin/resize affordances per column.
+function buildLogTheadRow(cols) {
+  const theadRow = document.getElementById('log-thead-row');
+  if (!theadRow) return;
+  theadRow.innerHTML = cols.map(c => {
+    const arrow = logTableSortCol === c.key ? (logTableSortDir === 'asc' ? '▲' : '▼') : '';
+    return `<th class="log-th-sortable" data-col="${c.key}">${esc(c.label)}` +
+      `<span class="col-sort-arrow">${arrow}</span>` +
+      `<button type="button" class="col-pin-icon" data-col="${c.key}" title="Pin column">${LOG_TABLE_PIN_ICON_SVG}</button>` +
+      `<span class="col-resize-handle"></span></th>`;
+  }).join('') + `<th data-col="__actions" style="width:${logActionsColWidth()}px">` +
+    `<span class="log-actions-th-inner">` +
+      `<span class="log-actions-th-label">${logActionsCollapsed ? '' : 'Action'}</span>` +
+      `<button type="button" class="log-actions-collapse-btn" onclick="toggleLogActionsColumn()" ` +
+        `title="${logActionsCollapsed ? 'Expand action column' : 'Collapse action column'}">` +
+        `<i class="ti ti-chevron-${logActionsCollapsed ? 'left' : 'right'}"></i>` +
+      `</button>` +
+    `</span></th>`;
+}
+
+// Re-applies sticky left/right offsets for pinned columns, using the widths currently
+// on screen. Called after every render and after every resize drag.
+function applyLogTableColumnPins() {
+  const table = document.getElementById('log-table');
+  const theadRow = document.getElementById('log-thead-row');
+  if (!table || !theadRow) return;
+  const order = Array.from(theadRow.querySelectorAll(':scope > th')).map(th => th.dataset.col).filter(Boolean);
+  const widthOf = (key) => {
+    if (logTableColWidths[key]) return logTableColWidths[key];
+    const th = theadRow.querySelector(':scope > th[data-col="' + key + '"]');
+    return th ? th.offsetWidth : 100;
+  };
+  let leftAcc = 0;
+  const leftOffset = {};
+  order.forEach(key => {
+    if (logTableColPinned[key] === 'left') { leftOffset[key] = leftAcc; leftAcc += widthOf(key); }
+  });
+  // The Action column is always sticky-right (handled via CSS), so any user-pinned-right
+  // columns must stack to the left of it rather than starting from the table edge.
+  let rightAcc = widthOf('__actions');
+  const rightOffset = {};
+  for (let i = order.length - 1; i >= 0; i--) {
+    const key = order[i];
+    if (key === '__actions') continue;
+    if (logTableColPinned[key] === 'right') { rightOffset[key] = rightAcc; rightAcc += widthOf(key); }
+  }
+  order.forEach((key, idx) => {
+    const dir = logTableColPinned[key];
+    const isLastLeft = dir === 'left' && order.slice(idx + 1).every(k => logTableColPinned[k] !== 'left');
+    const isFirstRight = dir === 'right' && order.slice(0, idx).every(k => logTableColPinned[k] !== 'right');
+    const cells = table.querySelectorAll('th[data-col="' + key + '"], td[data-col="' + key + '"]');
+    cells.forEach(cell => {
+      cell.style.left = '';
+      cell.style.right = '';
+      cell.classList.remove('pinned-col', 'pinned-col-edge-left', 'pinned-col-edge-right');
+      if (dir === 'left') {
+        cell.style.left = leftOffset[key] + 'px';
+        cell.classList.add('pinned-col');
+        if (isLastLeft) cell.classList.add('pinned-col-edge-left');
+      } else if (dir === 'right') {
+        cell.style.right = rightOffset[key] + 'px';
+        cell.classList.add('pinned-col');
+        if (isFirstRight) cell.classList.add('pinned-col-edge-right');
+      }
+    });
+  });
+}
+
+function updateLogPinIcon(icon, key) {
+  const dir = logTableColPinned[key];
+  icon.classList.remove('pin-left', 'pin-right');
+  if (dir === 'left') { icon.classList.add('pin-left'); icon.title = 'Pinned left — click to pin right instead'; }
+  else if (dir === 'right') { icon.classList.add('pin-right'); icon.title = 'Pinned right — click to unpin'; }
+  else { icon.title = 'Click to pin this column to the left'; }
+}
+function cycleLogColumnPin(key) {
+  if (logTableColPinned[key] === 'left') logTableColPinned[key] = 'right';
+  else if (logTableColPinned[key] === 'right') delete logTableColPinned[key];
+  else logTableColPinned[key] = 'left';
+  ltSaveObj(LOG_TABLE_PINNED_KEY, logTableColPinned);
+  applyLogTableColumnPins();
+  const headerIcon = document.querySelector('#log-thead-row .col-pin-icon[data-col="' + key + '"]');
+  if (headerIcon) updateLogPinIcon(headerIcon, key);
+}
+
+// Wires sort clicks, pin-icon clicks, and resize-handle dragging. Called after every
+// header rebuild since the header DOM is regenerated each render (columns can change
+// at runtime via Master Settings, unlike the Dashboard's static column sets).
+function wireLogTableColumnInteractions() {
+  const table = document.getElementById('log-table');
+  const theadRow = document.getElementById('log-thead-row');
+  if (!table || !theadRow) return;
+
+  theadRow.querySelectorAll(':scope > th.log-th-sortable').forEach(th => {
+    th.addEventListener('click', (e) => {
+      if (e.target.closest('.col-resize-handle') || e.target.closest('.col-pin-icon')) return;
+      const key = th.dataset.col;
+      if (logTableSortCol === key) { logTableSortDir = logTableSortDir === 'asc' ? 'desc' : 'asc'; }
+      else { logTableSortCol = key; logTableSortDir = (key === 'effort' || key === 'date') ? 'desc' : 'asc'; }
+      updateLogTable();
+    });
+  });
+
+  theadRow.querySelectorAll(':scope > th .col-pin-icon').forEach(icon => {
+    const key = icon.dataset.col;
+    updateLogPinIcon(icon, key);
+    icon.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      cycleLogColumnPin(key);
+    });
+  });
+
+  theadRow.querySelectorAll(':scope > th .col-resize-handle').forEach(handle => {
+    handle.addEventListener('click', e => e.stopPropagation());
+    handle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const th = handle.closest('th');
+      const key = th.dataset.col;
+      const startX = e.clientX;
+      const startWidth = logTableColWidths[key] || th.offsetWidth;
+      handle.classList.add('active');
+      function onMove(ev) {
+        const newWidth = Math.max(50, startWidth + (ev.clientX - startX));
+        logTableColWidths[key] = newWidth;
+        const colEl = table.querySelector(':scope > colgroup col[data-col="' + key + '"]');
+        if (colEl) colEl.style.width = newWidth + 'px';
+        applyLogTableColumnPins();
+      }
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        handle.classList.remove('active');
+        ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+    handle.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+      const th = handle.closest('th');
+      const key = th.dataset.col;
+      const startX = e.touches[0].clientX;
+      const startWidth = logTableColWidths[key] || th.offsetWidth;
+      handle.classList.add('active');
+      function onMove(ev) {
+        const newWidth = Math.max(50, startWidth + (ev.touches[0].clientX - startX));
+        logTableColWidths[key] = newWidth;
+        const colEl = table.querySelector(':scope > colgroup col[data-col="' + key + '"]');
+        if (colEl) colEl.style.width = newWidth + 'px';
+        applyLogTableColumnPins();
+      }
+      function onUp() {
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onUp);
+        handle.classList.remove('active');
+        ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths);
+      }
+      document.addEventListener('touchmove', onMove, { passive: true });
+      document.addEventListener('touchend', onUp);
+    }, { passive: true });
+  });
+}
+
 function updateLogTable() {
   const tbody = document.getElementById('log-tbody');
   const theadRow = document.getElementById('log-thead-row');
   if (!tbody) return;
   const selDate = getSelectedDate ? getSelectedDate() : todayStr();
-  const filtered = logEntries.filter(e => entryMatchesDate(e, selDate));
+  const todayForActions = todayStr();
+  const isPresentDay = selDate === todayForActions;
+  const isFutureDay = selDate > todayForActions;
+  const isPastDay = selDate < todayForActions;
+  const filtered = sortLogEntriesForDisplay(logEntries.filter(e => entryMatchesDate(e, selDate)));
   const cols = getVisibleLogColumns();
 
   // Render header row dynamically from configured columns (locked columns keep their
   // fixed labels; configurable columns use the user's renamed label if set).
-  if (theadRow) {
-    theadRow.innerHTML = cols.map(c => `<th>${esc(c.label)}</th>`).join('') + '<th style="width:36px"></th>';
-  }
+  buildLogTableColgroup(cols);
+  buildLogTheadRow(cols);
 
   tbody.innerHTML = filtered.map(e => {
     const task = tasks.find(t=>t.id===e.taskId);
@@ -2938,42 +3305,63 @@ function updateLogTable() {
 
     const cells = cols.map(c => {
       if (c.key === 'description') {
-        return `<td class="td-desc">${esc(e.heading || (isRunning ? '— pending on completion —' : ''))}</td>`;
+        return `<td class="td-desc" data-col="${c.key}">${esc(e.heading || (isRunning ? '— pending on completion —' : ''))}</td>`;
       }
       if (c.key === 'remark') {
-        return `<td class="td-desc">${esc(e.remark || '')}</td>`;
+        return `<td class="td-desc" data-col="${c.key}">${esc(e.remark || '')}</td>`;
       }
       if (c.key === 'effort') {
         const minsCell = e.durationSecs!==null
           ? `<span class="cell-dur">${Math.ceil(e.durationSecs/60)}</span>`
           : (task ? Math.ceil(liveElapsedSecs(task)/60) : '—');
-        return `<td>${minsCell}</td>`;
+        return `<td data-col="${c.key}">${minsCell}</td>`;
       }
       if (c.key === 'status') {
-        return `<td>${esc(statusText)}</td>`;
+        return `<td data-col="${c.key}">${esc(statusText)}</td>`;
       }
-      return `<td>${esc(getEntryValueForColumn(e, task, c.key))}</td>`;
+      return `<td data-col="${c.key}">${esc(getEntryValueForColumn(e, task, c.key))}</td>`;
     }).join('');
 
     const rowTask = tasks.find(t => t.id === e.taskId);
     const linkedPlan = (rowTask && rowTask.recurringPlanId) ? recurringPlans.find(p => p.id === rowTask.recurringPlanId && p.active) : null;
+    const rowIdx = logEntries.indexOf(e);
+
+    // Same action buttons regardless of collapsed/expanded state — collapsed mode just
+    // tucks them behind a single "more actions" toggle instead of showing them inline.
+    const actionButtonsHtml =
+        (isPresentDay ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+rowIdx+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : '')
+      + ((!isFutureDay)
+            ? '<button class="btn-icon" id="continue-'+e.taskId+'" onclick="continueTomorrow('+e.taskId+')" title="Add this task to another day" style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-calendar-plus"></i></button>'
+            : '')
+      + ((isPresentDay && statusText!=='In Progress')
+            ? '<button class="btn-icon" onclick="reopenTask('+e.taskId+')" title="Reopen task" style="border-color:var(--amber-mid);color:var(--amber-dark)"><i class="ti ti-refresh"></i></button>'
+            : '')
+      + ((!isFutureDay)
+            ? (linkedPlan
+                ? '<button class="btn-icon" onclick="openManageRecurringModal('+linkedPlan.id+')" title="Manage recurring plan" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'
+                : '<button class="btn-icon" onclick="openMakeRecurringModal('+e.taskId+')" title="Make this a recurring daily task" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>')
+            : '')
+      + (isPresentDay ? '<button class="btn-icon btn-delete" onclick="confirmDeleteLogEntry('+rowIdx+')" title="Delete entry"><i class="ti ti-trash"></i></button>' : '');
+
+    const actionsCellHtml = logActionsCollapsed
+      ? `<td data-col="__actions" class="log-actions-collapsed-cell">
+          <button type="button" class="btn-icon log-actions-toggle" onclick="toggleLogRowActionsMenu(event, ${rowIdx})" title="Actions"><i class="ti ti-dots-vertical"></i></button>
+          <div class="log-actions-menu hidden" id="log-actions-menu-${rowIdx}">
+            <div class="actions" style="display:flex;gap:4px">${actionButtonsHtml}</div>
+          </div>
+        </td>`
+      : `<td data-col="__actions">
+          <div style="display:flex;flex-direction:row;align-items:center;gap:4px">${actionButtonsHtml}</div>
+        </td>`;
 
     return `<tr>
       ${cells}
-      <td>
-        <div style="display:flex;flex-direction:row;align-items:center;gap:4px">
-        ${selDate === todayStr() ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+logEntries.indexOf(e)+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : ''}
-        ${statusText==='In Progress'
-            ? '<button class="btn-icon" id="continue-'+e.taskId+'" onclick="continueTomorrow('+e.taskId+')" title="Add this task to another day" style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-calendar-plus"></i></button>'
-            : (selDate === todayStr() ? '<button class="btn-icon" onclick="reopenTask('+e.taskId+')" title="Reopen task" style="border-color:var(--amber-mid);color:var(--amber-dark)"><i class="ti ti-refresh"></i></button>' : '')}
-        ${linkedPlan
-            ? '<button class="btn-icon" onclick="openManageRecurringModal('+linkedPlan.id+')" title="Manage recurring plan" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'
-            : '<button class="btn-icon" onclick="openMakeRecurringModal('+e.taskId+')" title="Make this a recurring daily task" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'}
-        ${selDate === todayStr() ? '<button class="btn-icon btn-delete" onclick="confirmDeleteLogEntry('+logEntries.indexOf(e)+')" title="Delete entry"><i class="ti ti-trash"></i></button>' : ''}
-        </div>
-      </td>
+      ${actionsCellHtml}
     </tr>`;
   }).join('');
+
+  wireLogTableColumnInteractions();
+  applyLogTableColumnPins();
 }
 
 function updateLogPanel() {
@@ -3028,7 +3416,7 @@ function switchTab(tab) {
   // The Lists tab and Columns tab now have their own dedicated, self-contained controls.
   if (addSec) addSec.style.display = 'none';
   const box = document.getElementById('masters-modal-box');
-  if (box) box.style.maxWidth = (tab === 'columns' || tab === 'lists') ? '600px' : '560px';
+  if (box) box.style.maxWidth = (tab === 'columns' || tab === 'lists') ? '600px' : '480px';
   renderMastersContent();
 }
 // ── Columns tab: configure log table / task card columns ───────────────────
@@ -3994,8 +4382,19 @@ async function copyEmailTableFromPreview() {
 
 // ── Data: Backup / Restore / Cleanup ──────────────────────────────────────────
 function exportBackup() {
+  // Per-date weekend "working day?" overrides are stored under dynamically-named
+  // keys (ttl_weekend_YYYY-MM-DD), one per date the user was prompted — collect
+  // all of them so a restore doesn't lose this history.
+  const weekendOverrides = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.indexOf('ttl_weekend_') === 0) weekendOverrides[k.slice('ttl_weekend_'.length)] = localStorage.getItem(k);
+    }
+  } catch (e) {}
+
   const backup = {
-    _version: 1,
+    _version: 2,
     _exported: new Date().toISOString(),
     tasks,
     logEntries,
@@ -4005,7 +4404,11 @@ function exportBackup() {
     recurringPlans,
     recurringPlanIdCounter,
     userName,
-    breakData: getBreakData()
+    breakData: getBreakData(),
+    theme: getStoredTheme(),
+    logTableColWidths,
+    logTableColPinned,
+    weekendOverrides
   };
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -4045,6 +4448,14 @@ function importBackup(event) {
       recurringPlanIdCounter  = b.recurringPlanIdCounter  ?? recurringPlanIdCounter;
       if (b.userName) userName = b.userName;
       if (b.breakData) saveBreakData(b.breakData);
+      if (b.theme) setTheme(b.theme);
+      if (b.logTableColWidths) { logTableColWidths = b.logTableColWidths; ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths); }
+      if (b.logTableColPinned) { logTableColPinned = b.logTableColPinned; ltSaveObj(LOG_TABLE_PINNED_KEY, logTableColPinned); }
+      if (b.weekendOverrides) {
+        Object.keys(b.weekendOverrides).forEach(dateStr => {
+          try { localStorage.setItem('ttl_weekend_' + dateStr, b.weekendOverrides[dateStr]); } catch (e) {}
+        });
+      }
       saveState();
       // Re-render everything
       renderAll();
@@ -4385,6 +4796,72 @@ function parseCSVDocument(text) {
   return rows.filter(r => r.some(f => f !== ''));
 }
 
+// ── Attendance time helpers (CSV import: Start/End Work Time + Working Hours) ──
+// Parses a clock-time value like "09:00", "17:30", or "5:30 PM" into minutes since
+// midnight. Returns null (never throws) for anything unparseable, so a single bad
+// cell doesn't stop the rest of the import.
+function parseClockTimeToMinutes(raw) {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  const m = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?$/);
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (isNaN(h) || isNaN(min) || min > 59) return null;
+  const ampm = m[3] ? m[3].toLowerCase() : null;
+  if (ampm) {
+    if (h < 1 || h > 12) return null;
+    if (ampm === 'pm' && h < 12) h += 12;
+    if (ampm === 'am' && h === 12) h = 0;
+  } else if (h > 23) return null;
+  return h * 60 + min;
+}
+
+// Parses a "Working Hours" duration value in any of several common shapes into total
+// minutes (minute precision): "8h", "8h 30m", "8h15m", "8:30", "8.5", or a plain
+// number (treated as hours if <= 24, otherwise as minutes). Returns null if the
+// value can't be understood.
+function parseDurationToMinutes(raw) {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  let m = s.match(/^(\d+(?:\.\d+)?)\s*h(?:ours?)?\s*(?:(\d+)\s*m(?:in(?:utes)?)?)?$/i);
+  if (m) {
+    const hoursPart = Math.round(parseFloat(m[1]) * 60);
+    const minsPart = m[2] ? parseInt(m[2], 10) : 0;
+    return hoursPart + minsPart;
+  }
+  m = s.match(/^(\d+)\s*m(?:in(?:utes)?)?$/i);
+  if (m) return parseInt(m[1], 10);
+  m = s.match(/^(\d{1,2}):(\d{2})$/);
+  if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+  m = s.match(/^\d+(?:\.\d+)?$/);
+  if (m) {
+    const n = parseFloat(s);
+    return Math.round(n <= 24 ? n * 60 : n);
+  }
+  return null;
+}
+
+// Automatic Break Time calculation for imported attendance rows:
+//   Total Time = End Work Time - Start Work Time (minute precision, overnight-safe)
+//   Break Time = Total Time - Working Hours, floored at 0, never negative.
+// Returns null (meaning "don't touch Break Time for this row") if any of the three
+// inputs is missing or unparseable, rather than throwing — so incomplete/invalid
+// rows still import normally, just without a computed break value.
+function calculateBreakMinutes(startStr, endStr, workingHoursStr) {
+  const startMin = parseClockTimeToMinutes(startStr);
+  const endMin = parseClockTimeToMinutes(endStr);
+  const workingMin = parseDurationToMinutes(workingHoursStr);
+  if (startMin == null || endMin == null || workingMin == null) return null;
+  let totalMin = endMin - startMin;
+  if (totalMin < 0) totalMin += 24 * 60; // overnight shift support
+  let breakMin = totalMin - workingMin;
+  if (breakMin < 0) breakMin = 0; // working hours >= total time → no break, never negative
+  return breakMin;
+}
+
 function processCSVFile(file) {
   const reader = new FileReader();
   reader.onload = ev => {
@@ -4413,18 +4890,71 @@ function processCSVFile(file) {
         status:      ['Status'],
         remark:      ['Remarks','Remark','Notes','Note']
       };
+      // Normalize a header/alias for matching: case-insensitive, and ignore spaces,
+      // underscores and hyphens so e.g. "Ticket #", "ticket_#" and "Ticket-#" all match.
+      const normalizeHeader = (s) => String(s == null ? '' : s).toLowerCase().replace(/[\s_-]+/g, '');
+      const normHeader = header.map(normalizeHeader);
+
       const cols = getLogColumns(); // all columns, locked + configurable + custom, in configured order
       const col = {}; // colKey -> header index, or -1 if not found in the uploaded file
       cols.forEach(c => {
         const aliases = [c.label, ...(LEGACY_ALIASES[c.key] || [])];
         col[c.key] = -1;
         for (const a of aliases) {
-          const idx = header.findIndex(h => h.toLowerCase() === a.toLowerCase());
+          const idx = normHeader.indexOf(normalizeHeader(a));
           if (idx >= 0) { col[c.key] = idx; break; }
         }
       });
-      let imported = 0, skipped = 0;
-      dataRows.forEach(vals => {
+
+      // Attendance/time-tracking columns (Start/End Work Time, Working Hours, Break Time)
+      // aren't part of the app's built-in column set, so they're detected directly against
+      // the uploaded header rather than through the `cols`/`col` mapping above.
+      const TIME_TRACKING_ALIASES = {
+        startWorkTime: ['Start Work Time', 'Start Time', 'Time In', 'Clock In'],
+        endWorkTime:   ['End Work Time', 'End Time', 'Time Out', 'Clock Out'],
+        workingHours:  ['Working Hours', 'Work Hours', 'Worked Hours', 'Hours Worked'],
+        breakTime:     ['Break Time', 'Break', 'Break Duration']
+      };
+      const findHeaderIndex = (aliases) => {
+        for (const a of aliases) {
+          const idx = normHeader.indexOf(normalizeHeader(a));
+          if (idx >= 0) return idx;
+        }
+        return -1;
+      };
+      const idxStartWorkTime = findHeaderIndex(TIME_TRACKING_ALIASES.startWorkTime);
+      const idxEndWorkTime   = findHeaderIndex(TIME_TRACKING_ALIASES.endWorkTime);
+      const idxWorkingHours  = findHeaderIndex(TIME_TRACKING_ALIASES.workingHours);
+      const idxBreakTime     = findHeaderIndex(TIME_TRACKING_ALIASES.breakTime);
+      const hasAttendanceTimeColumns = idxStartWorkTime >= 0 && idxEndWorkTime >= 0 && idxWorkingHours >= 0;
+      // Find any column the user already has configured for Break Time — matched by its
+      // current LABEL against the same aliases used for the file header, not by whether the
+      // uploaded file itself happens to contain a Break Time column. Most attendance imports
+      // only carry Start/End Work Time + Working Hours (no Break Time column in the file at
+      // all), so requiring idxBreakTime to be found in the file would miss an existing
+      // "Break Time" column entirely and strand the computed value under a duplicate key.
+      const existingBreakCol = cols.find(c => TIME_TRACKING_ALIASES.breakTime.some(a => normalizeHeader(a) === normalizeHeader(c.label)));
+      const breakTimeColKey = existingBreakCol ? existingBreakCol.key : 'breakTime';
+      // If no column currently owns that key (the common case: the file has Start/End Work
+      // Time + Working Hours but no separate Break Time header of its own, and no matching
+      // column was configured beforehand), the computed value has nowhere to render/export/
+      // persist. Auto-create a "Break Time" log column so imported rows actually show the
+      // calculated break instead of it being silently dropped into a key nothing displays.
+      if (hasAttendanceTimeColumns && !existingBreakCol) {
+        getLogColumns().push({ key: breakTimeColKey, label: 'Break Time', visible: true, type: 'text', builtIn: false });
+      }
+
+      // Required columns are the ones the app cannot function without (date/effort).
+      // Report any that are missing by name instead of silently importing broken rows.
+      const missingRequired = cols.filter(c => c.essential && col[c.key] === -1).map(c => c.label);
+      if (missingRequired.length) {
+        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Missing required column${missingRequired.length>1?'s':''}: ${missingRequired.map(esc).join(', ')}</span>`;
+        return;
+      }
+
+      let imported = 0, skipped = 0, failed = 0;
+      dataRows.forEach((vals, rowIdx) => {
+       try {
         const getVal = (key) => (col[key] >= 0 ? (vals[col[key]] || '') : '');
         const dateStr = getVal('date');
 
@@ -4443,8 +4973,9 @@ function processCSVFile(file) {
           startTs = new Date(yr, mo, dy, 9, 0).getTime();
           iso = yr + '-' + String(mo+1).padStart(2,'0') + '-' + String(dy).padStart(2,'0');
         } else {
-          startTs = Date.now();
-          iso = dateStr; // fallback, won't match range checks below if malformed
+          // Unparseable date: don't silently substitute today's date (that would
+          // corrupt the imported record's date). Treat as a row-level failure.
+          throw new Error('Row ' + (rowIdx + 2) + ': unrecognized date "' + dateStr + '"');
         }
 
         if (from && iso < from) { skipped++; return; }
@@ -4472,21 +5003,45 @@ function processCSVFile(file) {
         cols.filter(c => !c.builtIn && !['date','employee','effort','status'].includes(c.key)).forEach(c => {
           entry.customFields[c.key] = getVal(c.key);
         });
-        // Skip duplicates (same date+project+description+duration)
+        // Automatic Break Time: only computed when the row actually has all three source
+        // fields (Start Work Time, End Work Time, Working Hours). An unparseable/missing
+        // value on any of them just leaves Break Time untouched for this row rather than
+        // failing the whole row — the rest of the entry still imports normally.
+        if (hasAttendanceTimeColumns) {
+          const breakMins = calculateBreakMinutes(
+            vals[idxStartWorkTime], vals[idxEndWorkTime], vals[idxWorkingHours]
+          );
+          if (breakMins != null) {
+            entry.customFields[breakTimeColKey] = String(breakMins);
+          }
+        }
+        // Skip duplicates. Match on date+project+description+duration, plus employee
+        // and ticket so distinct records that share the same task/description/duration
+        // on the same day (e.g. different people, or different tickets) aren't wrongly
+        // treated as the same record and dropped.
         const isDupe = logEntries.some(e =>
           e.project === entry.project &&
           e.description === entry.description &&
           e.durationSecs === entry.durationSecs &&
+          e.employee === entry.employee &&
+          (e.ticket || '') === (entry.ticket || '') &&
           entryMatchesDate(e, iso)
         );
         if (isDupe) { skipped++; return; }
         logEntries.push(entry);
         imported++;
+       } catch (rowErr) {
+        // Validate each row independently: one bad row (bad date, etc.) is counted
+        // as failed and import continues with the remaining rows.
+        failed++;
+       }
       });
 
       saveState(); updateLogPanel();
-      prev.innerHTML = `<span style="color:var(--green-dark)">✓ Imported ${imported} entries</span>` +
-        (skipped ? ` <span style="color:var(--text-tertiary)">(${skipped} skipped — out of range or duplicate)</span>` : '');
+      const parts = [`<span style="color:var(--green-dark)">✓ Imported ${imported} entries</span>`];
+      if (skipped) parts.push(`<span style="color:var(--text-tertiary)">${skipped} skipped — out of range or duplicate</span>`);
+      if (failed)  parts.push(`<span style="color:var(--red-mid)">${failed} row${failed>1?'s':''} failed validation</span>`);
+      prev.innerHTML = parts.join(' &middot; ');
     } catch(err) {
       prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing CSV: ${err.message}</span>`;
     }

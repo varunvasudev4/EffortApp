@@ -11,15 +11,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW registered', reg))
-      .catch(err => console.error(err));
-  });
-}
-</script>
 <style>
   :root{
     --bg:#12151c;
@@ -1742,7 +1733,15 @@ function addSearchKeyword(raw){
   clearSavedFilterSelection();
   renderAll();
 }
-function getSearchKeywords(){ return searchKeywords.slice(); }
+function getSearchKeywords(){
+  // Committed chips (Enter/comma/blur) are OR-matched together. We also fold in
+  // whatever's currently typed but not yet committed, so a bare "1510" filters
+  // immediately without requiring Enter first.
+  const combined = searchKeywords.slice();
+  const live = searchInputEl.value.trim();
+  if(live && !combined.some(k=>k.toLowerCase()===live.toLowerCase())) combined.push(live);
+  return combined;
+}
 function setSearchKeywords(arr){
   searchKeywords = Array.isArray(arr) ? arr.slice() : (arr ? String(arr).split(',').map(s=>s.trim()).filter(Boolean) : []);
   renderSearchChips();
@@ -1762,6 +1761,12 @@ searchInputEl.addEventListener('keydown', (e)=>{
 searchInputEl.addEventListener('blur', ()=>{
   if(searchInputEl.value.trim()) addSearchKeyword(searchInputEl.value);
 });
+searchInputEl.addEventListener('input', ()=>{
+  // Live filter as the user types (e.g. typing a ticket number like "1510"
+  // with no Enter press should still narrow the tables immediately).
+  clearSavedFilterSelection();
+  renderAll();
+});
 
 function populateFacetFilters(data){
   employeeMS.setOptions(Array.from(new Set(data.map(d=>d.employee))).filter(Boolean).sort());
@@ -1778,7 +1783,12 @@ function getFiltered(){
     if(projSel.length && !projSel.includes(d.project)) return false;
     if(natSel.length && !natSel.includes(d.nature)) return false;
     if(keywords.length){
-      const hay = ((d.desc||'') + ' ' + (d.remarks||'')).toLowerCase();
+      // Search visible display text as well as identifiers that aren't always shown
+      // (raw ticket id, formatted ticket display, and the ticket's source system).
+      const hay = (
+        (d.desc||'') + ' ' + (d.remarks||'') + ' ' +
+        (d.ticket||'') + ' ' + (d.ticketDisplay||'') + ' ' + (d.ticketSystem||'')
+      ).toLowerCase();
       if(!keywords.some(k => hay.includes(k))) return false;
     }
     return true;
@@ -1791,7 +1801,8 @@ function activeFacetFilters(){
   if(empSel.length) parts.push({label:'Employee', value: empSel.join(', ')});
   if(projSel.length) parts.push({label:'Project', value: projSel.join(', ')});
   if(natSel.length) parts.push({label:'Nature', value: natSel.join(', ')});
-  if(searchKeywords.length) parts.push({label:'Search', value: searchKeywords.join(', ')});
+  const activeKeywords = getSearchKeywords();
+  if(activeKeywords.length) parts.push({label:'Search', value: activeKeywords.join(', ')});
   return parts;
 }
 function filterSummaryText(){
@@ -2144,6 +2155,7 @@ function renderModuleTable(data){
   });
   entitiesTableMgr.reorderDom();
   entitiesTableMgr.applyPins();
+  entitiesTableMgr.applyVisibility();
   const summary = filterSummaryText();
   sub.textContent = (summary ? 'Top 25 entries by ' + tableSortCol + ' — ' + summary : 'Top 25 module / feature entries, sorted by ' + tableSortCol) + ' — double-click a row for its history';
 
@@ -2278,6 +2290,7 @@ function renderTicketRollup(data){
   });
   ticketRollupMgr.reorderDom();
   ticketRollupMgr.applyPins();
+  ticketRollupMgr.applyVisibility();
   document.getElementById('ticketRollupSub').textContent =
     (rows.length ? shown.length + ' of ' + rows.length + ' tickets' + (staleOnly ? ' (stale filter on)' : '') : 'No ticket references in the current filters') + ' — click a header to sort, double-click a row for its history';
   document.querySelectorAll('#ticketRollupTable .sort-arrow').forEach(el=>{
@@ -2318,6 +2331,7 @@ function openHistoryModal(title, subtitle, entries){
   });
   ticketHistoryMgr.reorderDom();
   ticketHistoryMgr.applyPins();
+  ticketHistoryMgr.applyVisibility();
   ticketHistoryModalEl.style.display = 'flex';
 }
 function openTicketHistoryModal(rollupRow){
@@ -2380,6 +2394,7 @@ function renderRawTable(data, summary){
   });
   rawTableMgr.reorderDom();
   rawTableMgr.applyPins();
+  rawTableMgr.applyVisibility();
 
   document.getElementById('rawTableSub').textContent = (summary ? sorted.length + ' rows match: ' + summary : sorted.length + ' rows (no facet filters applied)') + ' — click a header to sort';
   document.getElementById('rawTablePageInfo').textContent = sorted.length
@@ -2455,8 +2470,17 @@ function createColumnManager(opts){
   }
   function applyVisibility(){
     keys.forEach(k=>{
+      const isHidden = hidden.has(k);
       const col = table.querySelector(':scope colgroup col[data-col="'+k+'"]');
-      if(col) col.style.display = hidden.has(k) ? 'none' : '';
+      if(col) col.style.display = isHidden ? 'none' : '';
+      // Hiding only the <col> isn't reliable in every browser once cells use
+      // position:sticky (our header row, plus pinned columns) inside a
+      // table-layout:fixed table — the column can keep rendering even though
+      // the <col> is display:none. Hide the actual header/body cells too, and
+      // re-run this after every re-render so freshly-created rows stay hidden.
+      table.querySelectorAll('th[data-col="'+k+'"], td[data-col="'+k+'"]').forEach(cell=>{
+        cell.style.display = isHidden ? 'none' : '';
+      });
     });
   }
   function reorderDom(){
