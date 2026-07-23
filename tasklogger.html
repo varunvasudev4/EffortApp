@@ -273,6 +273,106 @@ body {
   box-shadow: none; overflow: hidden;
   width: 100%;
 }
+
+/* Floating fullscreen controls */
+
+.fs-action-chip{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+
+    border-radius: 999px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+
+    z-index: 999999;
+
+    opacity: 0;
+    transform: translateY(12px);   /* Add this */
+
+    pointer-events: none;
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;       /* Replace transition:.25s */
+}
+
+.fs-action-chip.show{
+    opacity: 1;
+    transform: translateY(0);      /* Add this */
+    pointer-events: auto;
+}
+
+.fs-chip-btn {
+
+width: 40px;
+height: 40px;
+
+border: none;
+
+border-radius: 50%;
+
+background: transparent;
+
+color: var(--text-primary);
+
+cursor: pointer;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+}
+
+.fs-chip-btn:hover {
+
+background: var(--bg-secondary);
+
+}
+
+@media(max-width:768px) {
+
+  .fs-action-chip{
+        left:50%;
+        right:auto;
+        bottom:18px;
+        transform:translate(-50%,12px);
+    }
+
+    .fs-action-chip.show{
+        transform:translate(-50%,0);
+    }
+
+}
+
+/* ---------- Fullscreen Log Table ---------- */
+
+.log-panel.fullscreen{
+    width:100%;
+    height:100%;
+    margin:0;
+    border-radius:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.log-panel.fullscreen .log-wrap{
+    flex:1;
+    max-height:none !important;
+}
+
+body.log-fullscreen {
+    overflow: hidden;
+}
+
 .log-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 18px; border-bottom: 1px solid var(--border);
@@ -905,6 +1005,16 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .csv-import-drop:hover, .csv-import-drop.dragover { border-color: var(--green-mid); color: var(--green-dark); }
 .csv-import-preview { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
 
+.fs-date-input{
+    position:absolute;
+    right:0;
+    bottom:0;
+    width:1px;
+    height:1px;
+    opacity:0;
+    pointer-events:none;
+}
+
 </style>
 </head>
 <body>
@@ -957,6 +1067,13 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <button class="btn" onclick="openMailModal()" id="mail-btn" title="Send log via email"><i class="ti ti-mail"></i> Email</button>
         <button class="btn" onclick="clearLog()"><i class="ti ti-trash"></i> Clear log</button>
         <button class="btn btn-primary" onclick="exportXLSX()"><i class="ti ti-file-spreadsheet"></i> Download XLSX</button>
+        <button
+            class="btn"
+            id="log-fullscreen-btn"
+            onclick="toggleLogFullscreen()"
+            title="Fullscreen">
+            <i class="ti ti-maximize"></i>
+        </button>
       </div>
     </div>
     <div class="log-wrap">
@@ -968,7 +1085,39 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <tbody id="log-tbody"></tbody>
       </table>
     </div>
+    <div id="fs-action-chip" class="fs-action-chip">
+
+      <button
+          class="fs-chip-btn"
+          title="Exit Fullscreen"
+          aria-label="Exit Fullscreen"
+          onclick="toggleLogFullscreen()">
+          <i class="ti ti-minimize"></i>
+      </button>
+
+      <button
+          class="fs-chip-btn"
+          title="Theme"
+          aria-label="Theme"
+          onclick="cycleTheme()">
+          <i class="ti ti-sun"></i>
+      </button>
+
+      <button
+          class="fs-chip-btn"
+          onclick="document.getElementById('fs-date-input').showPicker()">
+          <i class="ti ti-calendar"></i>
+      </button>
+
+      <input
+          id="fs-date-input"
+          type="date"
+          class="fs-date-input"
+          onchange="onDateChanged(this.value)">
+
   </div>
+  </div>
+
   <div class="footer" style="padding: 0 1rem;">Task Time Logger &nbsp;·&nbsp; Data persists in browser localStorage</div>
 </div>
 
@@ -1825,6 +1974,26 @@ window.addEventListener('pagehide', freezeAllTimers);
 
 window.addEventListener('focus', refreshAllTimers);
 window.addEventListener('pageshow', refreshAllTimers);
+
+document.addEventListener("mousemove",(e)=>{
+  if(e.clientY>window.innerHeight-120){
+      showFsChip();
+  } 
+});
+
+window.addEventListener("scroll",()=>{
+  if(window.innerHeight+window.scrollY>
+      document.body.offsetHeight-250){
+      showFsChip();
+  }
+});
+
+document.addEventListener("touchstart",(e)=>{
+  const y=e.touches[0].clientY;
+  if(y>window.innerHeight-140){
+      showFsChip();
+  }
+});
 
 // ── Formatters ────────────────────────────────────────────────────────────────
 function fmt(secs) {
@@ -3206,12 +3375,31 @@ function updateEmptyState() {
 
 // ── Collapsible log table ──────────────────────────────────────────────────────
 let logTableExpanded = false;
+let fsChipTimer = null;
+
 function toggleLogTable() {
   // Only allow expand/collapse when viewing today's log
   if (getSelectedDate() !== todayStr()) return;
   logTableExpanded = !logTableExpanded;
   applyLogTableState();
 }
+
+async function toggleLogFullscreen() {
+  const panel = document.getElementById("log-panel");
+  const btn = document.getElementById("log-fullscreen-btn");
+  const icon = btn.querySelector("i");
+
+  if (!document.fullscreenElement) {
+    await panel.requestFullscreen();
+
+    panel.classList.add("fullscreen");
+    document.body.classList.add("log-fullscreen");
+    icon.className = "ti ti-minimize";
+  } else {
+    await document.exitFullscreen();
+  }
+}
+
 function applyLogTableState() {
   const isToday = getSelectedDate() === todayStr();
   // Past dates always show expanded; today defaults collapsed
@@ -3224,6 +3412,34 @@ function applyLogTableState() {
   // Hide toggle affordance on past dates (table is always shown)
   if (btn) btn.style.cursor = isToday ? 'pointer' : 'default';
   if (icon) icon.style.visibility = isToday ? 'visible' : 'hidden';
+}
+
+function showFsChip() {
+    const chip = document.getElementById("fs-action-chip");
+    if (!chip || !document.fullscreenElement) return;
+
+    chip.classList.add("show");
+
+    clearTimeout(fsChipTimer);
+
+    fsChipTimer = setTimeout(() => {
+        chip.classList.remove("show");
+    }, 2500);
+}
+
+  function openFloatingDatePicker(){
+
+  const picker=document.getElementById("log-date-input");
+
+  try{
+
+      picker.showPicker();
+
+  }catch{
+
+      picker.click();
+
+  }
 }
 
 // Sorts log entries for display only — click-to-sort, not persisted, and never
@@ -5761,7 +5977,10 @@ function applyTheme(theme) {
 }
 
 function setTheme(theme) {
-  try { localStorage.setItem('ttl_theme', theme); } catch (e) {}
+  try { 
+    localStorage.setItem('ttl_theme', theme);
+    setTimeout(updateFsChipThemeIcon, 0);
+ } catch (e) {}
   applyTheme(theme);
 }
 
@@ -5770,6 +5989,26 @@ function cycleTheme() {
   const current = getStoredTheme();
   const next = order[(order.indexOf(current) + 1) % order.length];
   setTheme(next);
+}
+
+function updateFsChipThemeIcon() {
+  
+    const icon = document.querySelector("#fs-action-chip button:nth-child(2) i");
+    if (!icon) return;
+
+    switch (getStoredTheme()) {
+        case "light":
+            icon.className = "ti ti-sun";
+            break;
+
+        case "dark":
+            icon.className = "ti ti-moon";
+            break;
+
+        case "system":
+            icon.className = "ti ti-device-desktop"; // or ti-device-laptop
+            break;
+    }
 }
 
 function initTheme() {
@@ -5936,6 +6175,55 @@ function positionBubble(el, pos) {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !document.getElementById('tour-backdrop').classList.contains('hidden')) endTour();
+
+  if(
+      e.key === "Escape" &&
+      document.getElementById("log-panel").classList.contains("fullscreen")
+  ){
+      toggleLogFullscreen();
+  }
+});
+
+document.addEventListener("fullscreenchange", () => {
+
+  const panel = document.getElementById("log-panel");
+  const btn = document.getElementById("log-fullscreen-btn");
+  const chip = document.getElementById("fs-action-chip");
+
+  if (!panel || !btn) return;
+
+  const icon = btn.querySelector("i");
+
+  if (document.fullscreenElement) {
+
+      panel.classList.add("fullscreen");
+      document.body.classList.add("log-fullscreen");
+      icon.className = "ti ti-minimize";
+
+      if (chip) showFsChip();
+
+  } else {
+
+      panel.classList.remove("fullscreen");
+      document.body.classList.remove("log-fullscreen");
+      icon.className = "ti ti-maximize";
+
+      if (chip) chip.classList.remove("show");
+
+  }
+
+});
+
+document.addEventListener("mousemove", () => {
+    if (document.fullscreenElement) showFsChip();
+});
+
+document.addEventListener("touchstart", () => {
+    if (document.fullscreenElement) showFsChip();
+});
+
+document.addEventListener("wheel", () => {
+    if (document.fullscreenElement) showFsChip();
 });
 </script>
 
