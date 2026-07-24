@@ -601,6 +601,12 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   padding-top: 80px;
 }
 #task-search-overlay.hidden { display: none; }
+.log-row-highlight { animation: logRowHighlightFlash 2.2s ease; }
+@keyframes logRowHighlightFlash {
+  0%   { background: var(--blue-bg, #dbeafe); }
+  70%  { background: var(--blue-bg, #dbeafe); }
+  100% { background: transparent; }
+}
 #task-search-box {
   background: var(--bg-primary);
   border: 1px solid var(--border-md);
@@ -1117,7 +1123,9 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 
       <button
           class="fs-chip-btn"
-          onclick="document.getElementById('fs-date-input').showPicker()">
+          title="Change date"
+          aria-label="Change date"
+          onclick="openFsDatePicker()">
           <i class="ti ti-calendar"></i>
       </button>
 
@@ -1125,7 +1133,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
           id="fs-date-input"
           type="date"
           class="fs-date-input"
-          onchange="onDateChanged(this.value)">
+          onchange="onFsDateChange(this.value)">
 
   </div>
   </div>
@@ -1372,6 +1380,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 </div>
 
 <!-- Task Search overlay (Ctrl+Shift+F) -->
+<div id="task-search-overlay-anchor" style="display:none"></div>
 <div id="task-search-overlay" class="hidden" onclick="if(event.target===this)closeSearch()">
   <div id="task-search-box">
     <div id="task-search-input-row" style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--border-md);flex-wrap:wrap;min-height:44px">
@@ -3417,6 +3426,27 @@ function _fsSupported() {
   return !!(el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen);
 }
 
+// The browser's native Fullscreen API promotes the fullscreen element to a
+// "top layer" that paints above everything else in the page, regardless of
+// z-index or DOM order. Modals/overlays that live outside the fullscreen
+// element (like search) end up rendered behind it and can't be clicked.
+// Fix: move the overlay inside the fullscreen element while it's active,
+// and move it back to its original spot afterward.
+function _moveOverlayIntoFullscreen() {
+  const overlay = document.getElementById('task-search-overlay');
+  const panel = document.getElementById('log-panel');
+  if (overlay && panel && overlay.parentElement !== panel) {
+    panel.appendChild(overlay);
+  }
+}
+function _restoreOverlayPosition() {
+  const overlay = document.getElementById('task-search-overlay');
+  const anchor = document.getElementById('task-search-overlay-anchor');
+  if (overlay && anchor && overlay.parentElement !== anchor.parentElement) {
+    anchor.parentElement.insertBefore(overlay, anchor.nextSibling);
+  }
+}
+
 async function toggleLogFullscreen() {
   const panel = document.getElementById("log-panel");
   const btn = document.getElementById("log-fullscreen-btn");
@@ -3429,11 +3459,13 @@ async function toggleLogFullscreen() {
       panel.classList.add("fullscreen", "fullscreen-sim");
       document.body.classList.add("log-fullscreen");
       icon.className = "ti ti-minimize";
+      _moveOverlayIntoFullscreen();
       showFsChip();
     } else {
       panel.classList.remove("fullscreen", "fullscreen-sim");
       document.body.classList.remove("log-fullscreen");
       icon.className = "ti ti-maximize";
+      _restoreOverlayPosition();
       const chip = document.getElementById("fs-action-chip");
       if (chip) chip.classList.remove("show");
     }
@@ -3446,6 +3478,7 @@ async function toggleLogFullscreen() {
       panel.classList.add("fullscreen");
       document.body.classList.add("log-fullscreen");
       icon.className = "ti ti-minimize";
+      _moveOverlayIntoFullscreen();
     } catch (err) {
       // Native request rejected (e.g. blocked outside a direct user
       // gesture) — fall back to the CSS-simulated mode instead of failing
@@ -3454,6 +3487,7 @@ async function toggleLogFullscreen() {
       panel.classList.add("fullscreen", "fullscreen-sim");
       document.body.classList.add("log-fullscreen");
       icon.className = "ti ti-minimize";
+      _moveOverlayIntoFullscreen();
       showFsChip();
     }
   } else {
@@ -3477,7 +3511,7 @@ function applyLogTableState() {
 
 function showFsChip() {
     const chip = document.getElementById("fs-action-chip");
-    if (!chip || !document.fullscreenElement) return;
+    if (!chip || !_isLogFullscreenActive()) return;
 
     chip.classList.add("show");
 
@@ -3797,7 +3831,7 @@ function updateLogTable() {
           <div style="display:flex;flex-direction:row;align-items:center;gap:4px">${actionButtonsHtml}</div>
         </td>`;
 
-    return `<tr>
+    return `<tr data-entry-ts="${e.startTs}">
       ${cells}
       ${actionsCellHtml}
     </tr>`;
@@ -5043,7 +5077,7 @@ function renderSearchResults() {
       e.ticket  ? `<span style="background:var(--amber-bg,#fff8e1);color:var(--amber-dark,#795900);border:1px solid var(--amber-mid,#f0b400);border-radius:10px;font-size:10px;padding:1px 7px">#${highlight(e.ticket)}</span>` : '',
       e.project ? `<span style="font-size:11px;color:var(--text-secondary)">${highlight(e.project)}</span>` : '',
     ].filter(Boolean).join(' ');
-    return `<div class="search-result-item" data-date="${entryDate}" onclick="jumpToDate('${entryDate}')" data-idx="${i}">
+    return `<div class="search-result-item" data-date="${entryDate}" onclick="jumpToDate('${entryDate}', ${e.startTs})" data-idx="${i}">
       <div class="search-result-date">${dateLabel}</div>
       <div class="search-result-body">
         <div class="search-result-heading">${highlight(e.heading) || '<span style="color:var(--text-tertiary);font-style:italic">Untitled</span>'}</div>
@@ -5061,10 +5095,25 @@ function clearSearchKeywords() {
   document.getElementById('task-search-input').focus();
 }
 
-function jumpToDate(dateStr) {
+function jumpToDate(dateStr, entryTs) {
   const inp = document.getElementById('log-date-input');
   if (inp) { inp.value = dateStr; onDateChange(); }
   closeSearch();
+  if (entryTs != null) highlightLogEntry(entryTs);
+}
+
+// Expands the log table (in case it was collapsed on today's date) and
+// scrolls to + flashes the row for the entry that was clicked in search.
+function highlightLogEntry(entryTs) {
+  logTableExpanded = true;
+  updateLogPanel();
+  requestAnimationFrame(() => {
+    const row = document.querySelector('#log-tbody tr[data-entry-ts="' + entryTs + '"]');
+    if (!row) return;
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.classList.add('log-row-highlight');
+    setTimeout(() => row.classList.remove('log-row-highlight'), 2200);
+  });
 }
 
 function searchKeyNav(e) {
@@ -5756,6 +5805,30 @@ function getSelectedDate() {
   return inp ? inp.value : todayStr();
 }
 
+// Opens the fullscreen chip's date picker pre-filled with the currently
+// selected date, so it reflects reality instead of always starting blank.
+function openFsDatePicker() {
+  const fsInp = document.getElementById('fs-date-input');
+  if (!fsInp) return;
+  fsInp.value = getSelectedDate();
+  try {
+    fsInp.showPicker();
+  } catch {
+    fsInp.click();
+  }
+}
+
+// Picking a date from the fullscreen chip should behave exactly like
+// picking one from the main date selector — update it and re-render the
+// log/task data for that date, all without leaving fullscreen.
+function onFsDateChange(value) {
+  if (!value) return;
+  const mainInp = document.getElementById('log-date-input');
+  if (!mainInp) return;
+  mainInp.value = value;
+  onDateChange();
+}
+
 function entryMatchesDate(entry, dateStr) {
   const d = new Date(entry.startTs);
   const ed = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -6260,6 +6333,7 @@ function _onFullscreenChange() {
       panel.classList.add("fullscreen");
       document.body.classList.add("log-fullscreen");
       icon.className = "ti ti-minimize";
+      _moveOverlayIntoFullscreen();
 
       if (chip) showFsChip();
 
@@ -6268,6 +6342,7 @@ function _onFullscreenChange() {
       panel.classList.remove("fullscreen");
       document.body.classList.remove("log-fullscreen");
       icon.className = "ti ti-maximize";
+      _restoreOverlayPosition();
 
       if (chip) chip.classList.remove("show");
 
@@ -6283,12 +6358,22 @@ function _isLogFullscreenActive() {
   return !!_fsElement() || _logFullscreenSim;
 }
 
-document.addEventListener("mousemove", () => {
-    if (_isLogFullscreenActive()) showFsChip();
+// Distance from the bottom edge (in px) within which the chip is revealed —
+// matches the zone the chip actually sits in, so it doesn't pop up on every
+// mouse movement across the whole screen.
+const FS_CHIP_TRIGGER_ZONE = 120;
+
+function _nearBottomEdge(clientY) {
+  return typeof clientY === "number" && (window.innerHeight - clientY) <= FS_CHIP_TRIGGER_ZONE;
+}
+
+document.addEventListener("mousemove", (e) => {
+    if (_isLogFullscreenActive() && _nearBottomEdge(e.clientY)) showFsChip();
 });
 
-document.addEventListener("touchstart", () => {
-    if (_isLogFullscreenActive()) showFsChip();
+document.addEventListener("touchstart", (e) => {
+    const y = e.touches && e.touches[0] ? e.touches[0].clientY : undefined;
+    if (_isLogFullscreenActive() && _nearBottomEdge(y)) showFsChip();
 });
 
 document.addEventListener("wheel", () => {
