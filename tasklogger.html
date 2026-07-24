@@ -3428,23 +3428,52 @@ function _fsSupported() {
 
 // The browser's native Fullscreen API promotes the fullscreen element to a
 // "top layer" that paints above everything else in the page, regardless of
-// z-index or DOM order. Modals/overlays that live outside the fullscreen
-// element (like search) end up rendered behind it and can't be clicked.
-// Fix: move the overlay inside the fullscreen element while it's active,
-// and move it back to its original spot afterward.
+// z-index or DOM order. Any modal, popup, or tooltip that lives outside the
+// fullscreen element ends up rendered behind it and can't be seen or clicked.
+// Fix: move ALL such floating elements inside the fullscreen element while
+// it's active, remembering exactly where each one came from so it can be
+// moved back to its original spot afterward.
+const FS_PORTAL_IDS = [
+  'appTooltip',            // custom tooltip
+  'task-search-overlay',   // Ctrl+Shift+F search
+  'complete-modal',
+  'carry-forward-modal',
+  'make-recurring-modal',
+  'manage-recurring-modal',
+  'email-preview-modal',
+  'masters-modal',
+  'weekend-prompt-overlay',
+  'csv-modal',
+  'confirm-overlay',
+  'username-prompt-overlay',
+  'tour-backdrop',
+  'tour-bubble'
+];
+let _fsPortalMoved = [];
+
 function _moveOverlayIntoFullscreen() {
-  const overlay = document.getElementById('task-search-overlay');
   const panel = document.getElementById('log-panel');
-  if (overlay && panel && overlay.parentElement !== panel) {
-    panel.appendChild(overlay);
-  }
+  if (!panel) return;
+  FS_PORTAL_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el || el.parentElement === panel) return;
+    _fsPortalMoved.push({ el, parent: el.parentElement, next: el.nextSibling });
+    panel.appendChild(el);
+  });
 }
 function _restoreOverlayPosition() {
-  const overlay = document.getElementById('task-search-overlay');
-  const anchor = document.getElementById('task-search-overlay-anchor');
-  if (overlay && anchor && overlay.parentElement !== anchor.parentElement) {
-    anchor.parentElement.insertBefore(overlay, anchor.nextSibling);
+  // Restore in reverse insertion order so each element's recorded
+  // "next sibling" reference is still valid at the moment we use it.
+  for (let i = _fsPortalMoved.length - 1; i >= 0; i--) {
+    const { el, parent, next } = _fsPortalMoved[i];
+    if (!parent) continue;
+    if (next && next.parentElement === parent) {
+      parent.insertBefore(el, next);
+    } else {
+      parent.appendChild(el);
+    }
   }
+  _fsPortalMoved = [];
 }
 
 async function toggleLogFullscreen() {
