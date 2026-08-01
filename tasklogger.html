@@ -1323,6 +1323,37 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   </div>
 </div>
 
+<!-- Transfer Minutes modal -->
+<div class="modal-overlay hidden" id="transfer-minutes-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-transfer" style="vertical-align:-2px;margin-right:6px;color:var(--purple-mid)"></i>Transfer Effort Minutes</div>
+      <button class="btn-icon" onclick="closeTransferMinutesModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="complete-field">
+        <label class="complete-label">From</label>
+        <div id="tm-source-name" style="font-size:13px;font-weight:600;color:var(--text-primary)"></div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">Currently logged: <span id="tm-source-mins"></span> min</div>
+      </div>
+      <div class="complete-field">
+        <label class="complete-label">To <span class="req">*</span></label>
+        <select class="complete-select" id="tm-target-select" style="width:100%" onchange="updateTransferMinutesPreview()"></select>
+      </div>
+      <div class="complete-field">
+        <label class="complete-label">Minutes to transfer <span class="req">*</span></label>
+        <input class="complete-input" id="tm-minutes" type="number" min="1" style="width:100%" oninput="updateTransferMinutesPreview()" />
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px" id="tm-hint"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;font-weight:500" id="tm-preview"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeTransferMinutesModal()">Cancel</button>
+      <button class="btn btn-primary" id="tm-confirm-btn" onclick="confirmTransferMinutes()"><i class="ti ti-check"></i> Transfer</button>
+    </div>
+  </div>
+</div>
+
 <!-- Manage Recurring modal -->
 <div class="modal-overlay hidden" id="manage-recurring-modal">
   <div class="modal" style="max-width:420px">
@@ -2142,6 +2173,15 @@ function getCompletePopupColumns() {
 function isDynamicPopupColumn(c) {
   return !c.builtIn && !c.essential && !c.isStatusColumn && !c.isDateColumn
     && !c.isEffortColumn && !c.isEmployeeColumn;
+}
+// Columns whose values are managed automatically — task lifecycle status (running/paused/
+// done), computed effort/duration, the task's creation date, or the logged-in employee name —
+// rather than typed in per task. These are never rendered as a task-card input even when
+// "Task card" is checked in Field Visibility, since there's no freely-editable per-task value
+// to bind them to without conflicting with the automatic behavior. Used both to decide what
+// renders on the card (renderTaskCardFields) and to grey out the checkbox in the Columns tab.
+function isSystemManagedColumn(c) {
+  return !!(c.isDateColumn || c.isEmployeeColumn || c.isEffortColumn || c.isStatusColumn);
 }
 // All configurable (non-locked) columns, built-in or custom — used to render dynamic
 // inputs on the task card and Complete popup, in their configured order.
@@ -3093,6 +3133,136 @@ function confirmDeleteLogEntry(globalIdx) {
   });
 }
 
+// ── Transfer effort minutes between two log entries ────────────────────────────
+// An entry is transferable if it's completed (durationSecs fixed) OR its task is
+// merely paused (accumulatedMs is stable, just not finalized yet). A running task's
+// time is still ticking live, so it's excluded until stopped or paused.
+let pendingTransferIdx = null;
+
+function getEntryTransferSecs(entry) {
+  if (!entry) return null;
+  if (entry.durationSecs !== null) return entry.durationSecs;
+  const task = tasks.find(t => t.id === entry.taskId);
+  if (task && task.status === 'paused') return liveElapsedSecs(task);
+  return null;
+}
+
+function applyTransferDelta(entry, deltaSecs) {
+  const task = tasks.find(t => t.id === entry.taskId);
+  if (entry.durationSecs !== null) {
+    entry.durationSecs = Math.max(0, entry.durationSecs + deltaSecs);
+    if (task) task.accumulatedMs = entry.durationSecs * 1000;
+  } else if (task) {
+    task.accumulatedMs = Math.max(0, task.accumulatedMs + deltaSecs * 1000);
+  }
+}
+
+function openTransferMinutesModal(globalIdx) {
+  const entry = logEntries[globalIdx];
+  if (!entry) return;
+  const srcSecs = getEntryTransferSecs(entry);
+  if (srcSecs === null) {
+    showConfirm('Task still running', 'This entry is still running live, so it has no fixed effort yet. Pause or complete the task before transferring its minutes.', () => {}, 'OK');
+    return;
+  }
+  const selDate = getSelectedDate ? getSelectedDate() : todayStr();
+
+  const candidates = logEntries
+    .map((e, i) => ({ e, i, secs: getEntryTransferSecs(e) }))
+    .filter(({ e, i, secs }) => i !== globalIdx && secs !== null && entryMatchesDate(e, selDate));
+
+  if (candidates.length === 0) {
+    showConfirm('No entries to transfer to', 'There are no other completed or paused entries on this date to transfer minutes to.', () => {}, 'OK');
+    return;
+  }
+
+  pendingTransferIdx = globalIdx;
+  const srcMins = Math.ceil(srcSecs / 60);
+  const srcLabel = entry.heading || entry.description || 'Untitled task';
+
+  document.getElementById('tm-source-name').textContent = srcLabel;
+  document.getElementById('tm-source-mins').textContent = srcMins;
+
+  const select = document.getElementById('tm-target-select');
+  select.innerHTML = candidates.map(({ e, i, secs }) => {
+    const label = e.heading || e.description || 'Untitled task';
+    const mins = Math.ceil(secs / 60);
+    return '<option value="' + i + '">' + esc(label.slice(0, 50)) + ' (' + mins + ' min)</option>';
+  }).join('');
+
+  const minsInput = document.getElementById('tm-minutes');
+  minsInput.value = '';
+  minsInput.max = srcMins;
+  minsInput.classList.remove('invalid');
+  document.getElementById('tm-hint').textContent = 'Max ' + srcMins + ' min available from this entry.';
+  document.getElementById('tm-preview').textContent = '';
+
+  document.getElementById('transfer-minutes-modal').classList.remove('hidden');
+  setTimeout(() => { if (minsInput.focus) minsInput.focus(); }, 80);
+}
+
+function closeTransferMinutesModal() {
+  document.getElementById('transfer-minutes-modal').classList.add('hidden');
+  pendingTransferIdx = null;
+}
+
+function updateTransferMinutesPreview() {
+  if (pendingTransferIdx === null) return;
+  const entry = logEntries[pendingTransferIdx];
+  if (!entry) return;
+  const select = document.getElementById('tm-target-select');
+  const target = logEntries[parseInt(select.value, 10)];
+  const minsInput = document.getElementById('tm-minutes');
+  minsInput.classList.remove('invalid');
+
+  const srcMins = Math.ceil(getEntryTransferSecs(entry) / 60);
+  let mins = parseInt(minsInput.value, 10) || 0;
+  if (mins > srcMins) mins = srcMins;
+
+  const preview = document.getElementById('tm-preview');
+  const tgtSecs = target ? getEntryTransferSecs(target) : null;
+  if (tgtSecs === null || mins <= 0) { preview.textContent = ''; return; }
+  const tgtMins = Math.ceil(tgtSecs / 60);
+  preview.textContent = 'After transfer: source entry ' + (srcMins - mins) + ' min · target entry ' + (tgtMins + mins) + ' min.';
+}
+
+function confirmTransferMinutes() {
+  if (pendingTransferIdx === null) return;
+  const entry = logEntries[pendingTransferIdx];
+  if (!entry) { closeTransferMinutesModal(); return; }
+
+  const select = document.getElementById('tm-target-select');
+  const target = logEntries[parseInt(select.value, 10)];
+  if (!target) { closeTransferMinutesModal(); return; }
+
+  const minsInput = document.getElementById('tm-minutes');
+  const srcSecs = getEntryTransferSecs(entry);
+  const tgtSecs = getEntryTransferSecs(target);
+  if (srcSecs === null || tgtSecs === null) { closeTransferMinutesModal(); return; }
+
+  const srcMins = Math.ceil(srcSecs / 60);
+  let mins = parseInt(minsInput.value, 10) || 0;
+
+  if (mins <= 0) { minsInput.classList.add('invalid'); minsInput.focus(); return; }
+  if (mins > srcMins) mins = srcMins;
+
+  const secsToMove = mins * 60;
+  applyTransferDelta(entry, -secsToMove);
+  applyTransferDelta(target, secsToMove);
+
+  // The log table re-renders from updateLogPanel(), but paused task cards only
+  // redraw their timer text at render time (they don't tick like running ones),
+  // so refresh both affected cards directly to reflect the new accumulatedMs now.
+  if (typeof renderRow === 'function') {
+    if (document.getElementById('row-' + entry.taskId)) renderRow(entry.taskId);
+    if (document.getElementById('row-' + target.taskId)) renderRow(target.taskId);
+  }
+
+  saveState();
+  updateLogPanel();
+  closeTransferMinutesModal();
+}
+
 function confirmDeleteTask(id) {
   const task = tasks.find(t => t.id === id);
   const name = task && task.heading.trim() ? task.heading.trim() : 'this task';
@@ -3216,6 +3386,39 @@ function buildDynamicFieldInput(col, idAttr, value, onChangeExpr, disabledAttr, 
     value="${esc(value || '')}" oninput="${onChangeExpr}" />`;
 }
 
+// Config-driven task-card fields: every column with Field Visibility → Task Card enabled
+// renders here automatically, in configured order, using its saved type/list/format — adding
+// a new task-card field (built-in or custom) never requires touching this function. Project,
+// Nature, and Module keep their historical required-asterisk and layout classes; Module and
+// Ticket keep their historical placeholders. System-managed columns (see isSystemManagedColumn)
+// are skipped since they have no freely-editable per-task value to bind to.
+const CORE_TASK_FIELD_KEYS = ['project', 'nature', 'module', 'ticket'];
+const TASK_CARD_REQUIRED_KEYS = ['project', 'nature', 'module'];
+const TASK_CARD_PLACEHOLDERS = { module: 'e.g. Scanner Integration', ticket: 'e.g. NAV-1234' };
+
+function renderTaskCardFields(task, id, dis) {
+  return getTaskCardColumns()
+    .filter(c => !isSystemManagedColumn(c))
+    .map(c => {
+      const isCore = CORE_TASK_FIELD_KEYS.includes(c.key);
+      // Core fields (project/nature/module/ticket) live directly on the task object, matching
+      // every other place in the app (startTask, resumeTask, Complete popup, etc.) that reads
+      // task.project/nature/module/ticket. Everything else — built-in (description, remark) or
+      // user-added custom columns — is stored in task.customFields, keyed by column key.
+      const value = isCore ? task[c.key] : ((task.customFields && task.customFields[c.key]) || '');
+      const onChangeExpr = isCore
+        ? `updateTaskField(${id},'${c.key}',this.value)`
+        : `updateTaskCustomField(${id},'${c.key}',this.value)`;
+      const cssKey = isCore ? c.key : 'custom';
+      const required = TASK_CARD_REQUIRED_KEYS.includes(c.key) ? ' <span class="req">*</span>' : '';
+      const placeholder = TASK_CARD_PLACEHOLDERS[c.key] || '';
+      return `<div class="meta-field meta-field-${cssKey}">
+        <span class="meta-label">${esc(c.label)}${required}</span>
+        ${buildDynamicFieldInput(c, `meta-${c.key}-${id}`, value, onChangeExpr, dis, placeholder)}
+      </div>`;
+    }).join('');
+}
+
 // Toggle a multi-select checkbox dropdown panel open/closed, closing any other open ones.
 function msddToggle(idAttr) {
   const panel = document.getElementById(idAttr + '-panel');
@@ -3299,29 +3502,7 @@ function renderRow(id) {
       </div>
     </div>
     <div class="task-meta">
-      ${getColumnByKey('project').showInTaskCard !== false ? `<div class="meta-field meta-field-project">
-        <span class="meta-label">${esc(getColumnByKey('project').label)} <span class="req">*</span></span>
-        ${buildDynamicFieldInput(getColumnByKey('project'), `meta-project-${id}`, task.project, `updateTaskField(${id},'project',this.value)`, dis)}
-      </div>` : ''}
-      ${getColumnByKey('nature').showInTaskCard !== false ? `<div class="meta-field meta-field-nature">
-        <span class="meta-label">${esc(getColumnByKey('nature').label)} <span class="req">*</span></span>
-        ${buildDynamicFieldInput(getColumnByKey('nature'), `meta-nature-${id}`, task.nature, `updateTaskField(${id},'nature',this.value)`, dis)}
-      </div>` : ''}
-      ${getColumnByKey('module').showInTaskCard !== false ? `<div class="meta-field meta-field-module">
-        <span class="meta-label">${esc(getColumnByKey('module').label)} <span class="req">*</span></span>
-        ${buildDynamicFieldInput(getColumnByKey('module'), `meta-module-${id}`, task.module, `updateTaskField(${id},'module',this.value)`, dis, 'e.g. Scanner Integration')}
-      </div>` : ''}
-      ${getColumnByKey('ticket').showInTaskCard !== false ? `<div class="meta-field meta-field-ticket">
-        <span class="meta-label">${esc(getColumnByKey('ticket').label)}</span>
-        ${buildDynamicFieldInput(getColumnByKey('ticket'), `meta-ticket-${id}`, task.ticket, `updateTaskField(${id},'ticket',this.value)`, dis, 'e.g. NAV-1234')}
-      </div>` : ''}
-      ${getTaskCardColumns().filter(isDynamicPopupColumn).map(c => {
-        const val = (task.customFields && task.customFields[c.key]) || '';
-        return `<div class="meta-field meta-field-custom">
-          <span class="meta-label">${esc(c.label)}</span>
-          ${buildDynamicFieldInput(c, `meta-${c.key}-${id}`, val, `updateTaskCustomField(${id},'${c.key}',this.value)`, dis)}
-        </div>`;
-      }).join('')}
+      ${renderTaskCardFields(task, id, dis)}
     </div>
     <div class="validation-msg" id="val-msg-${id}">
       <i class="ti ti-alert-circle"></i> Project, Nature of Task and Module are required before starting.
@@ -3440,6 +3621,7 @@ const FS_PORTAL_IDS = [
   'carry-forward-modal',
   'make-recurring-modal',
   'manage-recurring-modal',
+  'transfer-minutes-modal',
   'email-preview-modal',
   'masters-modal',
   'weekend-prompt-overlay',
@@ -3836,6 +4018,9 @@ function updateLogTable() {
     // tucks them behind a single "more actions" toggle instead of showing them inline.
     const actionButtonsHtml =
         (isPresentDay ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+rowIdx+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : '')
+      + (isPresentDay
+            ? '<button class="btn-icon" onclick="openTransferMinutesModal('+rowIdx+')" title="Transfer minutes to another task" style="border-color:var(--purple-mid);color:var(--purple-dark)"><i class="ti ti-transfer"></i></button>'
+            : '')
       + ((!isFutureDay)
             ? '<button class="btn-icon" id="continue-'+e.taskId+'" onclick="continueTomorrow('+e.taskId+')" title="Add this task to another day" style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-calendar-plus"></i></button>'
             : '')
@@ -3964,8 +4149,9 @@ function renderColumnsTabHTML() {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:pointer" title="Show this column as an input on the task card">
-          <input type="checkbox" ${c.showInTaskCard!==false?'checked':''} onchange="toggleColumnContext('${c.key}','showInTaskCard')" />
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:${isSystemManagedColumn(c)?'default':'pointer'}"
+          title="${isSystemManagedColumn(c) ? 'Managed automatically — not shown as a task card input' : 'Show this column as an input on the task card'}">
+          <input type="checkbox" ${c.showInTaskCard!==false?'checked':''} ${isSystemManagedColumn(c)?'disabled':''} onchange="toggleColumnContext('${c.key}','showInTaskCard')" />
           Task card
         </label>
         <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:pointer" title="Show this column in the log table (and exports/CSV)">
