@@ -187,6 +187,17 @@ body {
 .task-card.running { border-color: var(--green-mid); }
 .task-card.paused  { border-color: var(--amber-mid); }
 .task-card.done    { opacity: 0.7; }
+.task-card.dragging { opacity: 0.35; }
+
+.task-drag-handle {
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 26px; flex-shrink: 0; margin-left: -4px;
+  color: var(--text-tertiary); cursor: grab; border-radius: 4px;
+  touch-action: none;
+}
+.task-drag-handle:hover { color: var(--text-secondary); background: var(--bg-secondary); }
+.task-drag-handle:active { cursor: grabbing; }
+.task-drag-handle i { font-size: 15px; pointer-events: none; }
 
 .task-top { display: flex; align-items: center; gap: 8px; }
 .task-input {
@@ -258,6 +269,35 @@ body {
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
 .meta-field-ticket  .meta-input  { width: 100px; }
+
+/* Rich text editor (type: 'textarea' fields) */
+.rte-wrap { width: 100%; }
+.rte-toolbar { display: flex; gap: 3px; margin-bottom: 4px; }
+.rte-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 25px; height: 23px; border: 1px solid var(--border-md); border-radius: 5px;
+  background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer;
+  font-size: 13px; padding: 0;
+}
+.rte-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+.rte-editor {
+  width: 100%; min-height: 60px; max-height: 300px; overflow-y: auto; resize: vertical;
+  padding: 7px 9px; border: 1px solid var(--border-md); border-radius: var(--radius-md);
+  background: var(--bg-secondary); color: var(--text-primary);
+  font-size: 12px; font-family: var(--font-mono); line-height: 1.5; outline: none;
+  transition: border-color 0.15s;
+}
+.rte-editor:focus { border-color: var(--blue-mid); }
+.rte-editor.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
+.rte-editor[contenteditable="false"] { opacity: 0.6; cursor: default; }
+.rte-editor:empty::before { content: attr(data-placeholder); color: var(--text-tertiary); pointer-events: none; }
+.rte-editor p { margin: 0 0 8px; }
+.rte-editor p:last-child { margin-bottom: 0; }
+.rte-editor ul, .rte-editor ol { margin: 0 0 8px 20px; padding: 0; }
+.rte-editor ul:last-child, .rte-editor ol:last-child { margin-bottom: 0; }
+.rte-editor li { margin: 2px 0; }
+/* In the Complete/Edit popup, match the surrounding .complete-* field sizing */
+.complete-field .rte-editor { font-size: 13px; padding: 8px 10px; min-height: 72px; }
 
 /* Validation error */
 .validation-msg {
@@ -1049,7 +1089,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
         <span>Dashboard</span>
       </a>
-      <button class="btn" onclick="openCSVModal()"><i class="ti ti-file-text"></i> CSV</button>
+      <button class="btn" onclick="openCSVModal()" title="Import or export the log as CSV or Excel"><i class="ti ti-file-import"></i> Import / Export</button>
       <button class="btn" onclick="startTour()" id="tour-btn" title="App Tour"><i class="ti ti-route"></i> Tour</button>
       <div class="date-picker-wrap" onclick="try{document.getElementById('log-date-input').showPicker()}catch(e){document.getElementById('log-date-input').click()}">
         <i class="ti ti-calendar"></i>
@@ -1061,7 +1101,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
       <button class="btn btn-primary" onclick="addTask()"><i class="ti ti-plus"></i> Add task</button>
     </div>
   </div>
-  <div id="task-list">
+  <div id="task-list" ondragover="taskListDragOver(event)" ondrop="taskListDrop(event)">
     <div class="empty-state" id="empty-state">
       <i class="ti ti-clipboard-list"></i>
       No tasks yet — hit "Add task" to begin.
@@ -1518,12 +1558,12 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 <div class="modal-overlay hidden" id="csv-modal">
   <div class="modal" style="max-width:520px">
     <div class="modal-header">
-      <div class="modal-title"><i class="ti ti-file-text" style="vertical-align:-2px;margin-right:6px"></i>CSV Export / Import</div>
+      <div class="modal-title"><i class="ti ti-file-text" style="vertical-align:-2px;margin-right:6px"></i>Import / Export Log</div>
       <button class="btn-icon" onclick="document.getElementById('csv-modal').classList.add('hidden')"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-body">
       <!-- Export -->
-      <div class="csv-section-title"><i class="ti ti-download" style="font-size:12px;margin-right:4px"></i>Export Log to CSV</div>
+      <div class="csv-section-title"><i class="ti ti-download" style="font-size:12px;margin-right:4px"></i>Export Log</div>
       <div class="csv-modal-row">
         <div class="csv-field">
           <label class="csv-label">From date</label>
@@ -1533,14 +1573,19 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
           <label class="csv-label">To date</label>
           <input type="date" class="csv-input" id="csv-to" />
         </div>
-        <button class="btn btn-primary" onclick="exportCSV()" style="flex-shrink:0">
-          <i class="ti ti-download"></i> Export
-        </button>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+          <button class="btn btn-primary" onclick="exportCSV()" title="Download a .csv file">
+            <i class="ti ti-download"></i> Export as CSV
+          </button>
+          <button class="btn btn-primary" onclick="exportLogExcel()" title="Download an .xlsx file">
+            <i class="ti ti-file-spreadsheet"></i> Export as Excel
+          </button>
+        </div>
       </div>
       <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:16px">Leave dates blank to export all records.</div>
 
       <!-- Import -->
-      <div class="csv-section-title"><i class="ti ti-upload" style="font-size:12px;margin-right:4px"></i>Import Log from CSV</div>
+      <div class="csv-section-title"><i class="ti ti-upload" style="font-size:12px;margin-right:4px"></i>Import Log from CSV or Excel</div>
       <div class="csv-modal-row">
         <div class="csv-field">
           <label class="csv-label">Import from date</label>
@@ -1557,8 +1602,8 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         ondragleave="this.classList.remove('dragover')"
         ondrop="handleCSVDrop(event)">
         <i class="ti ti-file-upload" style="font-size:24px;display:block;margin-bottom:6px;opacity:.5"></i>
-        Click to choose a CSV file or drag &amp; drop here
-        <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVFile(this)" />
+        Click to choose a CSV or Excel file (.csv, .xlsx, .xls) or drag &amp; drop here
+        <input type="file" id="csv-file-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleCSVFile(this)" />
       </div>
       <div class="csv-import-preview" id="csv-import-preview"></div>
     </div>
@@ -1701,10 +1746,10 @@ const DEFAULT_LOG_COLUMNS = [
   { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
   { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'natures', builtIn: true },
   { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
-  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true, isTaskName: true },
+  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', builtIn: true, isTaskName: true },
   { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEffortColumn: true, essential: true },
   { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'statuses', isStatusColumn: true },
-  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true }
+  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', builtIn: true }
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -1813,6 +1858,10 @@ function loadState() {
           delete c.locked;
           if (c.key === 'date' && c.type === 'text') { c.type = 'date'; c.dateFormat = c.dateFormat || 'DD-MM-YYYY'; c.isDateColumn = true; }
           if (c.key === 'status' && c.type === 'text') { c.type = 'list'; c.listSource = 'statuses'; c.isStatusColumn = true; }
+          // Description/Remark always rendered as multi-line textareas; formalize that as
+          // their column type so they pick up rich text editing like any Text Area column,
+          // without changing any already-saved plain-text content (loads in unchanged).
+          if ((c.key === 'description' || c.key === 'remark') && c.type === 'text') { c.type = 'textarea'; }
           if (c.key === 'employee') c.isEmployeeColumn = true;
           if (c.key === 'effort') c.isEffortColumn = true;
           // Migrate the old single `visible` flag into the three independent per-context
@@ -2107,7 +2156,7 @@ const LOG_ACTIONS_BTN = 30, LOG_ACTIONS_GAP = 4, LOG_ACTIONS_CELL_PADDING = 20;
 function maxActionButtonsForDay(isPresentDay, isFutureDay) {
   if (isFutureDay) return 0;
   if (isPresentDay) return 5;
-  return 2; // past day
+  return 3; // past day: Edit, Continue, Recurring
 }
 function ltLoadBool(key, fallback) {
   try {
@@ -2230,19 +2279,20 @@ function getEntryValueForColumn(e, task, key) {
       return Math.ceil(secs / 60);
     }
     case 'status':       return e.taskStatus || (e.endTs ? 'Completed' : (task ? task.status : ''));
-    case 'remark':       return e.remark || '';
+    case 'remark':       return richTextToPlain(e.remark || '');
     default: {
       // Custom column: stored under e.customFields[key]
       const raw = (e.customFields && e.customFields[key]) || '';
       const colDef = getColumnByKey(key);
       if (colDef && colDef.type === 'date' && raw) return formatCustomDate(raw, colDef.dateFormat);
+      if (colDef && colDef.type === 'textarea' && raw) return richTextToPlain(raw);
       return raw;
     }
   }
 }
 // Export/copy value differs only for 'description': uses the actual typed description, not the task name
 function getExportValueForColumn(e, task, key) {
-  if (key === 'description') return e.description || '';
+  if (key === 'description') return richTextToPlain(e.description || '');
   return getEntryValueForColumn(e, task, key);
 }
 
@@ -2305,7 +2355,11 @@ function startTask(id) {
     taskId: id, heading: task.heading.trim(),
     project: task.project, module: task.module,
     nature: task.nature, ticket: task.ticket || '',
-    description: '', // filled at completion
+    // Seed from any draft already typed on the Task Card (via updateTaskCustomField,
+    // stored in task.customFields) before Start was pressed, rather than always blank —
+    // this is the same top-level field the Popup/Log Table/Export read (see §18).
+    description: (task.customFields && task.customFields.description) || '',
+    remark: (task.customFields && task.customFields.remark) || '',
     employee: userName,
     startTs: Date.now(), endTs: null, durationSecs: null,
     customFields: { ...(task.customFields || {}) }
@@ -2405,7 +2459,7 @@ function openCompleteModal(id) {
   const setFieldVisibility = (fieldId, labelId, col, requiredSuffix) => {
     const fieldEl = document.getElementById(fieldId);
     const labelEl = document.getElementById(labelId);
-    if (fieldEl) fieldEl.style.display = (col && col.visible === false) ? 'none' : '';
+    if (fieldEl) fieldEl.style.display = (col && col.showInCompletePopup === false) ? 'none' : '';
     if (labelEl && col) labelEl.innerHTML = esc(col.label) + (requiredSuffix ? ' <span class="req">*</span>' : '');
   };
   setFieldVisibility('cm-project-field', 'cm-project-label', projCol, true);
@@ -2448,7 +2502,7 @@ function openCompleteModal(id) {
   }, 500);
 
   document.getElementById('complete-modal').classList.remove('hidden');
-  setTimeout(() => { const d = document.getElementById('cm-description'); if (d && d.focus) d.focus(); }, 80);
+  setTimeout(() => focusFieldInput('cm-description'), 80);
 }
 
 function closeCompleteModal() {
@@ -2499,7 +2553,7 @@ function editLogEntry(globalIdx) {
   const setFieldVisibility = (fieldId, labelId, col, requiredSuffix) => {
     const fieldEl = document.getElementById(fieldId);
     const labelEl = document.getElementById(labelId);
-    if (fieldEl) fieldEl.style.display = (col && col.visible === false) ? 'none' : '';
+    if (fieldEl) fieldEl.style.display = (col && col.showInCompletePopup === false) ? 'none' : '';
     if (labelEl && col) labelEl.innerHTML = esc(col.label) + (requiredSuffix ? ' <span class="req">*</span>' : '');
   };
   setFieldVisibility('cm-project-field', 'cm-project-label', projCol, true);
@@ -2540,7 +2594,7 @@ function editLogEntry(globalIdx) {
   document.getElementById('cm-timer-label').textContent = 'Time tracked';
 
   document.getElementById('complete-modal').classList.remove('hidden');
-  setTimeout(() => { const d = document.getElementById('cm-description'); if (d && d.focus) d.focus(); }, 80);
+  setTimeout(() => focusFieldInput('cm-description'), 80);
 }
 
 
@@ -2725,6 +2779,13 @@ function submitComplete() {
       // Sync task.accumulatedMs if task still exists
       const rt = tasks.find(t => t.id === editEntry.taskId);
       if (rt && editEntry.durationSecs) rt.accumulatedMs = editEntry.durationSecs * 1000;
+      // description/remark are mirrored onto task.customFields for the Task Card (see §18);
+      // keep that mirror in sync so editing the entry here doesn't leave a stale card draft.
+      if (rt) {
+        if (!rt.customFields) rt.customFields = {};
+        rt.customFields.description = desc;
+        rt.customFields.remark = remark;
+      }
     }
     pendingEditIdx = null;
     document.querySelector('#complete-modal .modal-title').innerHTML =
@@ -2754,6 +2815,8 @@ function submitComplete() {
   task.module = module; task.ticket = ticket;
   if (!task.customFields) task.customFields = {};
   Object.assign(task.customFields, customValues);
+  task.customFields.description = desc;
+  task.customFields.remark = remark;
   const entry = [...logEntries].reverse().find(e => e.taskId===id && e.endTs===null);
   if (entry) {
     entry.endTs = customEnd || Date.now();
@@ -2844,6 +2907,10 @@ function confirmCarryForward() {
   const module  = (entry && entry.module)  || (task && task.module)  || '';
   const ticket  = (entry && entry.ticket)  || (task && task.ticket)  || '';
   const customFields = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
+  // description/remark live top-level on the entry (see §18), not in entry.customFields —
+  // prefer that canonical, finalized value over whatever draft customFields happened to hold.
+  if (entry && entry.description) customFields.description = entry.description;
+  if (entry && entry.remark) customFields.remark = entry.remark;
 
   const [yy, mm, dd] = chosenDateStr.split('-').map(Number);
   const w = (typeof getWorkHours === 'function') ? getWorkHours() : { startH: 9, startM: 30 };
@@ -3083,6 +3150,12 @@ function reopenTask(taskId) {
   const entry = [...logEntries].reverse().find(e => e.taskId === taskId && e.endTs !== null);
   if (entry && entry.durationSecs !== null) {
     task.accumulatedMs = entry.durationSecs * 1000;
+    // Pull the entry's canonical (top-level) description/remark back onto the task so the
+    // reopened Task Card shows the value that was actually finalized in the Complete popup,
+    // not whatever draft was last typed on the card before completion (see §18).
+    if (!task.customFields) task.customFields = {};
+    task.customFields.description = entry.description || '';
+    task.customFields.remark = entry.remark || '';
     // Re-open the log entry so live elapsed contributes to working hours
     entry.endTs = null;
     entry.durationSecs = null;
@@ -3120,7 +3193,7 @@ function reopenTask(taskId) {
 function confirmDeleteLogEntry(globalIdx) {
   const e = logEntries[globalIdx];
   if (!e) return;
-  const label = e.description || e.heading || 'this entry';
+  const label = richTextToPlain(e.description) || e.heading || 'this entry';
   showConfirm('Delete log entry?', '"' + label.slice(0, 60) + (label.length > 60 ? '…' : '') + '" will be permanently removed.', () => {
     const taskId = e.taskId;
     logEntries.splice(globalIdx, 1);
@@ -3178,14 +3251,14 @@ function openTransferMinutesModal(globalIdx) {
 
   pendingTransferIdx = globalIdx;
   const srcMins = Math.ceil(srcSecs / 60);
-  const srcLabel = entry.heading || entry.description || 'Untitled task';
+  const srcLabel = entry.heading || richTextToPlain(entry.description) || 'Untitled task';
 
   document.getElementById('tm-source-name').textContent = srcLabel;
   document.getElementById('tm-source-mins').textContent = srcMins;
 
   const select = document.getElementById('tm-target-select');
   select.innerHTML = candidates.map(({ e, i, secs }) => {
-    const label = e.heading || e.description || 'Untitled task';
+    const label = e.heading || richTextToPlain(e.description) || 'Untitled task';
     const mins = Math.ceil(secs / 60);
     return '<option value="' + i + '">' + esc(label.slice(0, 50)) + ' (' + mins + ' min)</option>';
   }).join('');
@@ -3305,6 +3378,17 @@ function updateTaskField(id, field, val) {
 }
 
 // Update a custom (user-configured) column's value on a task, keyed by column key.
+// NOTE (single-source-of-truth fix — see APP_ARCHITECTURE.md §18): 'description' and
+// 'remark' are BUILT-IN columns that render through this same generic Task Card path
+// (they are not in CORE_TASK_FIELD_KEYS), but every other reader — openCompleteModal,
+// editLogEntry, submitComplete, getEntryValueForColumn, getExportValueForColumn — treats
+// them as hand-built TOP-LEVEL log-entry properties (entry.description / entry.remark),
+// not entry.customFields.description / entry.customFields.remark. Writing them into
+// customFields here (as any ordinary custom column would be) silently created a second,
+// never-read copy of the value, which is why a value typed on the Task Card only ever
+// showed up on the Task Card itself. These two keys are special-cased to write to the
+// same top-level fields everything else reads, so there is exactly one live value.
+const ENTRY_TOPLEVEL_MIRROR_KEYS = ['description', 'remark'];
 function updateTaskCustomField(id, colKey, val) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
@@ -3312,8 +3396,12 @@ function updateTaskCustomField(id, colKey, val) {
   task.customFields[colKey] = val;
   const openEntry = [...logEntries].reverse().find(e => e.taskId === id && e.endTs === null);
   if (openEntry) {
-    if (!openEntry.customFields) openEntry.customFields = {};
-    openEntry.customFields[colKey] = val;
+    if (ENTRY_TOPLEVEL_MIRROR_KEYS.includes(colKey)) {
+      openEntry[colKey] = val;
+    } else {
+      if (!openEntry.customFields) openEntry.customFields = {};
+      openEntry.customFields[colKey] = val;
+    }
   }
   saveState();
   updateLogTable();
@@ -3378,12 +3466,149 @@ function buildDynamicFieldInput(col, idAttr, value, onChangeExpr, disabledAttr, 
     return `<input id="${idAttr}" class="meta-input" type="date" ${disabledAttr}
       value="${esc(value || '')}" onchange="${onChangeExpr}" />`;
   }
-  if (multiline) {
-    return `<textarea id="${idAttr}" class="meta-input" ${disabledAttr} placeholder="${esc(placeholder || '')}"
-      oninput="${onChangeExpr}" style="min-height:60px;resize:vertical;width:100%">${esc(value || '')}</textarea>`;
+  if (col.type === 'textarea' || multiline) {
+    // Rich text editor — covers every field whose input type is textarea, system or
+    // custom (Description, Remark, or any user-added "Text Area" column), plus any field
+    // rendered with the legacy `multiline` hint. See buildRichTextInput for details.
+    return buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, placeholder);
   }
   return `<input id="${idAttr}" class="meta-input" type="text" ${disabledAttr} placeholder="${esc(placeholder || '')}"
     value="${esc(value || '')}" oninput="${onChangeExpr}" />`;
+}
+
+// ── Rich text editor for `type: 'textarea'` fields ──────────────────────────────
+// A lightweight contenteditable-based editor used for every textarea-typed field, system
+// (Description, Remark) or custom, wherever it's rendered (task card, Complete/Edit popup).
+// It supports plain text, multi-line editing, and ordered/unordered lists, and stores its
+// value as a small, whitelisted HTML fragment (paragraphs/line breaks/lists) so formatting
+// survives editing and reloads. Plain-text values saved before this editor existed load in
+// unchanged (no migration needed), and content that never uses formatting round-trips as
+// plain text, so users who only type plain text see the same experience as before.
+//
+// Follows the same hidden-input + visible-surface pattern already used for the multi-select
+// dropdown above: a hidden <input> (idAttr) holds the canonical value so every existing
+// caller that reads `document.getElementById(idAttr).value` (submitComplete, updateTaskField,
+// updateTaskCustomField, Excel import matching, etc.) keeps working with zero changes, while
+// a visible contenteditable surface (idAttr + '-trigger') is what the user actually types
+// into. The '-trigger' suffix also matches the existing invalid-state lookup convention
+// (see submitComplete's check() and updateTaskField) so required-field validation styling
+// keeps working unmodified.
+const RTE_ALLOWED_TAGS = new Set(['P', 'BR', 'UL', 'OL', 'LI', 'DIV', 'B', 'STRONG', 'I', 'EM']);
+
+// Whitelist-sanitize an HTML fragment down to plain-text-safe structure (paragraphs, line
+// breaks, lists) — strips every other tag (unwrapping its contents) and every attribute, so
+// pasted content can't smuggle in scripts, styles, or arbitrary markup.
+function rteSanitizeHtml(html) {
+  const root = document.createElement('div');
+  root.innerHTML = html || '';
+  (function clean(node) {
+    Array.from(node.childNodes).forEach(child => {
+      if (child.nodeType === 1) {
+        if (!RTE_ALLOWED_TAGS.has(child.tagName)) {
+          while (child.firstChild) node.insertBefore(child.firstChild, child);
+          node.removeChild(child);
+          return;
+        }
+        Array.from(child.attributes).forEach(a => child.removeAttribute(a.name));
+        clean(child);
+      } else if (child.nodeType !== 3) {
+        node.removeChild(child); // strip comments, processing instructions, etc.
+      }
+    });
+  })(root);
+  return root.innerHTML;
+}
+// Heuristic: does this stored value already look like rich-editor HTML (from this feature),
+// as opposed to a legacy plain-text value that merely happens to contain a stray '<' or '>'?
+function rteLooksLikeHtml(v) {
+  return /<\/?(p|div|br|ul|ol|li)(\s[^>]*)?>/i.test(v);
+}
+// Legacy plain-text value → safe HTML for initial display, preserving line breaks.
+function rtePlainToHtml(v) {
+  return esc(v).replace(/\r\n|\r|\n/g, '<br>');
+}
+// Compute the editor's initial inner HTML from a stored value, handling both legacy
+// plain-text values (requirement: load/display without migration) and rich HTML saved by
+// this editor.
+function rteInitialContent(value) {
+  const v = value == null ? '' : String(value);
+  if (!v) return '';
+  return rteLooksLikeHtml(v) ? rteSanitizeHtml(v) : rtePlainToHtml(v);
+}
+// Plain-text rendering of a stored (possibly rich) field value, for contexts that only ever
+// expected plain text: the log table's cells/tooltips, search/filter matching, clipboard
+// copy, and the email template's {log_table} token. Legacy plain-text values pass through
+// unchanged.
+function richTextToPlain(html) {
+  const v = html == null ? '' : String(html);
+  if (!v || !rteLooksLikeHtml(v)) return v;
+  const root = document.createElement('div');
+  root.innerHTML = rteSanitizeHtml(v);
+  root.querySelectorAll('li').forEach(li => { li.insertAdjacentText('afterbegin', '• '); li.insertAdjacentText('beforeend', '\n'); });
+  root.querySelectorAll('p, div, br').forEach(el => el.insertAdjacentText('afterend', '\n'));
+  return (root.textContent || '').replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
+}
+
+function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, placeholder) {
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+  const isDisabled = !!(disabledAttr && String(disabledAttr).trim());
+  const editorId = idAttr + '-trigger';
+  const initialHtml = rteInitialContent(value);
+  const changeExpr = (onChangeExpr || '').replace(/this\.value/g, `document.getElementById('${idAttr}').value`);
+  const toolbar = isDisabled ? '' : `<div class="rte-toolbar">
+      <button type="button" class="rte-btn" tabindex="-1" title="Bulleted list" onmousedown="event.preventDefault()" onclick="rteToggleList('${editorId}','insertUnorderedList')"><i class="ti ti-list"></i></button>
+      <button type="button" class="rte-btn" tabindex="-1" title="Numbered list" onmousedown="event.preventDefault()" onclick="rteToggleList('${editorId}','insertOrderedList')"><i class="ti ti-list-numbers"></i></button>
+    </div>`;
+  return `<div class="rte-wrap">
+    <input type="hidden" id="${idAttr}" value="${esc(value || '')}" />
+    ${toolbar}
+    <div id="${editorId}" class="rte-editor" contenteditable="${isDisabled ? 'false' : 'true'}"
+      data-placeholder="${esc(placeholder || '')}"
+      oninput="rteSync('${idAttr}'); ${changeExpr}"
+      onblur="rteSync('${idAttr}')"
+      onpaste="rtePaste(event, '${idAttr}')">${initialHtml}</div>
+  </div>`;
+}
+function rteIsEditorEmpty(editor) { return !editor.textContent.trim(); }
+// Sync the visible editor's content into the canonical hidden input, and clear any
+// leftover empty markup (a stray <br>) once the user has deleted everything, so the
+// placeholder reappears correctly.
+function rteSync(idAttr) {
+  const editor = document.getElementById(idAttr + '-trigger');
+  const hidden = document.getElementById(idAttr);
+  if (!editor || !hidden) return;
+  if (rteIsEditorEmpty(editor)) {
+    if (editor.innerHTML !== '') editor.innerHTML = '';
+    hidden.value = '';
+  } else {
+    hidden.value = editor.innerHTML;
+    editor.classList.remove('invalid');
+  }
+}
+function rteToggleList(editorId, cmd) {
+  const editor = document.getElementById(editorId);
+  if (!editor) return;
+  editor.focus();
+  document.execCommand(cmd);
+  rteSync(editorId.replace(/-trigger$/, ''));
+}
+// Paste as sanitized rich text (if the source provided HTML) or escaped plain text
+// (preserving line breaks), instead of inheriting arbitrary markup/styling from outside.
+function rtePaste(evt, idAttr) {
+  evt.preventDefault();
+  const cb = evt.clipboardData || window.clipboardData;
+  const html = cb ? cb.getData('text/html') : '';
+  const text = cb ? cb.getData('text/plain') : '';
+  const fragment = html ? rteSanitizeHtml(html) : rtePlainToHtml(text);
+  document.execCommand('insertHTML', false, fragment || '');
+  rteSync(idAttr);
+}
+// Focus the interactive surface of a field built by buildDynamicFieldInput — the
+// contenteditable '-trigger' for rich text fields, or the element itself otherwise.
+function focusFieldInput(idAttr) {
+  const trigger = document.getElementById(idAttr + '-trigger');
+  const el = trigger || document.getElementById(idAttr);
+  if (el && el.focus) el.focus();
 }
 
 // Config-driven task-card fields: every column with Field Visibility → Task Card enabled
@@ -3489,6 +3714,9 @@ function renderRow(id) {
   // Show module/ticket on card only (project & nature shown, no description on card)
   container.innerHTML = `
     <div class="task-top">
+      <div class="task-drag-handle" draggable="true" ondragstart="taskDragStart(event, ${id})" ondragend="taskDragEnd(event)" title="Drag to reorder">
+        <i class="ti ti-grip-vertical"></i>
+      </div>
       <input id="inp-${id}" class="task-input" type="text" placeholder="Task / feature name…"
         value="${esc(task.heading)}" ${dis}
         oninput="updateTaskField(${id},'heading',this.value)"
@@ -3508,6 +3736,72 @@ function renderRow(id) {
       <i class="ti ti-alert-circle"></i> Project, Nature of Task and Module are required before starting.
     </div>
   `;
+}
+
+// ── Drag & drop task reordering ─────────────────────────────────────────────────
+// Only the small grip handle is draggable (not the whole card), so dragging never
+// conflicts with selecting/editing text in the card's inputs. The dragged element
+// is the handle, but we drag the whole card as the drag image and move the whole
+// card element around live during dragover; the array order is reconciled from
+// the final DOM order on drop.
+let _dragTaskId = null;
+
+function taskDragStart(e, id) {
+  _dragTaskId = id;
+  const card = document.getElementById('row-' + id);
+  if (!card) return;
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', String(id)); } catch (err) {}
+  try { e.dataTransfer.setDragImage(card, 20, 20); } catch (err) {}
+  // Add the class on the next tick so the browser has already captured the drag image
+  setTimeout(() => card.classList.add('dragging'), 0);
+}
+
+function taskDragEnd(e) {
+  const card = document.getElementById('row-' + _dragTaskId);
+  if (card) card.classList.remove('dragging');
+  _dragTaskId = null;
+}
+
+// Finds the card the cursor is currently closest to (by vertical midpoint) so the
+// dragged card can be live-repositioned before/after it as the pointer moves.
+function _dragAfterElement(container, y) {
+  const cards = [...container.querySelectorAll('.task-card:not(.dragging)')];
+  return cards.reduce((closest, card) => {
+    const box = card.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: card };
+    return closest;
+  }, { offset: -Infinity, element: null }).element;
+}
+
+function taskListDragOver(e) {
+  if (_dragTaskId == null) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const list = document.getElementById('task-list');
+  const dragging = document.getElementById('row-' + _dragTaskId);
+  if (!dragging) return;
+  const afterEl = _dragAfterElement(list, e.clientY);
+  if (afterEl == null) list.appendChild(dragging);
+  else if (afterEl !== dragging) list.insertBefore(dragging, afterEl);
+}
+
+// Reconciles the `tasks` array to match the card order shown in the DOM after a
+// drop. Only the slots currently occupied by visible cards are reassigned, so
+// tasks from other dates (interleaved in the underlying array) keep their
+// original positions untouched.
+function taskListDrop(e) {
+  if (_dragTaskId == null) return;
+  e.preventDefault();
+  const list = document.getElementById('task-list');
+  const orderedIds = [...list.querySelectorAll('.task-card[id^="row-"]')].map(el => parseInt(el.id.replace('row-', '')));
+  const idSet = new Set(orderedIds);
+  const slots = [];
+  tasks.forEach((t, i) => { if (idSet.has(t.id)) slots.push(i); });
+  const idToTask = new Map(tasks.map(t => [t.id, t]));
+  slots.forEach((slotIdx, i) => { tasks[slotIdx] = idToTask.get(orderedIds[i]); });
+  saveState();
 }
 
 function renderList() {
@@ -3780,6 +4074,7 @@ function defaultLogColumnWidth(c) {
   if (LOG_TABLE_DEFAULT_WIDTHS[c.key]) return LOG_TABLE_DEFAULT_WIDTHS[c.key];
   if (c.type === 'date') return 110;
   if (c.type === 'list' || c.type === 'multilist') return 130;
+  if (c.type === 'textarea') return 220;
   return 150; // generic text fallback for custom columns
 }
 
@@ -3992,10 +4287,12 @@ function updateLogTable() {
     const cells = cols.map(c => {
       if (c.key === 'description') {
         const descVal = e.heading || (isRunning ? '— pending on completion —' : '');
-        return `<td class="td-desc" data-col="${c.key}" title="${esc(descVal)}">${esc(descVal)}</td>`;
+        const effortDescVal = richTextToPlain(e.description || '').trim();
+        const hoverVal = effortDescVal ? (descVal + '\n\n— Task progress / Effort description —\n' + effortDescVal) : descVal;
+        return `<td class="td-desc" data-col="${c.key}" title="${esc(hoverVal)}">${esc(descVal)}</td>`;
       }
       if (c.key === 'remark') {
-        const remarkVal = e.remark || '';
+        const remarkVal = richTextToPlain(e.remark || '');
         return `<td class="td-desc" data-col="${c.key}" title="${esc(remarkVal)}">${esc(remarkVal)}</td>`;
       }
       if (c.key === 'effort') {
@@ -4017,7 +4314,7 @@ function updateLogTable() {
     // Same action buttons regardless of collapsed/expanded state — collapsed mode just
     // tucks them behind a single "more actions" toggle instead of showing them inline.
     const actionButtonsHtml =
-        (isPresentDay ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+rowIdx+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : '')
+        ((!isFutureDay) ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+rowIdx+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : '')
       + (isPresentDay
             ? '<button class="btn-icon" onclick="openTransferMinutesModal('+rowIdx+')" title="Transfer minutes to another task" style="border-color:var(--purple-mid);color:var(--purple-dark)"><i class="ti ti-transfer"></i></button>'
             : '')
@@ -4113,7 +4410,7 @@ function switchTab(tab) {
 // ── Columns tab: configure log table / task card columns ───────────────────
 function renderColumnsTabHTML() {
   const cols = getLogColumns();
-  const TYPE_LABELS = { text: 'Text', list: 'Dropdown list', multilist: 'Dropdown list (multi-select)', date: 'Date' };
+  const TYPE_LABELS = { text: 'Text', textarea: 'Text Area', list: 'Dropdown list', multilist: 'Dropdown list (multi-select)', date: 'Date' };
   const DATE_FORMAT_PRESETS = ['DD-MM-YYYY','YYYY-MM-DD','MM-DD-YYYY','DD/MM/YYYY','MM/DD/YYYY'];
   // Date and Effort can't be deleted — the timer/duration math depends on these existing —
   // but they can still be renamed, reordered, and (for Date) have their format changed.
@@ -4179,6 +4476,7 @@ function renderColumnsTabHTML() {
       <input class="master-add-input" id="new-column-label" placeholder="New column name…" style="flex:1" onkeydown="if(event.key==='Enter') addCustomColumn()" />
       <select class="meta-select" id="new-column-type" style="width:auto">
         <option value="text">Text</option>
+        <option value="textarea">Text Area</option>
         <option value="list">Dropdown list</option>
         <option value="multilist">Dropdown list (multi-select)</option>
         <option value="date">Date</option>
@@ -5387,7 +5685,7 @@ function escHtml(str) {
 }
 
 
-// ── CSV Export / Import ───────────────────────────────────────────────────────
+// ── CSV / Excel Export / Import ────────────────────────────────────────────────
 function openCSVModal() {
   const today = todayStr();
   // Default from: first day of current month
@@ -5442,6 +5740,38 @@ function exportCSV() {
   a.href = url; a.download = 'effort-log-' + (from||'all') + '-to-' + (to||'all') + '.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+// Same date-range filtering + column set as exportCSV(), but written as a single-
+// sheet .xlsx workbook via SheetJS instead of a CSV blob.
+function exportLogExcel() {
+  const from = document.getElementById('csv-from').value;
+  const to   = document.getElementById('csv-to').value;
+  const rows = logEntries.filter(e => entryInDateRange(e, from, to));
+  if (rows.length === 0) { alert('No entries found for the selected date range.'); return; }
+
+  const cols = getVisibleLogColumns();
+  const headers = cols.map(c => c.label);
+  const dataRows = rows.map(e => {
+    const task = tasks.find(t => t.id === e.taskId);
+    return cols.map(c => {
+      if (c.key === 'effort') {
+        const secs = e.durationSecs != null ? e.durationSecs : (task ? liveElapsedSecs(task) : 0);
+        return Math.ceil(secs / 60);
+      }
+      return getExportValueForColumn(e, task, c.key);
+    });
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
+  ws['!cols'] = headers.map((h, i) => {
+    const vals = [h, ...dataRows.map(r => String(r[i] || ''))];
+    const max = Math.min(40, Math.max(...vals.map(v => v.length)));
+    return { wch: max + 2 };
+  });
+  XLSX.utils.book_append_sheet(wb, ws, 'Effort Log');
+  XLSX.writeFile(wb, 'effort-log-' + (from||'all') + '-to-' + (to||'all') + '.xlsx');
 }
 
 function handleCSVDrop(e) {
@@ -5569,14 +5899,55 @@ function calculateBreakMinutes(startStr, endStr, workingHoursStr) {
   return breakMin;
 }
 
+// Entry point for both the file picker and drag & drop. Reads the file as text
+// (CSV) or binary (Excel) depending on its extension, parses it into a common
+// "array of row arrays" shape, then hands off to importParsedRows() so the rest
+// of the import pipeline (column mapping, validation, dedupe) is shared between
+// both formats.
 function processCSVFile(file) {
+  const name = (file.name || '').toLowerCase();
+  const isExcel = name.endsWith('.xlsx') || name.endsWith('.xls');
+  const prev = document.getElementById('csv-import-preview');
   const reader = new FileReader();
-  reader.onload = ev => {
+
+  if (isExcel) {
+    reader.onload = ev => {
+      try {
+        const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        // raw:false gives formatted/display strings (matching how CSV values arrive)
+        // rather than raw numbers/dates, so downstream parsing logic stays identical.
+        const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' })
+          .map(r => r.map(v => String(v == null ? '' : v).trim()))
+          .filter(r => r.some(f => f !== ''));
+        importParsedRows(allRows);
+      } catch (err) {
+        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing Excel file: ${escHtml(err.message)}</span>`;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.onload = ev => {
+      try {
+        const allRows = parseCSVDocument(ev.target.result);
+        importParsedRows(allRows);
+      } catch (err) {
+        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing CSV: ${escHtml(err.message)}</span>`;
+      }
+    };
+    reader.readAsText(file);
+  }
+}
+
+// Shared import pipeline: maps the uploaded header row to known columns, validates,
+// converts each data row into a log entry, and skips out-of-range/duplicate rows.
+// `allRows` is an array of rows, each row an array of field strings — the same
+// shape whether it came from CSV text parsing or an Excel sheet.
+function importParsedRows(allRows) {
     const from = document.getElementById('csv-import-from').value;
     const to   = document.getElementById('csv-import-to').value;
     const prev = document.getElementById('csv-import-preview');
     try {
-      const allRows = parseCSVDocument(ev.target.result);
       if (allRows.length === 0) throw new Error('Empty file');
       const header = allRows[0].map(h => h.trim().replace(/^"|"$/g,''));
       const dataRows = allRows.slice(1); // each is already an array of field values
@@ -5750,10 +6121,8 @@ function processCSVFile(file) {
       if (failed)  parts.push(`<span style="color:var(--red-mid)">${failed} row${failed>1?'s':''} failed validation</span>`);
       prev.innerHTML = parts.join(' &middot; ');
     } catch(err) {
-      prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing CSV: ${err.message}</span>`;
+      prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing file: ${escHtml(err.message)}</span>`;
     }
-  };
-  reader.readAsText(file);
 }
 
 function parseCSVLine(line) {
