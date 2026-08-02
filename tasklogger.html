@@ -269,6 +269,13 @@ body {
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
 .meta-field-ticket  .meta-input  { width: 100px; }
+/* Textarea-type fields (built-in Description/Remark, or any custom column set to
+   "textarea") have no intrinsic content width like a select or text input does, so
+   without an explicit flex-basis they'd shrink to min-content and look misaligned
+   next to Project/Nature/Module/Ticket. Give them the full row instead. */
+.meta-field-wide { flex: 1 1 100%; min-width: 220px; }
+.meta-field-wide .rte-wrap,
+.meta-field-wide .rte-editor { width: 100%; }
 
 /* Rich text editor (type: 'textarea' fields) */
 .rte-wrap { width: 100%; }
@@ -918,7 +925,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   .meta-field-nature { flex: 1 1 calc(50% - 3px); min-width: 120px; }
   .meta-field-module  { flex: 1 1 100%; }
   .meta-field-ticket  { flex: 1 1 calc(40% - 3px); }
-  .meta-field-desc    { flex: 1 1 100%; min-width: unset; }
+  .meta-field-wide    { flex: 1 1 100%; min-width: unset; }
   .meta-field-module .meta-input { width: 100%; }
   .meta-field-ticket .meta-input { width: 100%; }
 }
@@ -995,7 +1002,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 @media (min-width: 769px) and (max-width: 1024px) {
   body { padding: 1.5rem 1rem 6rem; }
   .task-meta { gap: 8px; }
-  .meta-field-desc { min-width: 160px; }
+  .meta-field-wide { min-width: 160px; }
 }
 
 /* ── Button text hide on very small ── */
@@ -2350,6 +2357,7 @@ function startTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
   if (isFutureTask(task)) return; // future-dated tasks have no actions until their date
+  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
 
   // Validate heading
   if (!task.heading.trim()) {
@@ -2389,6 +2397,7 @@ function startTask(id) {
 function pauseTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
+  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
   if (task.segmentStart !== null) { task.accumulatedMs += Date.now()-task.segmentStart; task.segmentStart=null; }
   task.status = 'paused';
   clearInterval(intervals[id]); delete intervals[id];
@@ -2398,6 +2407,7 @@ function pauseTask(id) {
 function resumeTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
+  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
   pauseOthersExcept(id);
   task.status = 'running';
   task.segmentStart = Date.now();
@@ -3445,6 +3455,9 @@ function taskDateStr(task) {
 function isFutureTask(task) {
   return taskDateStr(task) > todayStr();
 }
+function isPastTask(task) {
+  return taskDateStr(task) < todayStr();
+}
 
 // Build the HTML for a single configurable column's input, for use on the task card
 // or inside the Complete popup. `value` is the current raw value (ISO date string for
@@ -3653,9 +3666,10 @@ function renderTaskCardFields(task, id, dis) {
         ? `updateTaskField(${id},'${c.key}',this.value)`
         : `updateTaskCustomField(${id},'${c.key}',this.value)`;
       const cssKey = isCore ? c.key : 'custom';
+      const wideClass = c.type === 'textarea' ? ' meta-field-wide' : '';
       const required = TASK_CARD_REQUIRED_KEYS.includes(c.key) ? ' <span class="req">*</span>' : '';
       const placeholder = TASK_CARD_PLACEHOLDERS[c.key] || '';
-      return `<div class="meta-field meta-field-${cssKey}">
+      return `<div class="meta-field meta-field-${cssKey}${wideClass}">
         <span class="meta-label">${esc(c.label)}${required}</span>
         ${buildDynamicFieldInput(c, `meta-${c.key}-${id}`, value, onChangeExpr, dis, placeholder)}
       </div>`;
@@ -3709,12 +3723,22 @@ function renderRow(id) {
   const {status} = task;
   const isDone=status==='done', isRunning=status==='running', isPaused=status==='paused';
   const isFuture = isFutureTask(task);
-  container.className = 'task-card'+(isRunning?' running':isPaused?' paused':isDone?' done':'')+(isFuture?' future-task':'');
+  const isPast = isPastTask(task);
+  container.className = 'task-card'+(isRunning?' running':isPaused?' paused':isDone?' done':'')+(isFuture?' future-task':'')+(isPast?' past-task':'');
 
   let actionBtns = '';
   if (isFuture) {
     // No timer actions for future-dated tasks — just a planned indicator
     actionBtns = `<span class="future-badge" title="Available on ${taskDateStr(task)}"><i class="ti ti-calendar-time"></i> Planned</span>`;
+  } else if (isPast) {
+    // Past-dated tasks are read-only history: no start/pause/resume, only completing
+    // an already-running/paused task is allowed so the day's log can be closed out.
+    if (isRunning || isPaused)
+      actionBtns = `<button class="btn-icon btn-done" onclick="openCompleteModal(${id})" title="Mark done"><i class="ti ti-check"></i></button>`;
+    else if (isDone)
+      actionBtns = `<button class="btn-icon" disabled style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-circle-check"></i></button>`;
+    else
+      actionBtns = `<span class="future-badge" title="Past date — this task was never started"><i class="ti ti-lock"></i> Locked</span>`;
   } else {
     if (status==='idle')
       actionBtns = `<button class="btn-icon btn-start" onclick="startTask(${id})" title="Start timer"><i class="ti ti-player-play"></i></button>`;
