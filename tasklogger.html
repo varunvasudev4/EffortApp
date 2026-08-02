@@ -1825,6 +1825,7 @@ function saveState() {
 
 function renderAll() {
   materializeRecurringTasksUpTo(todayStr());
+  enforcePastDateAutoPause();
   renderList();
   restoreIntervals();
   updateLogPanel();
@@ -3458,6 +3459,27 @@ function isFutureTask(task) {
 function isPastTask(task) {
   return taskDateStr(task) < todayStr();
 }
+// Past-dated tasks are locked to read-only history — the user can no longer click
+// Pause on them (see renderRow). So if a task is still "running" once its date is
+// no longer today (left running overnight, or the app was closed mid-task), force
+// it into "paused" here, banking real elapsed time exactly like a manual pause
+// would. Cheap to run on every render; only touches tasks that actually need it.
+function enforcePastDateAutoPause() {
+  let changed = false;
+  tasks.forEach(task => {
+    if (task.status === 'running' && isPastTask(task)) {
+      if (task.segmentStart !== null) {
+        task.accumulatedMs += Date.now() - task.segmentStart;
+        task.segmentStart = null;
+      }
+      task.status = 'paused';
+      clearInterval(intervals[task.id]);
+      delete intervals[task.id];
+      changed = true;
+    }
+  });
+  if (changed) saveState();
+}
 
 // Build the HTML for a single configurable column's input, for use on the task card
 // or inside the Complete popup. `value` is the current raw value (ISO date string for
@@ -3847,6 +3869,7 @@ function taskListDrop(e) {
 }
 
 function renderList() {
+  enforcePastDateAutoPause();
   const list = document.getElementById('task-list');
   const selDate = getSelectedDate();
   const today = todayStr();
