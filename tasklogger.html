@@ -281,7 +281,14 @@ body {
 }
 .rte-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
 .rte-editor {
-  width: 100%; min-height: 60px; max-height: 300px; overflow-y: auto; resize: vertical;
+  /* Height driven by the column's configured Rows (Master Field Configuration), not a
+     hardcoded pixel value — see buildRichTextInput, which sets --rte-rows inline per field.
+     Using em-based line-height keeps this correct across contexts with different font-sizes
+     (Task Card vs Complete/Edit popup) without any per-context height constant. Fixed height
+     (not min-height) + overflow-y auto means the editor starts at exactly N rows and scrolls
+     internally for extra content instead of growing indefinitely. */
+  --rte-pad: 14px;
+  width: 100%; height: calc(var(--rte-rows, 3) * 1.5em + var(--rte-pad)); overflow-y: auto; resize: vertical;
   padding: 7px 9px; border: 1px solid var(--border-md); border-radius: var(--radius-md);
   background: var(--bg-secondary); color: var(--text-primary);
   font-size: 12px; font-family: var(--font-mono); line-height: 1.5; outline: none;
@@ -296,8 +303,9 @@ body {
 .rte-editor ul, .rte-editor ol { margin: 0 0 8px 20px; padding: 0; }
 .rte-editor ul:last-child, .rte-editor ol:last-child { margin-bottom: 0; }
 .rte-editor li { margin: 2px 0; }
-/* In the Complete/Edit popup, match the surrounding .complete-* field sizing */
-.complete-field .rte-editor { font-size: 13px; padding: 8px 10px; min-height: 72px; }
+/* In the Complete/Edit popup, match the surrounding .complete-* field sizing — only the
+   padding/font-size differ; the row-based height calc above still applies unchanged. */
+.complete-field .rte-editor { --rte-pad: 16px; font-size: 13px; padding: 8px 10px; }
 
 /* Validation error */
 .validation-msg {
@@ -1739,6 +1747,10 @@ const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
 //   showInTaskCard      — rendered as an input on the running task card
 //   showInLogTable       — rendered as a column in the log table (and exports/CSV)
 //   showInCompletePopup  — rendered as an input in the Complete Task / Edit Log Entry popup
+// Default number of visible rows for any TextArea-type column that doesn't have an explicit
+// col.rows set (older saved configs, or a column created before the Rows setting existed).
+// See buildRichTextInput / the .rte-editor CSS rule for how col.rows drives the actual height.
+const DEFAULT_TEXTAREA_ROWS = 3;
 const DEFAULT_LOG_COLUMNS = [
   { key: 'date',        label: 'Date',                                  showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'date', dateFormat: 'DD-MM-YYYY', isDateColumn: true, essential: true },
   { key: 'employee',    label: 'Employee Name',                         showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEmployeeColumn: true },
@@ -1746,10 +1758,10 @@ const DEFAULT_LOG_COLUMNS = [
   { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
   { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'natures', builtIn: true },
   { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
-  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', builtIn: true, isTaskName: true },
+  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', rows: 4, builtIn: true, isTaskName: true },
   { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEffortColumn: true, essential: true },
   { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'statuses', isStatusColumn: true },
-  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', builtIn: true }
+  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', rows: 2, builtIn: true }
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -3554,6 +3566,11 @@ function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, plac
   const isDisabled = !!(disabledAttr && String(disabledAttr).trim());
   const editorId = idAttr + '-trigger';
   const initialHtml = rteInitialContent(value);
+  // Rows comes from Master Field Configuration (col.rows); DEFAULT_TEXTAREA_ROWS covers
+  // columns/older saved configs created before the Rows setting existed. No hardcoded
+  // height here — the actual pixel height is computed by the .rte-editor CSS rule from
+  // this row count (see the --rte-rows custom property).
+  const rows = (col && col.rows > 0) ? col.rows : DEFAULT_TEXTAREA_ROWS;
   const changeExpr = (onChangeExpr || '').replace(/this\.value/g, `document.getElementById('${idAttr}').value`);
   const toolbar = isDisabled ? '' : `<div class="rte-toolbar">
       <button type="button" class="rte-btn" tabindex="-1" title="Bulleted list" onmousedown="event.preventDefault()" onclick="rteToggleList('${editorId}','insertUnorderedList')"><i class="ti ti-list"></i></button>
@@ -3563,6 +3580,7 @@ function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, plac
     <input type="hidden" id="${idAttr}" value="${esc(value || '')}" />
     ${toolbar}
     <div id="${editorId}" class="rte-editor" contenteditable="${isDisabled ? 'false' : 'true'}"
+      style="--rte-rows:${rows}"
       data-placeholder="${esc(placeholder || '')}"
       oninput="rteSync('${idAttr}'); ${changeExpr}"
       onblur="rteSync('${idAttr}')"
@@ -4437,6 +4455,11 @@ function renderColumnsTabHTML() {
           </select>
           ${isCustomFormat ? `<input class="master-add-input" style="padding:4px 8px;font-size:12px;width:120px" value="${esc(c.dateFormat)}"
             onchange="changeColumnDateFormat('${c.key}', this.value)" placeholder="e.g. DD.MM.YYYY" />` : ''}` : ''}
+          ${c.type === 'textarea' ? `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)" title="How many rows tall this field starts at (Task Card, Edit Popup, Completed Popup). Longer content scrolls inside the field instead of growing it.">
+            Rows
+            <input type="number" min="1" max="30" step="1" class="master-add-input" style="padding:4px 6px;font-size:12px;width:52px"
+              value="${(c.rows > 0) ? c.rows : DEFAULT_TEXTAREA_ROWS}" onchange="changeColumnRows('${c.key}', this.value)" />
+          </label>` : ''}
           ${(c.type === 'list' || c.type === 'multilist') ? `<select class="meta-select" style="font-size:12px;padding:4px 6px;width:auto" onchange="changeColumnListSource('${c.key}', this.value)">
             <option value="">— choose list —</option>
             ${listOptions.map(lk => `<option value="${lk}" ${c.listSource===lk?'selected':''}>${listLabel(lk)}</option>`).join('')}
@@ -4858,6 +4881,7 @@ function changeColumnType(key, newType) {
   const oldListSource = col.listSource;
   col.type = newType;
   if (newType === 'date' && !col.dateFormat) col.dateFormat = 'YYYY-MM-DD';
+  if (newType === 'textarea' && !(col.rows > 0)) col.rows = DEFAULT_TEXTAREA_ROWS;
   if (newType !== 'list' && newType !== 'multilist') {
     col.listSource = undefined;
     cleanupOrphanedList(oldListSource, key);
@@ -4884,6 +4908,19 @@ function changeColumnDateFormat(key, format) {
   col.dateFormat = (format === '__custom__') ? 'DD.MM.YYYY' : format;
   saveState();
   if (needsRerender) renderMastersContent();
+  refreshAfterColumnConfigChange();
+}
+
+// Update a TextArea column's configured Rows (Master Field Configuration). This is the only
+// place col.rows is set from user input — buildRichTextInput reads it to size the editor
+// everywhere the column renders (Task Card, Edit Popup, Completed Popup). Clamped to a
+// sane minimum so a cleared/invalid input can't collapse the editor to zero/negative height.
+function changeColumnRows(key, rows) {
+  const col = getColumnByKey(key);
+  if (!col) return;
+  const n = parseInt(rows, 10);
+  col.rows = (Number.isFinite(n) && n >= 1) ? n : DEFAULT_TEXTAREA_ROWS;
+  saveState();
   refreshAfterColumnConfigChange();
 }
 
@@ -4973,6 +5010,7 @@ function addCustomColumn() {
 
   const newCol = { key, label, visible: true, type, builtIn: false };
   if (type === 'date') newCol.dateFormat = 'DD-MM-YYYY';
+  if (type === 'textarea') newCol.rows = DEFAULT_TEXTAREA_ROWS;
   if (type === 'list' || type === 'multilist') {
     newCol.listSource = key; // each new list column gets its own dedicated master list
     if (!masters.customLists[key]) masters.customLists[key] = [];
