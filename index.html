@@ -1516,6 +1516,18 @@ function normalizeTicket(raw){
   return { id, system: 'Other', display: id };
 }
 
+// ---- project split: when a project value contains '/', treat it as multiple projects
+// sharing the same task, and divide the effort minutes evenly across each named project ----
+function splitProjectEffort(projectRaw, effort){
+  const raw = (projectRaw == null ? '' : String(projectRaw)).trim();
+  if(!raw) return [{ project: 'UNKNOWN', effort: effort }];
+  if(!raw.includes('/')) return [{ project: raw, effort: effort }];
+  const names = raw.split('/').map(p=>p.trim()).filter(Boolean);
+  if(names.length <= 1) return [{ project: names[0] || 'UNKNOWN', effort: effort }];
+  const share = effort / names.length;
+  return names.map(name => ({ project: name, effort: share }));
+}
+
 function csvRowsToRecords(rows, fileName){
   if(!rows.length) return { records: [], error: 'The file has no data rows.' };
   const headers = Object.keys(rows[0]);
@@ -1544,21 +1556,25 @@ function csvRowsToRecords(rows, fileName){
     const effort = parseFloat(String(effortRaw).replace(/[^0-9.\-]/g,''));
     if(isNaN(effort)) return;
     const ticketInfo = normalizeTicket(ticketH ? row[ticketH] : null);
-    records.push({
-      date: d.toISOString().slice(0,10),
-      dateDisp: d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', timeZone:'UTC'}),
-      employee: (employeeH && row[employeeH]) ? row[employeeH] : 'Unspecified',
-      project: (projH ? row[projH] : 'UNKNOWN') || 'UNKNOWN',
-      module: (moduleH ? row[moduleH] : '') || '',
-      nature: (natureH ? row[natureH] : '') || 'Unspecified',
-      ticket: ticketInfo ? ticketInfo.id : null,
-      ticketDisplay: ticketInfo ? ticketInfo.display : null,
-      ticketSystem: ticketInfo ? ticketInfo.system : null,
-      desc: (descH ? row[descH] : '') || '',
-      effort: effort,
-      status: (statusH ? row[statusH] : '') || 'Unspecified',
-      remarks: (remarksH && row[remarksH]) ? row[remarksH] : null,
-      sourceFile: fileName
+    const projectRaw = (projH ? row[projH] : 'UNKNOWN') || 'UNKNOWN';
+    const splits = splitProjectEffort(projectRaw, effort);
+    splits.forEach(sp=>{
+      records.push({
+        date: d.toISOString().slice(0,10),
+        dateDisp: d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', timeZone:'UTC'}),
+        employee: (employeeH && row[employeeH]) ? row[employeeH] : 'Unspecified',
+        project: sp.project,
+        module: (moduleH ? row[moduleH] : '') || '',
+        nature: (natureH ? row[natureH] : '') || 'Unspecified',
+        ticket: ticketInfo ? ticketInfo.id : null,
+        ticketDisplay: ticketInfo ? ticketInfo.display : null,
+        ticketSystem: ticketInfo ? ticketInfo.system : null,
+        desc: (descH ? row[descH] : '') || '',
+        effort: sp.effort,
+        status: (statusH ? row[statusH] : '') || 'Unspecified',
+        remarks: (remarksH && row[remarksH]) ? row[remarksH] : null,
+        sourceFile: fileName
+      });
     });
   });
   records.sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
@@ -3642,21 +3658,24 @@ function loadFromTaskLogger(showFeedback){
 
     const d = new Date(e.startTs);
     const ticketInfo = normalizeTicket(e.ticket);
-    records.push({
-      date: d.toISOString().slice(0,10),
-      dateDisp: d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', timeZone:'UTC'}),
-      employee: e.employee || 'Unspecified',
-      project: e.project || 'UNKNOWN',
-      module: e.module || '',
-      nature: e.nature || 'Unspecified',
-      ticket: ticketInfo ? ticketInfo.id : null,
-      ticketDisplay: ticketInfo ? ticketInfo.display : null,
-      ticketSystem: ticketInfo ? ticketInfo.system : null,
-      desc: e.description || e.heading || '',
-      effort: effortMin,
-      status: e.taskStatus || (task ? task.status : '') || 'Unspecified',
-      remarks: e.remark || null,
-      sourceFile: LOGGER_SOURCE_NAME
+    const splits = splitProjectEffort(e.project || 'UNKNOWN', effortMin);
+    splits.forEach(sp=>{
+      records.push({
+        date: d.toISOString().slice(0,10),
+        dateDisp: d.toLocaleDateString('en-GB', {day:'2-digit', month:'short', timeZone:'UTC'}),
+        employee: e.employee || 'Unspecified',
+        project: sp.project,
+        module: e.module || '',
+        nature: e.nature || 'Unspecified',
+        ticket: ticketInfo ? ticketInfo.id : null,
+        ticketDisplay: ticketInfo ? ticketInfo.display : null,
+        ticketSystem: ticketInfo ? ticketInfo.system : null,
+        desc: e.description || e.heading || '',
+        effort: sp.effort,
+        status: e.taskStatus || (task ? task.status : '') || 'Unspecified',
+        remarks: e.remark || null,
+        sourceFile: LOGGER_SOURCE_NAME
+      });
     });
   });
 
