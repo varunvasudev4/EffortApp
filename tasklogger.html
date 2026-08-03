@@ -268,7 +268,7 @@ body {
 .msdd-option:hover { background: var(--bg-secondary); }
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
-.meta-field-ticket  .meta-input  { min-width: 100px; }
+.meta-field-ticket  .meta-input  { width: 100px; }
 /* Textarea-type fields (built-in Description/Remark, or any custom column set to
    "textarea") have no intrinsic content width like a select or text input does, so
    without an explicit flex-basis they'd shrink to min-content and look misaligned
@@ -1721,8 +1721,11 @@ const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
       text = el.dataset.tooltipText;
     }
     if (!text) return;
-    // Log-table cells/headers only get a tooltip when their content is actually truncated.
-    if (el.matches('.log-table td, .log-table th') && el.scrollWidth <= el.clientWidth) return;
+    // Log-table cells/headers only get a tooltip when their content is actually truncated —
+    // except Description/Remark cells (.td-desc), whose tooltip carries the hidden
+    // "Task progress / Effort description" notes on top of the visible heading, so it
+    // should always show on hover regardless of whether the visible text itself is clipped.
+    if (el.matches('.log-table td, .log-table th') && !el.matches('.td-desc') && el.scrollWidth <= el.clientWidth) return;
     currentTarget = el;
     tip.textContent = text;
     positionTooltip(el);
@@ -1865,6 +1868,7 @@ function loadState() {
       if (masters.flags.sleepAutoPause === undefined) masters.flags.sleepAutoPause = true;
       if (!masters.logColumns || !Array.isArray(masters.logColumns) || masters.logColumns.length === 0) {
         masters.logColumns = DEFAULT_LOG_COLUMNS.map(c => ({ ...c }));
+        masters.migratedDescRemarkTextarea = true; // fresh config already matches the defaults
       } else {
         // Merge in any default columns missing from a saved config (e.g. after an app update)
         const haveKeys = masters.logColumns.map(c => c.key);
@@ -1873,15 +1877,21 @@ function loadState() {
         });
         // Backfill fields for columns saved under an older schema (pre-this-update), and
         // drop the old `locked` flag — every column is fully configurable now.
+        // The Description/Remark -> textarea backfill below must only ever run ONCE (the
+        // first load after that feature shipped) — otherwise it clobbers a user's later,
+        // deliberate switch back to Text on every reload. Gate it on a flag so it never
+        // fires again once it's run.
+        const runDescRemarkMigration = !masters.migratedDescRemarkTextarea;
         masters.logColumns.forEach(c => {
           if (!c.type) c.type = 'text';
           delete c.locked;
           if (c.key === 'date' && c.type === 'text') { c.type = 'date'; c.dateFormat = c.dateFormat || 'DD-MM-YYYY'; c.isDateColumn = true; }
           if (c.key === 'status' && c.type === 'text') { c.type = 'list'; c.listSource = 'statuses'; c.isStatusColumn = true; }
-          // Description/Remark always rendered as multi-line textareas; formalize that as
-          // their column type so they pick up rich text editing like any Text Area column,
-          // without changing any already-saved plain-text content (loads in unchanged).
-          if ((c.key === 'description' || c.key === 'remark') && c.type === 'text') { c.type = 'textarea'; }
+          // Description/Remark originally always rendered as multi-line textareas; this
+          // one-time backfill formalized that as their column type so they picked up rich
+          // text editing like any Text Area column, without changing already-saved plain
+          // text content. Runs once only — see runDescRemarkMigration above.
+          if (runDescRemarkMigration && (c.key === 'description' || c.key === 'remark') && c.type === 'text') { c.type = 'textarea'; }
           if (c.key === 'employee') c.isEmployeeColumn = true;
           if (c.key === 'effort') c.isEffortColumn = true;
           // Migrate the old single `visible` flag into the three independent per-context
@@ -1897,6 +1907,7 @@ function loadState() {
             delete c.visible;
           }
         });
+        masters.migratedDescRemarkTextarea = true;
       }
       if (!masters.customLists || typeof masters.customLists !== 'object') masters.customLists = {};
   if (!masters.emailTemplate || typeof masters.emailTemplate !== 'object') masters.emailTemplate = {
@@ -5206,7 +5217,7 @@ function copyLog() {
         return Math.ceil(secs/60);
       }
       return getExportValueForColumn(e, task, c.key);
-    }).join('\t');
+    }).map(tsvEscape).join('\t');
   });
 
   const text = rows.join('\n');
@@ -5305,8 +5316,8 @@ function openMailModal() {
   });
 
   // Build plain text body for mailto
-  const plainHeader = headerRow.join('\t');
-  const plainRows   = dataRows.map(r => r.join('\t'));
+  const plainHeader = headerRow.map(tsvEscape).join('\t');
+  const plainRows   = dataRows.map(r => r.map(tsvEscape).join('\t'));
   const plainTable  = [plainHeader, ...plainRows].join('\n');
   const plainBody   = resolveSimpleTokens(rawBody).replace('{log_table}', plainTable);
 
@@ -5426,7 +5437,7 @@ async function _copyTableToClipboard(headerRow, selectedRows) {
   ).join('');
 
   const tableHtml = `<html><body><!--StartFragment--><table style="border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0"><thead>${thead}</thead><tbody>${tbody}</tbody></table><!--EndFragment--></body></html>`;
-  const tsv = [headerRow, ...selectedRows].map(r => r.join('\t')).join('\n');
+  const tsv = [headerRow, ...selectedRows].map(r => r.map(tsvEscape).join('\t')).join('\n');
 
   await navigator.clipboard.write([
     new ClipboardItem({
@@ -5787,6 +5798,16 @@ function openCSVModal() {
 function csvEscape(val) {
   const s = String(val == null ? '' : val);
   if (s.includes(',') || s.includes('"') || s.includes('\n'))
+    return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+// Same quoting rule as csvEscape, for the tab-delimited text used by Copy Log and the
+// Mail preview's clipboard copy. Without this, a multi-line remark/description (or a
+// bulleted/numbered list, which renders as newline-separated bullet lines) splits into
+// extra rows instead of staying in one cell when pasted into Excel.
+function tsvEscape(val) {
+  const s = String(val == null ? '' : val);
+  if (s.includes('\t') || s.includes('"') || s.includes('\n'))
     return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
