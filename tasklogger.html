@@ -268,7 +268,9 @@ body {
 .msdd-option:hover { background: var(--bg-secondary); }
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
-.meta-field-ticket  .meta-input  { width: 100px; }
+.meta-field-ticket  .meta-input  { 
+  /* width: 100px;  */
+}
 /* Textarea-type fields (built-in Description/Remark, or any custom column set to
    "textarea") have no intrinsic content width like a select or text input does, so
    without an explicit flex-basis they'd shrink to min-content and look misaligned
@@ -320,7 +322,7 @@ body {
    show the full configured height, since there's no space pressure there. */
 /* .meta-field (two classes) beats the single-class .meta-field-wide rule above,
    regardless of source order, so collapsed always wins over the "full width" default. */
-.meta-field.tc-field-collapsed { flex: 0 0 200px; width: 200px; max-width: 200px; }
+.meta-field.tc-field-collapsed { flex: 0 0 257px; width: 257px; max-width: 257px; }
 .tc-field-collapsed .rte-editor { --rte-rows: 1 !important; overflow-y: hidden; }
 .tc-field-collapsed .rte-toolbar { display: none; }
 .meta-collapse-toggle {
