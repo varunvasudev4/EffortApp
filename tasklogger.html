@@ -244,7 +244,7 @@ body {
 .meta-select:focus, .meta-input:focus { border-color: var(--blue-mid); }
 .meta-select:disabled, .meta-input:disabled { opacity: 0.6; }
 .meta-select.invalid, .meta-input.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
-.meta-field-project .meta-select { max-width: 130px; }
+.meta-field-project .meta-select { min-width: 130px; }
 .meta-field-nature  .meta-select { min-width: 130px; }
 .meta-field-module  .meta-input  { width: 160px; }
 .msdd { position: relative; display: inline-block; min-width: 140px;width:100%; }
@@ -268,9 +268,7 @@ body {
 .msdd-option:hover { background: var(--bg-secondary); }
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
-.meta-field-ticket  .meta-input  { 
-  /* width: 100px;  */
-}
+.meta-field-ticket  .meta-input  { width: 100px; }
 /* Textarea-type fields (built-in Description/Remark, or any custom column set to
    "textarea") have no intrinsic content width like a select or text input does, so
    without an explicit flex-basis they'd shrink to min-content and look misaligned
@@ -322,7 +320,7 @@ body {
    show the full configured height, since there's no space pressure there. */
 /* .meta-field (two classes) beats the single-class .meta-field-wide rule above,
    regardless of source order, so collapsed always wins over the "full width" default. */
-.meta-field.tc-field-collapsed { flex: 0 0 257px; width: 257px; max-width: 257px; }
+.meta-field.tc-field-collapsed { flex: 0 0 200px; width: 200px; max-width: 200px; }
 .tc-field-collapsed .rte-editor { --rte-rows: 1 !important; overflow-y: hidden; }
 .tc-field-collapsed .rte-toolbar { display: none; }
 .meta-collapse-toggle {
@@ -1778,21 +1776,28 @@ const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
 //   showInTaskCard      — rendered as an input on the running task card
 //   showInLogTable       — rendered as a column in the log table (and exports/CSV)
 //   showInCompletePopup  — rendered as an input in the Complete Task / Edit Log Entry popup
+// A fourth, independent flag controls a different thing entirely — not visibility, but
+// data propagation:
+//   carryForward         — when a task is carried forward to a future date, or a recurring
+//                           plan is created / materializes a new instance, should THIS
+//                           column's value be copied onto the new task? true copies it
+//                           across; false leaves the field blank on the new instance even
+//                           though the source task/entry had a value. See buildCarriedFields().
 // Default number of visible rows for any TextArea-type column that doesn't have an explicit
 // col.rows set (older saved configs, or a column created before the Rows setting existed).
 // See buildRichTextInput / the .rte-editor CSS rule for how col.rows drives the actual height.
 const DEFAULT_TEXTAREA_ROWS = 3;
 const DEFAULT_LOG_COLUMNS = [
-  { key: 'date',        label: 'Date',                                  showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'date', dateFormat: 'DD-MM-YYYY', isDateColumn: true, essential: true },
-  { key: 'employee',    label: 'Employee Name',                         showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEmployeeColumn: true },
-  { key: 'project',     label: 'Project',                               showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'projects', builtIn: true },
-  { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
-  { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'natures', builtIn: true },
-  { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
-  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', rows: 4, builtIn: true, isTaskName: true },
-  { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEffortColumn: true, essential: true },
-  { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'statuses', isStatusColumn: true },
-  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'textarea', rows: 2, builtIn: true }
+  { key: 'date',        label: 'Date',                                  showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'date', dateFormat: 'DD-MM-YYYY', isDateColumn: true, essential: true },
+  { key: 'employee',    label: 'Employee Name',                         showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'text', isEmployeeColumn: true },
+  { key: 'project',     label: 'Project',                               showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'list', listSource: 'projects', builtIn: true },
+  { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'text', builtIn: true },
+  { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'list', listSource: 'natures', builtIn: true },
+  { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'text', builtIn: true },
+  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'textarea', rows: 4, builtIn: true, isTaskName: true },
+  { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'text', isEffortColumn: true, essential: true },
+  { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'list', listSource: 'statuses', isStatusColumn: true },
+  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'textarea', rows: 2, builtIn: true }
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -1930,6 +1935,15 @@ function loadState() {
             c.showInTaskCard = (def ? def.showInTaskCard : true) && wasVisible;
             c.showInCompletePopup = (def ? def.showInCompletePopup : true) && wasVisible;
             delete c.visible;
+          }
+          // Backfill the Carry fwd / Recurring flag for columns saved before it existed.
+          // Built-in columns fall back to their shipped default (project/module/nature
+          // copy across, ticket/description/remark/system columns don't); anything else
+          // (custom columns) defaults to true, matching the app's pre-flag behavior of
+          // always copying every custom field forward.
+          if (c.carryForward === undefined) {
+            const def = DEFAULT_LOG_COLUMNS.find(dc => dc.key === c.key);
+            c.carryForward = def ? def.carryForward : true;
           }
         });
         masters.migratedDescRemarkTextarea = true;
@@ -2295,6 +2309,48 @@ function getConfigurableColumns() {
 }
 function getColumnByKey(key) {
   return getLogColumns().find(c => c.key === key);
+}
+// Does this column's value get copied onto a new task card when the source task/entry
+// is carried forward, or when a recurring plan is created / materializes a new instance?
+// Defaults to true (matches the app's original behavior) unless explicitly turned off.
+function columnCarriesForward(key) {
+  const col = getColumnByKey(key);
+  return !col || col.carryForward !== false;
+}
+// Build the project/module/nature/ticket/customFields to seed onto a new carried-forward
+// or recurring task instance, honoring each column's "Carry fwd / Recurring" flag. A field
+// whose column has the flag off is left blank on the new instance even though the source
+// task/entry had a value — lets each field opt in/out of propagating forward independently.
+// `entry` is the most recent log entry for the source task (may be null), `task` is the
+// source task object itself (may be null when only a past log entry remains).
+function buildCarriedFields(entry, task) {
+  const pick = (key) => columnCarriesForward(key)
+    ? ((entry && entry[key]) || (task && task[key]) || '')
+    : '';
+  const project = pick('project');
+  const module  = pick('module');
+  const nature  = pick('nature');
+  const ticket  = pick('ticket');
+
+  const sourceCustom = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
+  const customFields = {};
+  Object.keys(sourceCustom).forEach(key => {
+    if (columnCarriesForward(key)) customFields[key] = sourceCustom[key];
+  });
+  // description/remark are canonical top-level fields on a finalized entry (see §18) —
+  // prefer that value over whatever draft copy happened to be sitting in customFields,
+  // but still respect the flag: skip (and strip any draft) when carryForward is off.
+  if (columnCarriesForward('description')) {
+    if (entry && entry.description) customFields.description = entry.description;
+  } else {
+    delete customFields.description;
+  }
+  if (columnCarriesForward('remark')) {
+    if (entry && entry.remark) customFields.remark = entry.remark;
+  } else {
+    delete customFields.remark;
+  }
+  return { project, module, nature, ticket, customFields };
 }
 // Format a date value (ISO YYYY-MM-DD string) according to a column's chosen dateFormat.
 function formatCustomDate(isoStr, dateFormat) {
@@ -2961,15 +3017,9 @@ function confirmCarryForward() {
   if (!task && !entry) { closeCarryForwardModal(); return; }
 
   const heading = (entry && entry.heading) || (task && task.heading) || '';
-  const project = (entry && entry.project) || (task && task.project) || '';
-  const nature  = (entry && entry.nature)  || (task && task.nature)  || '';
-  const module  = (entry && entry.module)  || (task && task.module)  || '';
-  const ticket  = (entry && entry.ticket)  || (task && task.ticket)  || '';
-  const customFields = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
-  // description/remark live top-level on the entry (see §18), not in entry.customFields —
-  // prefer that canonical, finalized value over whatever draft customFields happened to hold.
-  if (entry && entry.description) customFields.description = entry.description;
-  if (entry && entry.remark) customFields.remark = entry.remark;
+  // project/module/nature/ticket/customFields (incl. description/remark) are copied
+  // across only for columns with the "Carry fwd / Recurring" flag on — see buildCarriedFields().
+  const { project, module, nature, ticket, customFields } = buildCarriedFields(entry, task);
 
   const [yy, mm, dd] = chosenDateStr.split('-').map(Number);
   const w = (typeof getWorkHours === 'function') ? getWorkHours() : { startH: 9, startM: 30 };
@@ -3091,11 +3141,11 @@ function confirmMakeRecurring() {
   const includeWeekends = document.getElementById('mr-include-weekends').checked;
 
   const heading = (entry && entry.heading) || (task && task.heading) || '';
-  const project = (entry && entry.project) || (task && task.project) || '';
-  const nature  = (entry && entry.nature)  || (task && task.nature)  || '';
-  const module  = (entry && entry.module)  || (task && task.module)  || '';
-  const ticket  = (entry && entry.ticket)  || (task && task.ticket)  || '';
-  const customFields = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
+  // project/module/nature/ticket/customFields (incl. description/remark) are copied
+  // onto the plan only for columns with the "Carry fwd / Recurring" flag on — every
+  // instance the plan later materializes inherits this same filtered set (see
+  // buildCarriedFields() and materializeRecurringTasksUpTo()).
+  const { project, module, nature, ticket, customFields } = buildCarriedFields(entry, task);
 
   const planId = ++recurringPlanIdCounter;
   const plan = {
@@ -4582,6 +4632,11 @@ function renderColumnsTabHTML() {
           <input type="checkbox" ${c.showInCompletePopup!==false?'checked':''} onchange="toggleColumnContext('${c.key}','showInCompletePopup')" />
           Complete popup
         </label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:${isSystemManagedColumn(c)?'default':'pointer'}"
+          title="${isSystemManagedColumn(c) ? 'Not applicable — this field is managed automatically, not carried onto new tasks' : 'When carrying a task forward, or creating/materializing a recurring plan, copy this field\'s value onto the new task card'}">
+          <input type="checkbox" ${c.carryForward!==false?'checked':''} ${isSystemManagedColumn(c)?'disabled':''} onchange="toggleColumnContext('${c.key}','carryForward')" />
+          Carry fwd / Recurring
+        </label>
         ${!UNDELETABLE_KEYS.includes(c.key) ? `<button class="btn-icon btn-delete" onclick="confirmDeleteColumn('${c.key}')" title="Delete column"><i class="ti ti-trash"></i></button>` : `<span style="font-size:10px;color:var(--text-tertiary)" title="Required for timer/duration tracking">required</span>`}
       </div>
     </div>`;
@@ -4590,7 +4645,10 @@ function renderColumnsTabHTML() {
   return `
     <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
       Drag rows to reorder, rename any column's label, choose its input type, and show/hide it in
-      the log table, task card, and Complete popup. Date and Effort can't be deleted since the
+      the log table, task card, and Complete popup. "Carry fwd / Recurring" controls a separate
+      thing — whether that field's value gets copied onto the new task card when you carry a task
+      forward or when a recurring plan is created or generates a new instance; leave it unchecked
+      to have that field start blank instead. Date and Effort can't be deleted since the
       timer depends on them, but every other column — including Status — can be renamed, retyped,
       or removed. Changes apply to exports and CSV import mapping too.
     </div>
@@ -5108,7 +5166,7 @@ function addCustomColumn() {
   const existingKeys = getLogColumns().map(c => c.key);
   while (existingKeys.includes(key)) { key = baseKey + '_' + (++n); }
 
-  const newCol = { key, label, visible: true, type, builtIn: false };
+  const newCol = { key, label, visible: true, type, builtIn: false, carryForward: true };
   if (type === 'date') newCol.dateFormat = 'DD-MM-YYYY';
   if (type === 'textarea') newCol.rows = DEFAULT_TEXTAREA_ROWS;
   if (type === 'list' || type === 'multilist') {
