@@ -1539,7 +1539,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
     <div class="confirm-title" id="confirm-title">Are you sure?</div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-actions">
-      <button class="btn" onclick="confirmNo()">Cancel</button>
+      <button class="btn" id="confirm-no-btn" onclick="confirmNo()">Cancel</button>
       <button class="btn btn-danger" id="confirm-yes-btn" onclick="confirmYes()">Delete</button>
     </div>
   </div>
@@ -1840,6 +1840,7 @@ let masters = {
 let activeMastersTab = 'lists';
 let activeListKey = 'projects'; // which list is selected inside the consolidated Lists tab
 let confirmCallback = null;
+let confirmNoCallback = null;
 let pendingCompleteId = null;
 let pendingEditIdx = null;
 let cmTimerInterval = null; // task waiting for complete modal
@@ -2925,38 +2926,127 @@ function submitComplete() {
     ? adjMins * 60
     : Math.floor(task.accumulatedMs / 1000);
 
-  task.status = 'done';
-  task.accumulatedMs = totalSecs * 1000; // sync so reopen uses adjusted time
-  task.heading = heading;
-  task.project = project; task.nature = nature;
-  task.module = module; task.ticket = ticket;
-  if (!task.customFields) task.customFields = {};
-  Object.assign(task.customFields, customValues);
-  task.customFields.description = desc;
-  task.customFields.remark = remark;
-  const entry = [...logEntries].reverse().find(e => e.taskId===id && e.endTs===null);
-  if (entry) {
-    entry.endTs = customEnd || Date.now();
-    if (customStart) entry.startTs = customStart;
-    entry.durationSecs = totalSecs;
-    // If custom time was used, deduct that window from break
-    if (customStart && customEnd) deductFromBreak(customStart, customEnd);
-    entry.heading = heading;
-    entry.project = project; entry.module = module;
-    entry.nature = nature; entry.ticket = ticket;
-    entry.taskStatus = status;
-    entry.description = desc;
-    entry.remark = remark;
-    if (!entry.customFields) entry.customFields = {};
-    Object.assign(entry.customFields, customValues);
+  // If a multi-select (dropdown list, multi-select) field has more than one value
+  // checked, offer to split this completion into a separate log entry per value —
+  // each getting an even share of the total effort minutes — instead of logging one
+  // entry with every checked value combined into that field.
+  //
+  // Look at every multi-select column, not just the custom ones collected into
+  // customValues above. Built-in fields (Project, Nature, Module, Ticket, Status,
+  // Description, Remark) each have their own dedicated popup element (id 'cm-<key>')
+  // that's re-rendered to match the column's configured type by renderCmField every
+  // time the popup opens — including as a multi-select checkbox panel if that's what
+  // the column is set to — so a multi-valued Project selection lives at that element's
+  // .value, not in customFields. Prefer that live element's value for every column;
+  // only fall back to the entry's/task's already-saved value (customFields for custom
+  // columns) when no popup element exists at all — i.e. a custom multi-select column
+  // configured to appear on the Task Card only (showInCompletePopup:false).
+  const openEntry = [...logEntries].reverse().find(e => e.taskId===id && e.endTs===null);
+  const multiFieldsToSplit = getConfigurableColumns()
+    .filter(c => c.type === 'multilist')
+    .map(c => {
+      const el = document.getElementById('cm-' + c.key) || document.getElementById('cm-custom-' + c.key);
+      const raw = el ? el.value : getEntryValueForColumn(openEntry || {}, task, c.key);
+      return { key: c.key, values: String(raw || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean) };
+    })
+    .filter(f => f.values.length > 1);
+
+  // Write a single split value for `key` onto a log entry, mirroring the same
+  // key → storage mapping getEntryValueForColumn/getExportValueForColumn already use:
+  // built-in fields live at the top level of the entry, everything else lives in
+  // entry.customFields.
+  const setEntryFieldValue = (entryObj, key, val) => {
+    switch (key) {
+      case 'project': entryObj.project = val; break;
+      case 'module':  entryObj.module = val; break;
+      case 'nature':  entryObj.nature = val; break;
+      case 'ticket':  entryObj.ticket = val; break;
+      case 'status':  entryObj.taskStatus = val; break;
+      case 'remark':  entryObj.remark = val; break;
+      case 'description': entryObj.description = val; break;
+      default:
+        if (!entryObj.customFields) entryObj.customFields = {};
+        entryObj.customFields[key] = val;
+    }
+  };
+
+  // Finishes marking the task complete. `splitFields`, when given, is the list of
+  // multi-select fields (each with 2+ checked values) to split the completion across —
+  // one duplicate log entry per combination of their values, with effort minutes divided
+  // evenly and every other field (project/ticket/description/other custom values/etc.)
+  // duplicated unchanged. Pass null/empty to log a single entry exactly as before.
+  const finalizeMarkComplete = (splitFields) => {
+    task.status = 'done';
+    task.accumulatedMs = totalSecs * 1000; // sync so reopen uses adjusted time
+    task.heading = heading;
+    task.project = project; task.nature = nature;
+    task.module = module; task.ticket = ticket;
+    if (!task.customFields) task.customFields = {};
+    Object.assign(task.customFields, customValues);
+    task.customFields.description = desc;
+    task.customFields.remark = remark;
+    const entry = openEntry;
+    if (entry) {
+      entry.endTs = customEnd || Date.now();
+      if (customStart) entry.startTs = customStart;
+      // If custom time was used, deduct that window from break
+      if (customStart && customEnd) deductFromBreak(customStart, customEnd);
+      entry.heading = heading;
+      entry.project = project; entry.module = module;
+      entry.nature = nature; entry.ticket = ticket;
+      entry.taskStatus = status;
+      entry.description = desc;
+      entry.remark = remark;
+      if (!entry.customFields) entry.customFields = {};
+      Object.assign(entry.customFields, customValues);
+
+      if (splitFields && splitFields.length) {
+        // Cartesian product of every splitting field's checked values — one entry per
+        // combination (e.g. 2 values in field A × 3 in field B = 6 entries).
+        const combos = splitFields.reduce((acc, f) => {
+          const next = [];
+          acc.forEach(soFar => f.values.forEach(v => next.push({ ...soFar, [f.key]: v })));
+          return next;
+        }, [{}]);
+        const n = combos.length;
+        const baseSecs = Math.floor(totalSecs / n);
+        let remainder = totalSecs - baseSecs * n; // spread any leftover minute(s) across the first few entries
+
+        combos.forEach((combo, i) => {
+          const share = baseSecs + (remainder > 0 ? 1 : 0);
+          if (remainder > 0) remainder--;
+          // First combo reuses the entry already being completed; the rest are pushed
+          // as fresh duplicates so every field carries over except the split field(s).
+          const target = i === 0 ? entry : { ...entry, customFields: { ...entry.customFields } };
+          target.durationSecs = share;
+          Object.entries(combo).forEach(([key, val]) => setEntryFieldValue(target, key, val));
+          if (i > 0) logEntries.push(target);
+        });
+      } else {
+        entry.durationSecs = totalSecs;
+      }
+    }
+    closeCompleteModal();
+    saveState();
+    // Auto-remove completed card from task list
+    const doneRow = document.getElementById('row-' + id);
+    if (doneRow) doneRow.remove();
+    updateEmptyState();
+    updateLogPanel();
+  };
+
+  if (multiFieldsToSplit.length > 0) {
+    showConfirmChoice(
+      'Split into multiple entries?',
+      'One or more multi-select fields have more than one value checked. Split this completion into a separate log entry per value, dividing the effort minutes evenly across them? Choose "No" to log it as a single entry with all checked values combined, same as before.',
+      () => finalizeMarkComplete(multiFieldsToSplit),
+      () => finalizeMarkComplete(null),
+      'Split',
+      "No, keep as one"
+    );
+  } else {
+    finalizeMarkComplete(null);
   }
-  closeCompleteModal();
-  saveState();
-  // Auto-remove completed card from task list
-  const doneRow = document.getElementById('row-' + id);
-  if (doneRow) doneRow.remove();
-  updateEmptyState();
-  updateLogPanel();
 }
 
 // ── Continue an "In Progress" task tomorrow (manual, button-triggered) ───────
@@ -5297,13 +5387,32 @@ function listItemDragEnd(e) {
 // ── Confirm ───────────────────────────────────────────────────────────────────
 function showConfirm(title,msg,cb,yesLabel='Delete') {
   confirmCallback=cb;
+  confirmNoCallback=null;
   document.getElementById('confirm-title').textContent=title;
   document.getElementById('confirm-msg').textContent=msg;
   document.getElementById('confirm-yes-btn').textContent=yesLabel;
+  document.getElementById('confirm-yes-btn').className='btn btn-danger';
+  const noBtnReset = document.getElementById('confirm-no-btn');
+  if (noBtnReset) noBtnReset.textContent = 'Cancel';
   document.getElementById('confirm-overlay').classList.remove('hidden');
 }
-function confirmYes() { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmCallback){confirmCallback();confirmCallback=null;} }
-function confirmNo()  { document.getElementById('confirm-overlay').classList.add('hidden'); confirmCallback=null; }
+// Like showConfirm, but "No" is a meaningful choice rather than a plain dismiss — it
+// runs noCb too. Used for prompts where declining should still do something (e.g. "log
+// this as one entry instead" rather than just closing the dialog and doing nothing).
+function showConfirmChoice(title, msg, yesCb, noCb, yesLabel='Yes', noLabel='No') {
+  confirmCallback = yesCb;
+  confirmNoCallback = noCb;
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  const yesBtn = document.getElementById('confirm-yes-btn');
+  yesBtn.textContent = yesLabel;
+  yesBtn.className = 'btn btn-primary';
+  const noBtn = document.getElementById('confirm-no-btn');
+  if (noBtn) noBtn.textContent = noLabel;
+  document.getElementById('confirm-overlay').classList.remove('hidden');
+}
+function confirmYes() { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmCallback){confirmCallback();} confirmCallback=null; confirmNoCallback=null; }
+function confirmNo()  { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmNoCallback){confirmNoCallback();} confirmCallback=null; confirmNoCallback=null; }
 // ── Copy log to clipboard (data rows only, tab-separated) ───────────────────
 function copyLog() {
   const selDate = getSelectedDate();
