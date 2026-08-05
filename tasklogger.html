@@ -3701,14 +3701,21 @@ function buildDynamicFieldInput(col, idAttr, value, onChangeExpr, disabledAttr, 
     value="${esc(value || '')}" oninput="${onChangeExpr}" />`;
 }
 
-// ── Rich text editor for `type: 'textarea'` fields ──────────────────────────────
+// ── Plain-text multi-line editor for `type: 'textarea'` fields ─────────────────
 // A lightweight contenteditable-based editor used for every textarea-typed field, system
 // (Description, Remark) or custom, wherever it's rendered (task card, Complete/Edit popup).
-// It supports plain text, multi-line editing, and ordered/unordered lists, and stores its
-// value as a small, whitelisted HTML fragment (paragraphs/line breaks/lists) so formatting
-// survives editing and reloads. Plain-text values saved before this editor existed load in
-// unchanged (no migration needed), and content that never uses formatting round-trips as
-// plain text, so users who only type plain text see the same experience as before.
+// Field content is ALWAYS treated and stored as plain text — no bold/italic/lists, no HTML
+// fragment persisted anywhere. The only thing preserved beyond raw characters is line breaks,
+// so multi-line typing/pasting (e.g. from Excel cells or other docs) keeps its line structure.
+// Contenteditable (rather than a plain <textarea>) is still used only so the field can
+// auto-grow/scroll consistently with the rest of the UI, not to support any formatting.
+//
+// Entries saved by an earlier version of this app that DID store a rich-HTML fragment (bold,
+// bulleted/numbered lists, etc.) are handled read-only-once: the first time such a value is
+// loaded into the editor it is flattened to plain text (tags dropped, list items prefixed
+// with "• ", line breaks kept) via richTextToPlain — so old formatting is not preserved, but
+// nothing renders as raw HTML tags either. Saving the field again after that always writes
+// plain text.
 //
 // Follows the same hidden-input + visible-surface pattern already used for the multi-select
 // dropdown above: a hidden <input> (idAttr) holds the canonical value so every existing
@@ -3718,64 +3725,43 @@ function buildDynamicFieldInput(col, idAttr, value, onChangeExpr, disabledAttr, 
 // into. The '-trigger' suffix also matches the existing invalid-state lookup convention
 // (see submitComplete's check() and updateTaskField) so required-field validation styling
 // keeps working unmodified.
-const RTE_ALLOWED_TAGS = new Set(['P', 'BR', 'UL', 'OL', 'LI', 'DIV', 'B', 'STRONG', 'I', 'EM']);
 
-// Whitelist-sanitize an HTML fragment down to plain-text-safe structure (paragraphs, line
-// breaks, lists) — strips every other tag (unwrapping its contents) and every attribute, so
-// pasted content can't smuggle in scripts, styles, or arbitrary markup.
-function rteSanitizeHtml(html) {
-  const root = document.createElement('div');
-  root.innerHTML = html || '';
-  (function clean(node) {
-    Array.from(node.childNodes).forEach(child => {
-      if (child.nodeType === 1) {
-        if (!RTE_ALLOWED_TAGS.has(child.tagName)) {
-          while (child.firstChild) node.insertBefore(child.firstChild, child);
-          node.removeChild(child);
-          return;
-        }
-        Array.from(child.attributes).forEach(a => child.removeAttribute(a.name));
-        clean(child);
-      } else if (child.nodeType !== 3) {
-        node.removeChild(child); // strip comments, processing instructions, etc.
-      }
-    });
-  })(root);
-  return root.innerHTML;
-}
-// Heuristic: does this stored value already look like rich-editor HTML (from this feature),
-// as opposed to a legacy plain-text value that merely happens to contain a stray '<' or '>'?
+// Heuristic: does this stored value look like an HTML fragment left over from the old rich
+// text editor (paragraphs/breaks/lists/bold/italic), as opposed to a plain-text value that
+// merely happens to contain a stray '<' or '>'?
 function rteLooksLikeHtml(v) {
-  return /<\/?(p|div|br|ul|ol|li)(\s[^>]*)?>/i.test(v);
+  return /<\/?(p|div|br|ul|ol|li|b|strong|i|em)(\s[^>]*)?>/i.test(v);
 }
-// Legacy plain-text value → safe HTML for initial display, preserving line breaks.
+// Plain text → escaped HTML for display inside the contenteditable surface, preserving line
+// breaks as <br> (the only "structure" this editor ever renders).
 function rtePlainToHtml(v) {
   return esc(v).replace(/\r\n|\r|\n/g, '<br>');
 }
-// Compute the editor's initial inner HTML from a stored value, handling both legacy
-// plain-text values (requirement: load/display without migration) and rich HTML saved by
-// this editor.
-function rteInitialContent(value) {
-  const v = value == null ? '' : String(value);
-  if (!v) return '';
-  return rteLooksLikeHtml(v) ? rteSanitizeHtml(v) : rtePlainToHtml(v);
-}
-// Plain-text rendering of a stored (possibly rich) field value, for contexts that only ever
-// expected plain text: the log table's cells/tooltips, search/filter matching, clipboard
-// copy, and the email template's {log_table} token. Legacy plain-text values pass through
-// unchanged.
+// One-way flatten of an old rich-HTML fragment down to plain text: list items get a "• "
+// prefix, block/line boundaries become real newlines, every tag is otherwise dropped (its
+// text content kept). Plain-text values pass through unchanged.
 function richTextToPlain(html) {
   const v = html == null ? '' : String(html);
   if (!v || !rteLooksLikeHtml(v)) return v;
   const root = document.createElement('div');
-  root.innerHTML = rteSanitizeHtml(v);
+  root.innerHTML = v;
   root.querySelectorAll('li').forEach(li => { li.insertAdjacentText('afterbegin', '• '); li.insertAdjacentText('beforeend', '\n'); });
   root.querySelectorAll('p, div, br').forEach(el => el.insertAdjacentText('afterend', '\n'));
   return (root.textContent || '').replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
 }
+// Compute the editor's initial inner HTML from a stored value: always plain text, always
+// rendered through rtePlainToHtml. A value from the old rich editor is flattened first via
+// richTextToPlain so no HTML tag is ever interpreted as markup here.
+function rteInitialContent(value) {
+  const v = value == null ? '' : String(value);
+  if (!v) return '';
+  return rtePlainToHtml(richTextToPlain(v));
+}
 
 function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, placeholder) {
-  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch (e) {}
+  // Force Enter to insert a plain <br> rather than wrapping in <p>/<div> — keeps the
+  // editor's DOM to text nodes + <br> only, matching what it stores.
+  try { document.execCommand('defaultParagraphSeparator', false, 'br'); } catch (e) {}
   const isDisabled = !!(disabledAttr && String(disabledAttr).trim());
   const editorId = idAttr + '-trigger';
   const initialHtml = rteInitialContent(value);
@@ -3785,13 +3771,8 @@ function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, plac
   // this row count (see the --rte-rows custom property).
   const rows = (col && col.rows > 0) ? col.rows : DEFAULT_TEXTAREA_ROWS;
   const changeExpr = (onChangeExpr || '').replace(/this\.value/g, `document.getElementById('${idAttr}').value`);
-  const toolbar = isDisabled ? '' : `<div class="rte-toolbar">
-      <button type="button" class="rte-btn" tabindex="-1" title="Bulleted list" onmousedown="event.preventDefault()" onclick="rteToggleList('${editorId}','insertUnorderedList')"><i class="ti ti-list"></i></button>
-      <button type="button" class="rte-btn" tabindex="-1" title="Numbered list" onmousedown="event.preventDefault()" onclick="rteToggleList('${editorId}','insertOrderedList')"><i class="ti ti-list-numbers"></i></button>
-    </div>`;
   return `<div class="rte-wrap">
     <input type="hidden" id="${idAttr}" value="${esc(value || '')}" />
-    ${toolbar}
     <div id="${editorId}" class="rte-editor" contenteditable="${isDisabled ? 'false' : 'true'}"
       style="--rte-rows:${rows}"
       data-placeholder="${esc(placeholder || '')}"
@@ -3801,9 +3782,10 @@ function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, plac
   </div>`;
 }
 function rteIsEditorEmpty(editor) { return !editor.textContent.trim(); }
-// Sync the visible editor's content into the canonical hidden input, and clear any
-// leftover empty markup (a stray <br>) once the user has deleted everything, so the
-// placeholder reappears correctly.
+// Sync the visible editor's content into the canonical hidden input as PLAIN TEXT (line
+// breaks preserved, everything else discarded) — never store the editor's innerHTML — and
+// clear any leftover empty markup (a stray <br>) once the user has deleted everything, so
+// the placeholder reappears correctly.
 function rteSync(idAttr) {
   const editor = document.getElementById(idAttr + '-trigger');
   const hidden = document.getElementById(idAttr);
@@ -3812,25 +3794,19 @@ function rteSync(idAttr) {
     if (editor.innerHTML !== '') editor.innerHTML = '';
     hidden.value = '';
   } else {
-    hidden.value = editor.innerHTML;
+    hidden.value = richTextToPlain(editor.innerHTML) || editor.textContent;
     editor.classList.remove('invalid');
   }
 }
-function rteToggleList(editorId, cmd) {
-  const editor = document.getElementById(editorId);
-  if (!editor) return;
-  editor.focus();
-  document.execCommand(cmd);
-  rteSync(editorId.replace(/-trigger$/, ''));
-}
-// Paste as sanitized rich text (if the source provided HTML) or escaped plain text
-// (preserving line breaks), instead of inheriting arbitrary markup/styling from outside.
+// Paste is always forced to plain text — any rich formatting (bold, lists, fonts, colors,
+// etc.) from the clipboard is discarded. Only newlines are preserved, so multi-line pastes
+// (e.g. from Excel cells or other docs) still break into separate lines rather than
+// collapsing into one.
 function rtePaste(evt, idAttr) {
   evt.preventDefault();
   const cb = evt.clipboardData || window.clipboardData;
-  const html = cb ? cb.getData('text/html') : '';
   const text = cb ? cb.getData('text/plain') : '';
-  const fragment = html ? rteSanitizeHtml(html) : rtePlainToHtml(text);
+  const fragment = rtePlainToHtml(text);
   document.execCommand('insertHTML', false, fragment || '');
   rteSync(idAttr);
 }
