@@ -18,8 +18,6 @@
 </script>
 <link rel="icon" href="./favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json" />
 <script>
 if ('serviceWorker' in navigator) {
@@ -34,92 +32,67 @@ if ('serviceWorker' in navigator) {
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #fffdf8;
-  --bg-secondary: #f7f0dd;
-  --bg-tertiary: #ede1c3;
-  --text-primary: #26211a;
-  --text-secondary: #5a4f3c;
-  --text-tertiary: #8a7f68;
-  --border: rgba(38,33,26,0.16);
-  --border-md: rgba(38,33,26,0.30);
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --green-bg: #dcefe8;
-  --green-mid: #2f8f76;
-  --green-dark: #1f6350;
-  --amber-bg: #f3e9c9;
-  --amber-mid: #a3821f;
-  --amber-dark: #7a5f13;
-  --blue-bg: #fbe2d3;
-  --blue-mid: #c94f1f;
-  --blue-dark: #9c3c15;
-  --red-bg: #f6dede;
-  --red-mid: #b1403c;
-  --purple-bg: #e6e1f5;
-  --purple-mid: #6a5cb0;
-  --purple-dark: #4f4386;
-  --bg-primary: #fffdf8;
-  --shadow: 0 1px 2px rgba(38,33,26,0.08), 0 2px 8px rgba(38,33,26,0.05);
-  --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  --font-head: 'Space Grotesk', 'IBM Plex Sans', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
-  /* Scrollbar */
-  --scroll-track: var(--bg-secondary);
-  --scroll-thumb: var(--border-md);
-  --scroll-thumb-hover: var(--blue-mid);
+  --bg: #ffffff;
+  --bg-secondary: #f5f5f3;
+  --bg-tertiary: #efefec;
+  --text-primary: #1a1a18;
+  --text-secondary: #6b6b66;
+  --text-tertiary: #9e9e99;
+  --border: rgba(0,0,0,0.10);
+  --border-md: rgba(0,0,0,0.20);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --green-bg: #E1F5EE;
+  --green-mid: #1D9E75;
+  --green-dark: #0F6E56;
+  --amber-bg: #FAEEDA;
+  --amber-mid: #BA7517;
+  --amber-dark: #854F0B;
+  --blue-bg: #E6F1FB;
+  --blue-mid: #185FA5;
+  --blue-dark: #0C447C;
+  --red-bg: #FCEBEB;
+  --red-mid: #A32D2D;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
 }
 /* System preference fallback — only applies when no explicit theme is set */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --bg: #1c2230; --bg-secondary: #232a3d; --bg-tertiary: #0c0e13;
-    --text-primary: #edeff4; --text-secondary: #8b93a7; --text-tertiary: #5b6478;
-    --border: #2e3549; --border-md: #454f6b;
-    --green-bg: #1c332e; --green-mid: #3fab8f; --green-dark: #7fd4bc;
-    --amber-bg: #2b2a1f; --amber-mid: #d1b954; --amber-dark: #e8cf7a;
-    --blue-bg: #3a2a20; --blue-mid: #e8622c; --blue-dark: #ff8f5c;
-    --red-bg: #331f1f; --red-mid: #d9534f;
-    --purple-bg: #221f35; --purple-mid: #8b7fd1; --purple-dark: #b0a8e8;
-    --bg-primary: #1c2230;
-    --shadow: 0 1px 2px rgba(0,0,0,0.3);
+    --bg: #1c1c1a; --bg-secondary: #262624; --bg-tertiary: #2e2e2c;
+    --text-primary: #f0efe8; --text-secondary: #a0a09a; --text-tertiary: #6b6b66;
+    --border: rgba(255,255,255,0.10); --border-md: rgba(255,255,255,0.20);
+    --green-bg: #04342C; --green-mid: #5DCAA5; --green-dark: #9FE1CB;
+    --amber-bg: #412402; --amber-mid: #EF9F27; --amber-dark: #FAC775;
+    --blue-bg: #042C53; --blue-mid: #378ADD; --blue-dark: #85B7EB;
+    --red-bg: #501313; --red-mid: #F09595;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
   }
 }
 /* Explicit dark theme — set via the theme toggle, overrides system preference */
 :root[data-theme="dark"] {
-  --bg: #1c2230; --bg-secondary: #232a3d; --bg-tertiary: #0c0e13;
-  --text-primary: #edeff4; --text-secondary: #8b93a7; --text-tertiary: #5b6478;
-  --border: #2e3549; --border-md: #454f6b;
-  --green-bg: #1c332e; --green-mid: #3fab8f; --green-dark: #7fd4bc;
-  --amber-bg: #2b2a1f; --amber-mid: #d1b954; --amber-dark: #e8cf7a;
-  --blue-bg: #3a2a20; --blue-mid: #e8622c; --blue-dark: #ff8f5c;
-  --red-bg: #331f1f; --red-mid: #d9534f;
-  --purple-bg: #221f35; --purple-mid: #8b7fd1; --purple-dark: #b0a8e8;
-  --bg-primary: #1c2230;
-  --shadow: 0 1px 2px rgba(0,0,0,0.3);
-  /* Scrollbar */
-  --scroll-track: var(--bg-secondary);
-  --scroll-thumb: rgba(255,255,255,.28);
-  --scroll-thumb-hover: var(--blue-mid);
+  --bg: #1c1c1a; --bg-secondary: #262624; --bg-tertiary: #2e2e2c;
+  --text-primary: #f0efe8; --text-secondary: #a0a09a; --text-tertiary: #6b6b66;
+  --border: rgba(255,255,255,0.10); --border-md: rgba(255,255,255,0.20);
+  --green-bg: #04342C; --green-mid: #5DCAA5; --green-dark: #9FE1CB;
+  --amber-bg: #412402; --amber-mid: #EF9F27; --amber-dark: #FAC775;
+  --blue-bg: #042C53; --blue-mid: #378ADD; --blue-dark: #85B7EB;
+  --red-bg: #501313; --red-mid: #F09595;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.2);
 }
 /* Explicit light theme — set via the theme toggle, overrides system preference */
 :root[data-theme="light"] {
-  --bg: #fffdf8; --bg-secondary: #f7f0dd; --bg-tertiary: #ede1c3;
-  --text-primary: #26211a; --text-secondary: #5a4f3c; --text-tertiary: #8a7f68;
-  --border: rgba(38,33,26,0.16); --border-md: rgba(38,33,26,0.30);
-  --green-bg: #dcefe8; --green-mid: #2f8f76; --green-dark: #1f6350;
-  --amber-bg: #f3e9c9; --amber-mid: #a3821f; --amber-dark: #7a5f13;
-  --blue-bg: #fbe2d3; --blue-mid: #c94f1f; --blue-dark: #9c3c15;
-  --purple-bg: #e6e1f5; --purple-mid: #6a5cb0; --purple-dark: #4f4386;
-  --red-bg: #f6dede; --red-mid: #b1403c;
-  --bg-primary: #fffdf8;
-  --shadow: 0 1px 2px rgba(38,33,26,0.08), 0 2px 8px rgba(38,33,26,0.05);
-  /* Scrollbar */
-  --scroll-track: var(--bg-secondary);
-  --scroll-thumb: var(--border-md);
-  --scroll-thumb-hover: var(--blue-mid);
+  --bg: #ffffff; --bg-secondary: #f5f5f3; --bg-tertiary: #efefec;
+  --text-primary: #1a1a18; --text-secondary: #6b6b66; --text-tertiary: #9e9e99;
+  --border: rgba(0,0,0,0.10); --border-md: rgba(0,0,0,0.20);
+  --green-bg: #E1F5EE; --green-mid: #1D9E75; --green-dark: #0F6E56;
+  --amber-bg: #FAEEDA; --amber-mid: #BA7517; --amber-dark: #854F0B;
+  --blue-bg: #E6F1FB; --blue-mid: #185FA5; --blue-dark: #0C447C;
+  --red-bg: #FCEBEB; --red-mid: #A32D2D;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.05);
 }
 
 body {
-  font-family: var(--font-ui);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg-tertiary); color: var(--text-primary);
   min-height: 100vh; padding: 2rem 1rem 4rem; line-height: 1.6;
 }
@@ -132,26 +105,23 @@ body {
   display: flex; align-items: flex-start; justify-content: space-between;
   margin-bottom: 1.5rem; gap: 12px;
 }
-.title { font-family: var(--font-head); font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
-.subtitle { font-family: var(--font-mono); font-size: 12px; color: var(--text-tertiary); margin-top: 5px; letter-spacing: 0.02em; }
+.title { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+.subtitle { font-size: 13px; color: var(--text-tertiary); margin-top: 3px; }
 .header-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
 
 /* Buttons */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 14px; border: 1px solid var(--border-md);
+  padding: 9px 14px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg);
-  color: var(--text-primary); font-size: 12.5px; font-weight: 500;
-  cursor: pointer; transition: border-color 0.15s, background 0.15s; white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06); font-family: var(--font-mono); letter-spacing: 0.02em;
+  color: var(--text-primary); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.15s; white-space: nowrap;
+  box-shadow: var(--shadow); font-family: inherit;
 }
-.btn:hover { background: var(--bg-secondary); border-color: var(--text-tertiary); }
+.btn:hover { background: var(--bg-secondary); }
 .btn i { font-size: 15px; }
-.btn-primary {
-  background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid);
-  font-weight: 600; box-shadow: 0 0 0 3px var(--blue-bg), 0 2px 10px rgba(232,98,44,0.25);
-}
-.btn-primary:hover { background: var(--blue-dark) !important; border-color: var(--blue-dark) !important; }
+.btn-primary { background: var(--green-mid); color: #fff; border-color: var(--green-dark); }
+.btn-primary:hover { background: var(--green-dark) !important; }
 .btn-icon {
   display: flex; align-items: center; justify-content: center;
   width: 30px; height: 30px; border: 1px solid var(--border);
@@ -172,32 +142,16 @@ body {
 .btn-delete:hover { border-color: var(--red-mid); color: var(--red-mid); background: var(--red-bg) !important; }
 .btn-danger { background: var(--red-bg); color: var(--red-mid); border-color: var(--red-mid); }
 .btn-danger:hover { background: var(--red-mid) !important; color: #fff; }
-.btn-highlight {
-  background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid); font-weight: 600;
-  box-shadow: 0 0 0 3px var(--blue-bg), 0 2px 10px rgba(232,98,44,0.3);
-}
-.btn-highlight:hover { background: var(--blue-dark) !important; border-color: var(--blue-dark) !important; }
 
 /* Task card */
 .task-card {
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 14px 16px;
-  margin-bottom: 10px; transition: border-color 0.2s; box-shadow: none;
+  border-radius: var(--radius-lg); padding: 12px 14px;
+  margin-bottom: 10px; transition: border-color 0.2s; box-shadow: var(--shadow);
 }
 .task-card.running { border-color: var(--green-mid); }
 .task-card.paused  { border-color: var(--amber-mid); }
 .task-card.done    { opacity: 0.7; }
-.task-card.dragging { opacity: 0.35; }
-
-.task-drag-handle {
-  display: flex; align-items: center; justify-content: center;
-  width: 18px; height: 26px; flex-shrink: 0; margin-left: -4px;
-  color: var(--text-tertiary); cursor: grab; border-radius: 4px;
-  touch-action: none;
-}
-.task-drag-handle:hover { color: var(--text-secondary); background: var(--bg-secondary); }
-.task-drag-handle:active { cursor: grabbing; }
-.task-drag-handle i { font-size: 15px; pointer-events: none; }
 
 .task-top { display: flex; align-items: center; gap: 8px; }
 .task-input {
@@ -208,16 +162,16 @@ body {
 .task-input:disabled { color: var(--text-secondary); }
 
 .timer-display {
-  font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--text-tertiary);
+  font-size: 13px; font-weight: 700; color: var(--text-tertiary);
   min-width: 62px; text-align: right; font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em; flex-shrink: 0;
+  letter-spacing: 0.04em; flex-shrink: 0;
 }
 .timer-display.running { color: var(--green-dark); }
 .timer-display.paused  { color: var(--amber-dark); }
 
 .status-badge {
-  font-family: var(--font-mono); font-size: 10.5px; padding: 2px 9px; border-radius: 20px;
-  font-weight: 500; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.02em;
+  font-size: 11px; padding: 3px 9px; border-radius: 20px;
+  font-weight: 500; white-space: nowrap; flex-shrink: 0;
 }
 .badge-idle    { background: var(--bg-secondary); color: var(--text-tertiary); }
 .badge-running { background: var(--green-bg);  color: var(--green-dark); }
@@ -230,24 +184,23 @@ body {
 .task-meta { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; align-items: flex-end; }
 .meta-field { display: flex; flex-direction: column; gap: 3px; }
 .meta-label {
-  font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500;
+  font-size: 10px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
 }
 .meta-label .req { color: var(--red-mid); margin-left: 2px; }
 .meta-select, .meta-input {
-  padding: 6px 9px; border: 1px solid var(--border-md);
+  padding: 5px 8px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg-secondary);
-  color: var(--text-primary); font-size: 12px; font-family: var(--font-mono);
+  color: var(--text-primary); font-size: 12px; font-family: inherit;
   outline: none; transition: border-color 0.15s;
-  width:100%;
 }
-.meta-select:focus, .meta-input:focus { border-color: var(--blue-mid); }
+.meta-select:focus, .meta-input:focus { border-color: var(--green-mid); }
 .meta-select:disabled, .meta-input:disabled { opacity: 0.6; }
 .meta-select.invalid, .meta-input.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
 .meta-field-project .meta-select { min-width: 130px; }
 .meta-field-nature  .meta-select { min-width: 130px; }
 .meta-field-module  .meta-input  { width: 160px; }
-.msdd { position: relative; display: inline-block; min-width: 140px;width:100%; }
+.msdd { position: relative; display: inline-block; min-width: 140px; }
 .msdd-trigger {
   width: 100%; text-align: left; cursor: pointer; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis;
@@ -268,72 +221,7 @@ body {
 .msdd-option:hover { background: var(--bg-secondary); }
 .msdd-option input[type="checkbox"] { cursor: pointer; }
 .msdd-empty { font-size: 12px; color: var(--text-tertiary); padding: 6px 8px; }
-.meta-field-ticket  .meta-input  { 
-  /* width: 100px;  */
-}
-/* Textarea-type fields (built-in Description/Remark, or any custom column set to
-   "textarea") have no intrinsic content width like a select or text input does, so
-   without an explicit flex-basis they'd shrink to min-content and look misaligned
-   next to Project/Nature/Module/Ticket. Give them the full row instead. */
-.meta-field-wide { flex: 1 1 100%; min-width: 220px; }
-.meta-field-wide .rte-wrap,
-.meta-field-wide .rte-editor { width: 100%; }
-
-/* Rich text editor (type: 'textarea' fields) */
-.rte-wrap { width: 100%; }
-.rte-toolbar { display: flex; gap: 3px; margin-bottom: 4px; }
-.rte-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 25px; height: 23px; border: 1px solid var(--border-md); border-radius: 5px;
-  background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer;
-  font-size: 13px; padding: 0;
-}
-.rte-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.rte-editor {
-  /* Height driven by the column's configured Rows (Master Field Configuration), not a
-     hardcoded pixel value — see buildRichTextInput, which sets --rte-rows inline per field.
-     Using em-based line-height keeps this correct across contexts with different font-sizes
-     (Task Card vs Complete/Edit popup) without any per-context height constant. Fixed height
-     (not min-height) + overflow-y auto means the editor starts at exactly N rows and scrolls
-     internally for extra content instead of growing indefinitely. */
-  --rte-pad: 14px;
-  width: 100%; height: calc(var(--rte-rows, 3) * 1.5em + var(--rte-pad)); overflow-y: auto; resize: vertical;
-  padding: 7px 9px; border: 1px solid var(--border-md); border-radius: var(--radius-md);
-  background: var(--bg-secondary); color: var(--text-primary);
-  font-size: 12px; font-family: var(--font-mono); line-height: 1.5; outline: none;
-  transition: border-color 0.15s;
-}
-.rte-editor:focus { border-color: var(--blue-mid); }
-.rte-editor.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
-.rte-editor[contenteditable="false"] { opacity: 0.6; cursor: default; }
-.rte-editor:empty::before { content: attr(data-placeholder); color: var(--text-tertiary); pointer-events: none; }
-.rte-editor p { margin: 0 0 8px; }
-.rte-editor p:last-child { margin-bottom: 0; }
-.rte-editor ul, .rte-editor ol { margin: 0 0 8px 20px; padding: 0; }
-.rte-editor ul:last-child, .rte-editor ol:last-child { margin-bottom: 0; }
-.rte-editor li { margin: 2px 0; }
-/* In the Complete/Edit popup, match the surrounding .complete-* field sizing — only the
-   padding/font-size differ; the row-based height calc above still applies unchanged. */
-.complete-field .rte-editor { --rte-pad: 16px; font-size: 13px; padding: 8px 10px; }
-/* Task-card textarea fields: collapsed by default to save vertical space (see
-   expandedTaskCardFields / toggleTaskCardFieldCollapse). Collapsed shows exactly one row
-   and hides the list-formatting toolbar; expanding restores the field's configured Rows
-   height and the toolbar. Only applies on the task card — Complete/Edit popups always
-   show the full configured height, since there's no space pressure there. */
-/* .meta-field (two classes) beats the single-class .meta-field-wide rule above,
-   regardless of source order, so collapsed always wins over the "full width" default. */
-.meta-field.tc-field-collapsed { flex: 0 0 257px; width: 257px; max-width: 257px; }
-.tc-field-collapsed .rte-editor { --rte-rows: 1 !important; overflow-y: hidden; }
-.tc-field-collapsed .rte-toolbar { display: none; }
-.meta-collapse-toggle {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 16px; height: 16px; margin-left: 2px; padding: 0; vertical-align: -3px;
-  border: none; background: transparent; color: var(--text-tertiary); cursor: pointer;
-  border-radius: 3px;
-}
-.meta-collapse-toggle:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-.meta-collapse-toggle i { display: block; transition: transform 0.15s; }
-.meta-collapse-toggle.expanded i { transform: rotate(180deg); }
+.meta-field-ticket  .meta-input  { width: 100px; }
 
 /* Validation error */
 .validation-msg {
@@ -346,128 +234,16 @@ body {
 .log-panel {
   background: var(--bg); border: 1px solid var(--border);
   border-radius: var(--radius-lg); margin-top: 1.5rem;
-  box-shadow: none; overflow: hidden;
+  box-shadow: var(--shadow); overflow: hidden;
   width: 100%;
 }
-
-/* Floating fullscreen controls */
-
-.fs-action-chip{
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-
-    display: flex;
-    gap: 6px;
-    padding: 6px;
-
-    border-radius: 999px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(12px);
-
-    z-index: 999999;
-
-    opacity: 0;
-    transform: translateY(12px);   /* Add this */
-
-    pointer-events: none;
-
-    transition:
-        opacity .25s ease,
-        transform .25s ease;       /* Replace transition:.25s */
-}
-
-.fs-action-chip.show{
-    opacity: 1;
-    transform: translateY(0);      /* Add this */
-    pointer-events: auto;
-}
-
-.fs-chip-btn {
-
-width: 40px;
-height: 40px;
-
-border: none;
-
-border-radius: 50%;
-
-background: transparent;
-
-color: var(--text-primary);
-
-cursor: pointer;
-
-display: flex;
-
-align-items: center;
-
-justify-content: center;
-}
-
-.fs-chip-btn:hover {
-
-background: var(--bg-secondary);
-
-}
-
-@media(max-width:768px) {
-
-  .fs-action-chip{
-        left:50%;
-        right:auto;
-        bottom:18px;
-        transform:translate(-50%,12px);
-    }
-
-    .fs-action-chip.show{
-        transform:translate(-50%,0);
-    }
-
-}
-
-/* ---------- Fullscreen Log Table ---------- */
-
-.log-panel.fullscreen{
-    width:100%;
-    height:100%;
-    margin:0;
-    border-radius:0;
-    display:flex;
-    flex-direction:column;
-}
-
-/* CSS-simulated fullscreen fallback for browsers that don't support the
-   Fullscreen API on non-video elements (iPhone Safari and Chrome, both
-   WebKit-based, do not support Element.requestFullscreen() on divs). */
-.log-panel.fullscreen-sim{
-    position:fixed;
-    top:0; left:0;
-    width:100vw;
-    height:100dvh;
-    z-index:9999;
-    background:var(--bg);
-}
-
-.log-panel.fullscreen .log-wrap{
-    flex:1;
-    max-height:none !important;
-}
-
-body.log-fullscreen {
-    overflow: hidden;
-}
-
 .log-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
   background: var(--bg-secondary); gap: 10px; flex-wrap: wrap;
 }
-.log-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary); }
-.log-count { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-tertiary); margin-top: 2px; }
+.log-title { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.log-count { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
 .log-header-actions { display: flex; gap: 8px; }
 .log-wrap {
   overflow-x: auto; width: 100%;
@@ -475,126 +251,31 @@ body.log-fullscreen {
   transition: max-height 0.35s ease;
 }
 .log-wrap.expanded {
-  max-height: 480px;
+  max-height: 9999px;
   overflow-y: auto;
 }
 .log-collapse-icon { transition: transform 0.25s; display: inline-block; }
 .log-collapse-icon.open { transform: rotate(90deg); }
 .log-collapse-btn {
   display: flex; align-items: center; gap: 5px;
-  font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary);
-  cursor: pointer; background: none; border: none; padding: 0;
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; background: none; border: none; font-family: inherit; padding: 0;
 }
-.log-collapse-btn:hover { color: var(--blue-mid); }
-table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 900px; }
+.log-collapse-btn:hover { color: var(--text-primary); }
+table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
 thead th {
   text-align: left; padding: 8px 12px; color: var(--text-tertiary);
-  font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; text-transform: uppercase;
-  letter-spacing: 0.08em; border-bottom: 1px solid var(--border);
+  font-weight: 500; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
   background: var(--bg-secondary); white-space: nowrap;
 }
 tbody tr { border-bottom: 1px solid var(--border); }
 tbody tr:last-child { border-bottom: none; }
-tbody td { padding: 9px 12px; color: var(--text-secondary); vertical-align: middle; white-space: nowrap; }
+tbody td { padding: 8px 12px; color: var(--text-secondary); vertical-align: middle; white-space: nowrap; }
 tbody td:first-child { color: var(--text-primary); font-weight: 500; }
-.td-desc { min-width: 180px; max-width: 280px; }
+.td-desc { white-space: normal; min-width: 180px; max-width: 280px; }
 .cell-running { color: var(--green-dark); font-weight: 500; }
-.cell-dur { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; color: var(--blue-mid); }
-
-/* ── Log table column interactions (sort / resize / pin / sticky) — scoped to
-   .log-table only, so no other table in the app is affected. ── */
-.log-table { table-layout: fixed; }
-.log-table th { position: relative; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding-right: 26px; }
-.log-table td { overflow: hidden; text-overflow: ellipsis; }
-.log-table th.log-th-sortable { cursor: pointer; user-select: none; }
-.log-table th.log-th-sortable:hover { color: var(--text-primary); }
-.log-table .col-sort-arrow { font-size: 9px; color: var(--blue-mid); margin-left: 4px; }
-.log-table .col-resize-handle {
-  position: absolute; top: 0; right: 0; width: 8px; height: 100%; cursor: col-resize; user-select: none;
-  touch-action: none; z-index: 2;
-}
-.log-table .col-resize-handle::after {
-  content: ''; position: absolute; top: 2px; bottom: 2px; right: 3px; width: 2px; background: var(--border-md);
-}
-.log-table .col-resize-handle:hover::after, .log-table .col-resize-handle.active::after { background: var(--blue-mid); }
-.log-table .col-pin-icon {
-  position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
-  background: none; border: none; color: var(--text-tertiary); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; line-height: 1; padding: 2px; z-index: 2; opacity: .55;
-}
-.log-table .col-pin-icon:hover { color: var(--text-primary); opacity: 1; }
-.log-table .col-pin-icon.pin-left { color: var(--blue-mid); opacity: 1; }
-.log-table .col-pin-icon.pin-right { color: var(--green-mid); opacity: 1; }
-.log-table thead th { position: sticky; top: 0; z-index: 5; background: var(--bg-secondary); }
-.log-table .pinned-col { position: sticky !important; z-index: 2; background: var(--bg); }
-.log-table thead th.pinned-col { z-index: 8; background: var(--bg-secondary); }
-.log-table .pinned-col-edge-left { box-shadow: 2px 0 0 var(--border); }
-.log-table .pinned-col-edge-right { box-shadow: -2px 0 0 var(--border); }
-
-/* ── Sticky Action column — always pinned to the right, independent of the
-   user-configurable column pinning above, with a collapse/expand toggle. ── */
-.log-table th[data-col="__actions"],
-.log-table td[data-col="__actions"] {
-  position: sticky; right: 0; z-index: 6; background: var(--bg);
-  box-shadow: -2px 0 0 var(--border); padding-right: 8px;
-  white-space: normal; overflow: visible;
-}
-.log-table thead th[data-col="__actions"] {
-  z-index: 9; background: var(--bg-secondary); padding: 8px 8px;
-}
-.log-actions-th-inner { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-.log-actions-th-label { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; }
-.log-actions-collapse-btn {
-  background: none; border: none; color: var(--text-tertiary); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; padding: 2px; line-height: 1;
-}
-.log-actions-collapse-btn:hover { color: var(--text-primary); }
-.log-actions-collapsed-cell { position: sticky; right: 0; text-align: center; }
-.log-actions-menu {
-  position: absolute; top: 100%; right: 4px; margin-top: 4px;
-  background: var(--bg); border: 1px solid var(--border-md); border-radius: var(--radius-md);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.18); padding: 6px; z-index: 30; min-width: 40px;
-}
-.log-actions-menu.hidden { display: none; }
-.log-actions-menu .actions { flex-direction: column; align-items: stretch; }
-
-/* ── Custom tooltip (replaces native browser title tooltips) — ported from the
-   Dashboard's table tooltip implementation: same markup, positioning, and
-   overflow-edge handling, restyled with the TTL design tokens so it matches
-   both the Light and Dark themes automatically via CSS variables. ── */
-#appTooltip {
-  position: fixed;
-  z-index: 10050;
-  max-width: 320px;
-  background: var(--bg);
-  color: var(--text-primary);
-  border: 1px solid var(--blue-mid);
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  line-height: 1.4;
-  white-space: pre-line;
-  word-break: break-word;
-  box-shadow: var(--shadow), 0 10px 30px rgba(0,0,0,0.25);
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity .12s ease, transform .12s ease;
-}
-#appTooltip.visible { opacity: 1; transform: translateY(0); }
-#appTooltip::after {
-  content: '';
-  position: absolute;
-  left: 14px;
-  width: 8px; height: 8px;
-  background: var(--bg);
-  border: 1px solid var(--blue-mid);
-  border-top: none; border-left: none;
-  transform: rotate(45deg);
-}
-#appTooltip.tip-below::after { top: -5px; transform: rotate(225deg); }
-#appTooltip.tip-above::after { bottom: -5px; transform: rotate(45deg); }
+.cell-dur { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--text-primary); }
 
 /* Complete modal — description + final meta confirm */
 .modal-overlay {
@@ -603,34 +284,34 @@ tbody td:first-child { color: var(--text-primary); font-weight: 500; }
 }
 .modal-overlay.hidden { display: none; }
 .modal {
-  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 520px;
+  background: var(--bg); border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25); width: 100%; max-width: 520px;
   max-height: 90vh; display: flex; flex-direction: column;
 }
 .modal-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 20px; border-bottom: 1px solid var(--border);
 }
-.modal-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; }
+.modal-title { font-size: 15px; font-weight: 600; }
 .modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
 .modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
 
 .complete-field { margin-bottom: 14px; }
 .complete-label {
-  display: block; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-tertiary);
-  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 5px;
+  display: block; font-size: 11px; color: var(--text-tertiary);
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 5px;
 }
 .complete-label .req { color: var(--red-mid); }
 .complete-select, .complete-input, .complete-textarea {
   width: 100%; padding: 8px 10px; border: 1px solid var(--border-md);
   border-radius: var(--radius-md); background: var(--bg-secondary);
-  color: var(--text-primary); font-size: 13px; font-family: var(--font-mono); outline: none;
+  color: var(--text-primary); font-size: 13px; font-family: inherit; outline: none;
   transition: border-color 0.15s;
 }
-.complete-select:focus, .complete-input:focus, .complete-textarea:focus { border-color: var(--blue-mid); }
+.complete-select:focus, .complete-input:focus, .complete-textarea:focus { border-color: var(--green-mid); }
 .complete-select.invalid, .complete-input.invalid, .complete-textarea.invalid { border-color: var(--red-mid) !important; background: var(--red-bg); }
 .complete-textarea { resize: vertical; min-height: 72px; }
-.et-body-tpl { font-size: 12px; font-family: var(--font-mono); color: var(--text-primary); background: var(--bg-secondary); }
+.et-body-tpl { font-size: 12px; font-family: monospace; color: var(--text-primary); background: var(--bg-secondary); }
 
 #tour-backdrop.hidden { display: none; }
 #tour-bubble.hidden  { display: none; }
@@ -677,12 +358,6 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   padding-top: 80px;
 }
 #task-search-overlay.hidden { display: none; }
-.log-row-highlight { animation: logRowHighlightFlash 2.2s ease; }
-@keyframes logRowHighlightFlash {
-  0%   { background: var(--blue-bg, #dbeafe); }
-  70%  { background: var(--blue-bg, #dbeafe); }
-  100% { background: transparent; }
-}
 #task-search-box {
   background: var(--bg-primary);
   border: 1px solid var(--border-md);
@@ -700,7 +375,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .search-result-item:last-child { border-bottom: none; }
 .search-result-item:hover, .search-result-item.active { background: var(--bg-secondary); }
 .search-result-date {
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);
+  font-size: 11px; color: var(--text-tertiary);
   white-space: nowrap; padding-top: 2px; min-width: 72px;
 }
 .search-result-body { flex: 1; min-width: 0; }
@@ -710,7 +385,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .search-result-heading em { font-style: normal; color: var(--blue-mid); background: var(--blue-bg); border-radius: 2px; padding: 0 1px; }
 .search-result-meta {
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); margin-top: 2px;
+  font-size: 11px; color: var(--text-tertiary); margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .search-empty { padding: 28px 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; }
@@ -735,8 +410,8 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   background: var(--green-bg); border-radius: var(--radius-md);
   margin-bottom: 16px; border: 1px solid var(--green-mid);
 }
-.timer-summary-time { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
-.timer-summary-label { font-family: var(--font-mono); font-size: 12px; color: var(--green-dark); }
+.timer-summary-time { font-size: 20px; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
+.timer-summary-label { font-size: 12px; color: var(--green-dark); }
 
 /* Masters modal */
 .masters-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -745,7 +420,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   background: transparent; cursor: pointer; font-size: 13px; font-weight: 500;
   color: var(--text-secondary); font-family: inherit; transition: all 0.15s;
 }
-.tab-btn.active { background: var(--blue-mid); color: #1a1108; border-color: var(--blue-mid); font-weight: 600; }
+.tab-btn.active { background: var(--green-mid); color: #fff; border-color: var(--green-mid); }
 .master-list { display: flex; flex-direction: column; gap: 6px; }
 .master-item {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px;
@@ -768,7 +443,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   border-radius: var(--radius-md); background: var(--bg);
   color: var(--text-primary); font-size: 13px; font-family: inherit; outline: none;
 }
-.master-add-input:focus { border-color: var(--blue-mid); }
+.master-add-input:focus { border-color: var(--green-mid); }
 
 /* Confirm */
 .confirm-overlay {
@@ -777,10 +452,10 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .confirm-overlay.hidden { display: none; }
 .confirm-box {
-  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 340px; padding: 24px 20px;
+  background: var(--bg); border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.25); width: 100%; max-width: 340px; padding: 24px 20px;
 }
-.confirm-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.confirm-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
 .confirm-msg { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
 .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
@@ -789,19 +464,19 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .date-picker-wrap {
   display: flex; align-items: center; gap: 6px;
   background: var(--bg); border: 1px solid var(--border-md);
-  border-radius: var(--radius-md); padding: 7px 10px;
-  box-shadow: none; cursor: pointer;
+  border-radius: var(--radius-md); padding: 6px 10px;
+  box-shadow: var(--shadow); cursor: pointer;
 }
 .date-picker-wrap:hover { background: var(--bg-secondary); }
 .date-picker-wrap i { font-size: 15px; color: var(--text-secondary); flex-shrink:0; }
 .date-picker-input {
   border: none; outline: none; background: transparent;
-  font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+  font-family: inherit; font-size: 13px; font-weight: 500;
   color: var(--text-primary); cursor: pointer; min-width: 0;
 }
 .date-picker-input::-webkit-calendar-picker-indicator { opacity: 0; position: absolute; width: 0; }
 .date-today-badge {
-  font-family: var(--font-mono); font-size: 10px; padding: 2px 7px; border-radius: 20px;
+  font-size: 10px; padding: 2px 7px; border-radius: 20px;
   background: var(--green-bg); color: var(--green-dark); font-weight: 600;
   white-space: nowrap; flex-shrink: 0;
 }
@@ -814,14 +489,14 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   display: none; position: fixed; bottom: 20px; right: 20px;
   background: var(--green-mid); color: #fff; padding: 8px 14px;
   border-radius: var(--radius-md); font-size: 12px; font-weight: 500;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 50;
+  box-shadow: var(--shadow); z-index: 50;
 }
 .wake-notice.show { display: block; }
 
 .task-card.future-task { opacity: 0.85; border-style: dashed; border-color: var(--purple-mid); }
 .future-badge {
   display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--purple-mid);
+  font-size: 11px; font-weight: 600; color: var(--purple-mid);
   background: var(--purple-bg); padding: 4px 9px; border-radius: 20px;
   white-space: nowrap;
 }
@@ -847,11 +522,11 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .username-prompt-overlay.hidden { display: none; }
 .username-prompt-box {
-  background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.35); width: 100%; max-width: 360px;
+  background: var(--bg); border-radius: var(--radius-lg);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3); width: 100%; max-width: 360px;
   padding: 28px 24px;
 }
-.username-prompt-title { font-family: var(--font-head); font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+.username-prompt-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
 .username-prompt-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 18px; }
 
 
@@ -860,7 +535,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   position: fixed; bottom: 20px; left: 20px;
   background: var(--bg); border: 1px solid var(--border-md);
   border-radius: var(--radius-lg); padding: 10px 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   z-index: 40; min-width: 170px;
   transition: border-color 0.3s;
 }
@@ -871,7 +546,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .work-dot.active { background: var(--green-mid); }
 .work-time {
-  font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums; color: var(--text-primary);
   line-height: 1.1;
 }
@@ -882,15 +557,15 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   position: fixed; bottom: 20px; right: 20px;
   background: var(--bg); border: 1px solid var(--border-md);
   border-radius: var(--radius-lg); padding: 10px 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   z-index: 40; min-width: 170px;
   transition: border-color 0.3s;
 }
 .break-widget.on-break { border-color: var(--amber-mid); }
 .break-widget.off-hours { border-color: var(--border); opacity: 0.6; }
 .break-label {
-  font-family: var(--font-mono); font-size: 10px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: 3px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-tertiary); margin-bottom: 3px;
   display: flex; align-items: center; gap: 5px;
 }
 .break-dot {
@@ -899,13 +574,13 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 .break-dot.active { background: var(--amber-mid); }
 .break-time {
-  font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+  font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums; color: var(--text-primary);
   line-height: 1.1;
 }
 .break-time.on-break { color: var(--amber-dark); }
 .break-sub {
-  font-family: var(--font-mono); font-size: 10px; color: var(--text-tertiary); margin-top: 2px;
+  font-size: 10px; color: var(--text-tertiary); margin-top: 2px;
 }
 
 
@@ -946,7 +621,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   .meta-field-nature { flex: 1 1 calc(50% - 3px); min-width: 120px; }
   .meta-field-module  { flex: 1 1 100%; }
   .meta-field-ticket  { flex: 1 1 calc(40% - 3px); }
-  .meta-field-wide    { flex: 1 1 100%; min-width: unset; }
+  .meta-field-desc    { flex: 1 1 100%; min-width: unset; }
   .meta-field-module .meta-input { width: 100%; }
   .meta-field-ticket .meta-input { width: 100%; }
 }
@@ -1023,7 +698,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 @media (min-width: 769px) and (max-width: 1024px) {
   body { padding: 1.5rem 1rem 6rem; }
   .task-meta { gap: 8px; }
-  .meta-field-wide { min-width: 160px; }
+  .meta-field-desc { min-width: 160px; }
 }
 
 /* ── Button text hide on very small ── */
@@ -1045,51 +720,18 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 }
 
 /* ── Scrollbar styling for table on touch ── */
-/* .log-wrap::-webkit-scrollbar { height: 4px; }
-.log-wrap::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; } */
-
-/* ===== Theme Scrollbars ===== */
-
-/* Firefox */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
-}
-
-/* Chrome / Edge / Safari */
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--scroll-track);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--scroll-thumb);
-    border: 2px solid var(--scroll-track);
-    border-radius: 20px;
-    background-clip: padding-box;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--scroll-thumb-hover);
-}
-
-::-webkit-scrollbar-corner {
-    background: var(--scroll-track);
-}
+.log-wrap::-webkit-scrollbar { height: 4px; }
+.log-wrap::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 4px; }
 
 
 /* ── CSV Export/Import modal ── */
 .csv-modal-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
 .csv-field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.csv-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+.csv-label { font-size: 11px; color: var(--text-tertiary); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
 .csv-input { padding: 7px 10px; border: 1px solid var(--border-md); border-radius: var(--radius-md);
-  background: var(--bg-secondary); color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; outline: none; }
-.csv-input:focus { border-color: var(--blue-mid); }
-.csv-section-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+  background: var(--bg-secondary); color: var(--text-primary); font-family: inherit; font-size: 13px; outline: none; }
+.csv-input:focus { border-color: var(--green-mid); }
+.csv-section-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;
   padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 .csv-import-drop {
   border: 2px dashed var(--border-md); border-radius: var(--radius-md);
@@ -1099,20 +741,9 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 .csv-import-drop:hover, .csv-import-drop.dragover { border-color: var(--green-mid); color: var(--green-dark); }
 .csv-import-preview { font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
 
-.fs-date-input{
-    position:absolute;
-    right:0;
-    bottom:0;
-    width:1px;
-    height:1px;
-    opacity:0;
-    pointer-events:none;
-}
-
 </style>
 </head>
 <body>
-<div id="appTooltip" role="tooltip"></div>
 
 <div class="app-constrained">
   <div class="header">
@@ -1125,7 +756,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
         <span>Dashboard</span>
       </a>
-      <button class="btn" onclick="openCSVModal()" title="Import or export the log as CSV or Excel"><i class="ti ti-file-import"></i> Import / Export</button>
+      <button class="btn" onclick="openCSVModal()"><i class="ti ti-file-text"></i> CSV</button>
       <button class="btn" onclick="startTour()" id="tour-btn" title="App Tour"><i class="ti ti-route"></i> Tour</button>
       <div class="date-picker-wrap" onclick="try{document.getElementById('log-date-input').showPicker()}catch(e){document.getElementById('log-date-input').click()}">
         <i class="ti ti-calendar"></i>
@@ -1137,7 +768,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
       <button class="btn btn-primary" onclick="addTask()"><i class="ti ti-plus"></i> Add task</button>
     </div>
   </div>
-  <div id="task-list" ondragover="taskListDragOver(event)" ondrop="taskListDrop(event)">
+  <div id="task-list">
     <div class="empty-state" id="empty-state">
       <i class="ti ti-clipboard-list"></i>
       No tasks yet — hit "Add task" to begin.
@@ -1161,17 +792,10 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <button class="btn" onclick="openMailModal()" id="mail-btn" title="Send log via email"><i class="ti ti-mail"></i> Email</button>
         <button class="btn" onclick="clearLog()"><i class="ti ti-trash"></i> Clear log</button>
         <button class="btn btn-primary" onclick="exportXLSX()"><i class="ti ti-file-spreadsheet"></i> Download XLSX</button>
-        <button
-            class="btn"
-            id="log-fullscreen-btn"
-            onclick="toggleLogFullscreen()"
-            title="Fullscreen">
-            <i class="ti ti-maximize"></i>
-        </button>
       </div>
     </div>
     <div class="log-wrap">
-      <table id="log-table" class="log-table">
+      <table>
         <thead>
           <tr id="log-thead-row">
           </tr>
@@ -1179,41 +803,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         <tbody id="log-tbody"></tbody>
       </table>
     </div>
-    <div id="fs-action-chip" class="fs-action-chip">
-
-      <button
-          class="fs-chip-btn"
-          title="Exit Fullscreen"
-          aria-label="Exit Fullscreen"
-          onclick="toggleLogFullscreen()">
-          <i class="ti ti-minimize"></i>
-      </button>
-
-      <button
-          class="fs-chip-btn"
-          title="Theme"
-          aria-label="Theme"
-          onclick="cycleTheme()">
-          <i class="ti ti-sun"></i>
-      </button>
-
-      <button
-          class="fs-chip-btn"
-          title="Change date"
-          aria-label="Change date"
-          onclick="openFsDatePicker()">
-          <i class="ti ti-calendar"></i>
-      </button>
-
-      <input
-          id="fs-date-input"
-          type="date"
-          class="fs-date-input"
-          onchange="onFsDateChange(this.value)">
-
   </div>
-  </div>
-
   <div class="footer" style="padding: 0 1rem;">Task Time Logger &nbsp;·&nbsp; Data persists in browser localStorage</div>
 </div>
 
@@ -1399,37 +989,6 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
   </div>
 </div>
 
-<!-- Transfer Minutes modal -->
-<div class="modal-overlay hidden" id="transfer-minutes-modal">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header">
-      <div class="modal-title"><i class="ti ti-transfer" style="vertical-align:-2px;margin-right:6px;color:var(--purple-mid)"></i>Transfer Effort Minutes</div>
-      <button class="btn-icon" onclick="closeTransferMinutesModal()"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="complete-field">
-        <label class="complete-label">From</label>
-        <div id="tm-source-name" style="font-size:13px;font-weight:600;color:var(--text-primary)"></div>
-        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">Currently logged: <span id="tm-source-mins"></span> min</div>
-      </div>
-      <div class="complete-field">
-        <label class="complete-label">To <span class="req">*</span></label>
-        <select class="complete-select" id="tm-target-select" style="width:100%" onchange="updateTransferMinutesPreview()"></select>
-      </div>
-      <div class="complete-field">
-        <label class="complete-label">Minutes to transfer <span class="req">*</span></label>
-        <input class="complete-input" id="tm-minutes" type="number" min="1" style="width:100%" oninput="updateTransferMinutesPreview()" />
-        <div style="font-size:11px;color:var(--text-tertiary);margin-top:4px" id="tm-hint"></div>
-      </div>
-      <div style="font-size:12px;color:var(--text-secondary);margin-top:8px;font-weight:500" id="tm-preview"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeTransferMinutesModal()">Cancel</button>
-      <button class="btn btn-primary" id="tm-confirm-btn" onclick="confirmTransferMinutes()"><i class="ti ti-check"></i> Transfer</button>
-    </div>
-  </div>
-</div>
-
 <!-- Manage Recurring modal -->
 <div class="modal-overlay hidden" id="manage-recurring-modal">
   <div class="modal" style="max-width:420px">
@@ -1487,7 +1046,6 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 </div>
 
 <!-- Task Search overlay (Ctrl+Shift+F) -->
-<div id="task-search-overlay-anchor" style="display:none"></div>
 <div id="task-search-overlay" class="hidden" onclick="if(event.target===this)closeSearch()">
   <div id="task-search-box">
     <div id="task-search-input-row" style="display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--border-md);flex-wrap:wrap;min-height:44px">
@@ -1539,7 +1097,7 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
     <div class="confirm-title" id="confirm-title">Are you sure?</div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-actions">
-      <button class="btn" id="confirm-no-btn" onclick="confirmNo()">Cancel</button>
+      <button class="btn" onclick="confirmNo()">Cancel</button>
       <button class="btn btn-danger" id="confirm-yes-btn" onclick="confirmYes()">Delete</button>
     </div>
   </div>
@@ -1594,12 +1152,12 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
 <div class="modal-overlay hidden" id="csv-modal">
   <div class="modal" style="max-width:520px">
     <div class="modal-header">
-      <div class="modal-title"><i class="ti ti-file-text" style="vertical-align:-2px;margin-right:6px"></i>Import / Export Log</div>
+      <div class="modal-title"><i class="ti ti-file-text" style="vertical-align:-2px;margin-right:6px"></i>CSV Export / Import</div>
       <button class="btn-icon" onclick="document.getElementById('csv-modal').classList.add('hidden')"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-body">
       <!-- Export -->
-      <div class="csv-section-title"><i class="ti ti-download" style="font-size:12px;margin-right:4px"></i>Export Log</div>
+      <div class="csv-section-title"><i class="ti ti-download" style="font-size:12px;margin-right:4px"></i>Export Log to CSV</div>
       <div class="csv-modal-row">
         <div class="csv-field">
           <label class="csv-label">From date</label>
@@ -1609,19 +1167,14 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
           <label class="csv-label">To date</label>
           <input type="date" class="csv-input" id="csv-to" />
         </div>
-        <div style="display:flex;gap:8px;flex-shrink:0">
-          <button class="btn btn-primary" onclick="exportCSV()" title="Download a .csv file">
-            <i class="ti ti-download"></i> Export as CSV
-          </button>
-          <button class="btn btn-primary" onclick="exportLogExcel()" title="Download an .xlsx file">
-            <i class="ti ti-file-spreadsheet"></i> Export as Excel
-          </button>
-        </div>
+        <button class="btn btn-primary" onclick="exportCSV()" style="flex-shrink:0">
+          <i class="ti ti-download"></i> Export
+        </button>
       </div>
       <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:16px">Leave dates blank to export all records.</div>
 
       <!-- Import -->
-      <div class="csv-section-title"><i class="ti ti-upload" style="font-size:12px;margin-right:4px"></i>Import Log from CSV or Excel</div>
+      <div class="csv-section-title"><i class="ti ti-upload" style="font-size:12px;margin-right:4px"></i>Import Log from CSV</div>
       <div class="csv-modal-row">
         <div class="csv-field">
           <label class="csv-label">Import from date</label>
@@ -1638,8 +1191,8 @@ body.touring #masters-modal .modal  { z-index: 10101 !important; }
         ondragleave="this.classList.remove('dragover')"
         ondrop="handleCSVDrop(event)">
         <i class="ti ti-file-upload" style="font-size:24px;display:block;margin-bottom:6px;opacity:.5"></i>
-        Click to choose a CSV or Excel file (.csv, .xlsx, .xls) or drag &amp; drop here
-        <input type="file" id="csv-file-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleCSVFile(this)" />
+        Click to choose a CSV file or drag &amp; drop here
+        <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleCSVFile(this)" />
       </div>
       <div class="csv-import-preview" id="csv-import-preview"></div>
     </div>
@@ -1702,69 +1255,6 @@ const DEFAULT_NATURES = [
 ];
 const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
 
-// ── App-styled tooltip: replaces native browser title tooltips everywhere,
-// including truncated log-table cell text. Ported from the Dashboard's
-// initCustomTooltips implementation (same positioning/overflow-edge logic),
-// with one addition: for .log-table cells, the tooltip only shows when the
-// cell's text is actually clipped by the ellipsis (scrollWidth > clientWidth),
-// per the Log Table's "only when truncated" requirement. Tooltips on other
-// titled elements (buttons, icons, etc.) keep the Dashboard's original
-// always-show-on-hover behavior. ──
-(function initCustomTooltips() {
-  const tip = document.getElementById('appTooltip');
-  if (!tip) return;
-  let currentTarget = null;
-
-  function positionTooltip(el) {
-    const rect = el.getBoundingClientRect();
-    tip.classList.remove('tip-above', 'tip-below');
-    const tipRect = tip.getBoundingClientRect();
-    let top = rect.top - tipRect.height - 10;
-    let below = false;
-    if (top < 8) { top = rect.bottom + 10; below = true; }
-    let left = rect.left;
-    const maxLeft = window.innerWidth - tipRect.width - 12;
-    if (left > maxLeft) left = Math.max(8, maxLeft);
-    if (left < 8) left = 8;
-    tip.style.left = left + 'px';
-    tip.style.top = top + 'px';
-    tip.classList.add(below ? 'tip-below' : 'tip-above');
-  }
-
-  document.addEventListener('mouseover', (e) => {
-    const el = e.target.closest ? e.target.closest('[title], [data-tooltip-text]') : null;
-    if (!el || el === currentTarget) return;
-    let text = el.getAttribute('title');
-    if (text) {
-      el.removeAttribute('title'); // suppress the native browser tooltip, but keep the text for next time
-      el.dataset.tooltipText = text;
-    } else {
-      text = el.dataset.tooltipText;
-    }
-    if (!text) return;
-    // Log-table cells/headers only get a tooltip when their content is actually truncated —
-    // except Description/Remark cells (.td-desc), whose tooltip carries the hidden
-    // "Task progress / Effort description" notes on top of the visible heading, so it
-    // should always show on hover regardless of whether the visible text itself is clipped.
-    if (el.matches('.log-table td, .log-table th') && !el.matches('.td-desc') && el.scrollWidth <= el.clientWidth) return;
-    currentTarget = el;
-    tip.textContent = text;
-    positionTooltip(el);
-    tip.classList.add('visible');
-  });
-
-  document.addEventListener('mouseout', (e) => {
-    if (!currentTarget) return;
-    if (!e.relatedTarget || !currentTarget.contains(e.relatedTarget)) {
-      tip.classList.remove('visible');
-      currentTarget = null;
-    }
-  });
-
-  window.addEventListener('scroll', () => { tip.classList.remove('visible'); currentTarget = null; }, true);
-  window.addEventListener('resize', () => { tip.classList.remove('visible'); currentTarget = null; });
-})();
-
 // Log table columns. ALL columns are fully configurable: rename, reorder, show/hide,
 // and change input type (text / list / date with format). Date, Employee Name, Effort,
 // and Status ship as defaults but behave like any other column once added — the app
@@ -1778,28 +1268,17 @@ const DEFAULT_STATUSES = ['Completed','In Progress','Pending','Blocked'];
 //   showInTaskCard      — rendered as an input on the running task card
 //   showInLogTable       — rendered as a column in the log table (and exports/CSV)
 //   showInCompletePopup  — rendered as an input in the Complete Task / Edit Log Entry popup
-// A fourth, independent flag controls a different thing entirely — not visibility, but
-// data propagation:
-//   carryForward         — when a task is carried forward to a future date, or a recurring
-//                           plan is created / materializes a new instance, should THIS
-//                           column's value be copied onto the new task? true copies it
-//                           across; false leaves the field blank on the new instance even
-//                           though the source task/entry had a value. See buildCarriedFields().
-// Default number of visible rows for any TextArea-type column that doesn't have an explicit
-// col.rows set (older saved configs, or a column created before the Rows setting existed).
-// See buildRichTextInput / the .rte-editor CSS rule for how col.rows drives the actual height.
-const DEFAULT_TEXTAREA_ROWS = 3;
 const DEFAULT_LOG_COLUMNS = [
-  { key: 'date',        label: 'Date',                                  showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'date', dateFormat: 'DD-MM-YYYY', isDateColumn: true, essential: true },
-  { key: 'employee',    label: 'Employee Name',                         showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'text', isEmployeeColumn: true },
-  { key: 'project',     label: 'Project',                               showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'list', listSource: 'projects', builtIn: true },
-  { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'text', builtIn: true },
-  { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: true,  type: 'list', listSource: 'natures', builtIn: true },
-  { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'text', builtIn: true },
-  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'textarea', rows: 4, builtIn: true, isTaskName: true },
-  { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, carryForward: false, type: 'text', isEffortColumn: true, essential: true },
-  { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'list', listSource: 'statuses', isStatusColumn: true },
-  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  carryForward: false, type: 'textarea', rows: 2, builtIn: true }
+  { key: 'date',        label: 'Date',                                  showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'date', dateFormat: 'DD-MM-YYYY', isDateColumn: true, essential: true },
+  { key: 'employee',    label: 'Employee Name',                         showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEmployeeColumn: true },
+  { key: 'project',     label: 'Project',                               showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'projects', builtIn: true },
+  { key: 'module',      label: 'Module / Feature',                      showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
+  { key: 'nature',      label: 'Nature of Task',                        showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'natures', builtIn: true },
+  { key: 'ticket',      label: 'Ticket # if support ticket',            showInTaskCard: true,  showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true },
+  { key: 'description', label: 'Task progress / Effort description',   showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true, isTaskName: true },
+  { key: 'effort',      label: 'Effort (Minutes)',                      showInTaskCard: false, showInLogTable: true, showInCompletePopup: false, type: 'text', isEffortColumn: true, essential: true },
+  { key: 'status',      label: 'Status',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'list', listSource: 'statuses', isStatusColumn: true },
+  { key: 'remark',      label: 'Remark',                                showInTaskCard: false, showInLogTable: true, showInCompletePopup: true,  type: 'text', builtIn: true }
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -1814,10 +1293,6 @@ let recurringPlans = []; // { id, heading, project, nature, module, ticket, cust
 let recurringPlanIdCounter = 0;
 let importIdCounter = 0; // separate negative-only namespace for CSV-imported entries, never overlaps real task IDs
 let intervals = {};
-// Which task-card textarea fields (Description, Remark, custom Text Area columns) are
-// currently expanded, keyed by "taskId:columnKey". Not persisted to storage — every
-// field starts collapsed on a fresh load, which is the whole point (save space by default).
-let expandedTaskCardFields = new Set();
 let masters = {
   weekendDays: [...DEFAULT_WEEKEND_DAYS],
   workHours: { startH: DEFAULT_WORK_START_H, startM: DEFAULT_WORK_START_M, endH: DEFAULT_WORK_END_H, endM: DEFAULT_WORK_END_M },
@@ -1840,7 +1315,6 @@ let masters = {
 let activeMastersTab = 'lists';
 let activeListKey = 'projects'; // which list is selected inside the consolidated Lists tab
 let confirmCallback = null;
-let confirmNoCallback = null;
 let pendingCompleteId = null;
 let pendingEditIdx = null;
 let cmTimerInterval = null; // task waiting for complete modal
@@ -1861,7 +1335,6 @@ function saveState() {
 
 function renderAll() {
   materializeRecurringTasksUpTo(todayStr());
-  enforcePastDateAutoPause();
   renderList();
   restoreIntervals();
   updateLogPanel();
@@ -1887,9 +1360,8 @@ function loadState() {
     if (l) {
       const allEntries = JSON.parse(l);
       // Keep only last 3 months
-      // const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
-      logEntries = allEntries
-        //.filter(e => e.startTs >= cutoff); //Turened off history automatic cleaning
+      const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+      logEntries = allEntries.filter(e => e.startTs >= cutoff);
     }
     if (counter) taskIdCounter = parseInt(counter) || 0;
     if (importCounter) importIdCounter = parseInt(importCounter) || 0;
@@ -1902,7 +1374,6 @@ function loadState() {
       if (masters.flags.sleepAutoPause === undefined) masters.flags.sleepAutoPause = true;
       if (!masters.logColumns || !Array.isArray(masters.logColumns) || masters.logColumns.length === 0) {
         masters.logColumns = DEFAULT_LOG_COLUMNS.map(c => ({ ...c }));
-        masters.migratedDescRemarkTextarea = true; // fresh config already matches the defaults
       } else {
         // Merge in any default columns missing from a saved config (e.g. after an app update)
         const haveKeys = masters.logColumns.map(c => c.key);
@@ -1911,21 +1382,11 @@ function loadState() {
         });
         // Backfill fields for columns saved under an older schema (pre-this-update), and
         // drop the old `locked` flag — every column is fully configurable now.
-        // The Description/Remark -> textarea backfill below must only ever run ONCE (the
-        // first load after that feature shipped) — otherwise it clobbers a user's later,
-        // deliberate switch back to Text on every reload. Gate it on a flag so it never
-        // fires again once it's run.
-        const runDescRemarkMigration = !masters.migratedDescRemarkTextarea;
         masters.logColumns.forEach(c => {
           if (!c.type) c.type = 'text';
           delete c.locked;
           if (c.key === 'date' && c.type === 'text') { c.type = 'date'; c.dateFormat = c.dateFormat || 'DD-MM-YYYY'; c.isDateColumn = true; }
           if (c.key === 'status' && c.type === 'text') { c.type = 'list'; c.listSource = 'statuses'; c.isStatusColumn = true; }
-          // Description/Remark originally always rendered as multi-line textareas; this
-          // one-time backfill formalized that as their column type so they picked up rich
-          // text editing like any Text Area column, without changing already-saved plain
-          // text content. Runs once only — see runDescRemarkMigration above.
-          if (runDescRemarkMigration && (c.key === 'description' || c.key === 'remark') && c.type === 'text') { c.type = 'textarea'; }
           if (c.key === 'employee') c.isEmployeeColumn = true;
           if (c.key === 'effort') c.isEffortColumn = true;
           // Migrate the old single `visible` flag into the three independent per-context
@@ -1940,17 +1401,7 @@ function loadState() {
             c.showInCompletePopup = (def ? def.showInCompletePopup : true) && wasVisible;
             delete c.visible;
           }
-          // Backfill the Carry fwd / Recurring flag for columns saved before it existed.
-          // Built-in columns fall back to their shipped default (project/module/nature
-          // copy across, ticket/description/remark/system columns don't); anything else
-          // (custom columns) defaults to true, matching the app's pre-flag behavior of
-          // always copying every custom field forward.
-          if (c.carryForward === undefined) {
-            const def = DEFAULT_LOG_COLUMNS.find(dc => dc.key === c.key);
-            c.carryForward = def ? def.carryForward : true;
-          }
         });
-        masters.migratedDescRemarkTextarea = true;
       }
       if (!masters.customLists || typeof masters.customLists !== 'object') masters.customLists = {};
   if (!masters.emailTemplate || typeof masters.emailTemplate !== 'object') masters.emailTemplate = {
@@ -2150,26 +1601,6 @@ window.addEventListener('pagehide', freezeAllTimers);
 window.addEventListener('focus', refreshAllTimers);
 window.addEventListener('pageshow', refreshAllTimers);
 
-document.addEventListener("mousemove",(e)=>{
-  if(e.clientY>window.innerHeight-120){
-      showFsChip();
-  } 
-});
-
-window.addEventListener("scroll",()=>{
-  if(window.innerHeight+window.scrollY>
-      document.body.offsetHeight-250){
-      showFsChip();
-  }
-});
-
-document.addEventListener("touchstart",(e)=>{
-  const y=e.touches[0].clientY;
-  if(y>window.innerHeight-140){
-      showFsChip();
-  }
-});
-
 // ── Formatters ────────────────────────────────────────────────────────────────
 function fmt(secs) {
   const h = Math.floor(secs / 3600), m = Math.floor((secs % 3600) / 60), s = secs % 60;
@@ -2186,90 +1617,6 @@ function fmtDuration(secs) {
 function esc(str) {
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-// ── Log table column interaction state (sort / resize / pin) ───────────────
-// Migrated from the Effort Manifest Dashboard's generic column manager. Unlike the
-// Dashboard's static per-table column sets, the Task Logger's visible columns come
-// from masters.logColumns (Master Settings) and can change at runtime, so the log
-// table's header/colgroup are rebuilt on every updateLogTable() call and these
-// interactions are re-wired each time rather than set up once at load.
-const LOG_TABLE_WIDTHS_KEY = 'ttl_logTableColWidths';
-const LOG_TABLE_PINNED_KEY = 'ttl_logTablePinned';
-const LOG_TABLE_PIN_ICON_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>';
-
-function ltLoadObj(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return Object.assign({}, fallback);
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : Object.assign({}, fallback);
-  } catch(e) { return Object.assign({}, fallback); }
-}
-function ltSaveObj(key, obj) {
-  try { localStorage.setItem(key, JSON.stringify(obj)); } catch(e) {}
-}
-
-let logTableColWidths = ltLoadObj(LOG_TABLE_WIDTHS_KEY, {});
-let logTableColPinned = ltLoadObj(LOG_TABLE_PINNED_KEY, {});
-let logTableSortCol = null; // null = no sort applied, keep natural entry order
-let logTableSortDir = 'asc';
-
-// ── Sticky Action column collapse/expand preference ────────────────────────
-const LOG_ACTIONS_COLLAPSED_KEY = 'ttl_logActionsCollapsed';
-// 20px cell padding (12px left / 8px right) + 30px per button + 4px gap between buttons.
-// A fixed 76px floor covers the header's "Action" label + collapse toggle even when a day
-// has zero action buttons (future dates).
-const LOG_ACTIONS_COL_WIDTH_MIN = 76;
-const LOG_ACTIONS_COL_WIDTH_COLLAPSED = 40;
-const LOG_ACTIONS_BTN = 30, LOG_ACTIONS_GAP = 4, LOG_ACTIONS_CELL_PADDING = 20;
-// Mirrors the button conditions in updateLogTable's actionButtonsHtml: present day can show
-// up to 5 (edit, continue, reopen, recurring, delete); past days only continue + recurring;
-// future days show none. Keeping the column narrow on past/future days (and wide only when
-// present-day rows actually need it) is the point — a static width sized for the worst case
-// wasted space everywhere else.
-function maxActionButtonsForDay(isPresentDay, isFutureDay) {
-  if (isFutureDay) return 0;
-  if (isPresentDay) return 5;
-  return 3; // past day: Edit, Continue, Recurring
-}
-function ltLoadBool(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw === null) return fallback;
-    return raw === '1';
-  } catch(e) { return fallback; }
-}
-function ltSaveBool(key, val) {
-  try { localStorage.setItem(key, val ? '1' : '0'); } catch(e) {}
-}
-let logActionsCollapsed = ltLoadBool(LOG_ACTIONS_COLLAPSED_KEY, false);
-function logActionsColWidth(isPresentDay, isFutureDay) {
-  if (logActionsCollapsed) return LOG_ACTIONS_COL_WIDTH_COLLAPSED;
-  const n = maxActionButtonsForDay(isPresentDay, isFutureDay);
-  const contentWidth = n > 0 ? (n * LOG_ACTIONS_BTN + (n - 1) * LOG_ACTIONS_GAP) : 0;
-  return Math.max(LOG_ACTIONS_COL_WIDTH_MIN, LOG_ACTIONS_CELL_PADDING + contentWidth);
-}
-function toggleLogActionsColumn() {
-  logActionsCollapsed = !logActionsCollapsed;
-  ltSaveBool(LOG_ACTIONS_COLLAPSED_KEY, logActionsCollapsed);
-  updateLogTable();
-}
-// Per-row "more actions" menu, used only in collapsed mode. Only one menu is open
-// at a time; clicking elsewhere on the page closes it.
-function toggleLogRowActionsMenu(evt, rowIdx) {
-  evt.preventDefault();
-  evt.stopPropagation();
-  const menu = document.getElementById('log-actions-menu-' + rowIdx);
-  if (!menu) return;
-  const wasHidden = menu.classList.contains('hidden');
-  document.querySelectorAll('.log-actions-menu').forEach(m => m.classList.add('hidden'));
-  if (wasHidden) menu.classList.remove('hidden');
-}
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.log-actions-menu') && !e.target.closest('.log-actions-toggle')) {
-    document.querySelectorAll('.log-actions-menu').forEach(m => m.classList.add('hidden'));
-  }
-});
 
 // ── Log table column configuration helpers ─────────────────────────────────
 function getLogColumns() {
@@ -2297,15 +1644,6 @@ function isDynamicPopupColumn(c) {
   return !c.builtIn && !c.essential && !c.isStatusColumn && !c.isDateColumn
     && !c.isEffortColumn && !c.isEmployeeColumn;
 }
-// Columns whose values are managed automatically — task lifecycle status (running/paused/
-// done), computed effort/duration, the task's creation date, or the logged-in employee name —
-// rather than typed in per task. These are never rendered as a task-card input even when
-// "Task card" is checked in Field Visibility, since there's no freely-editable per-task value
-// to bind them to without conflicting with the automatic behavior. Used both to decide what
-// renders on the card (renderTaskCardFields) and to grey out the checkbox in the Columns tab.
-function isSystemManagedColumn(c) {
-  return !!(c.isDateColumn || c.isEmployeeColumn || c.isEffortColumn || c.isStatusColumn);
-}
 // All configurable (non-locked) columns, built-in or custom — used to render dynamic
 // inputs on the task card and Complete popup, in their configured order.
 function getConfigurableColumns() {
@@ -2313,48 +1651,6 @@ function getConfigurableColumns() {
 }
 function getColumnByKey(key) {
   return getLogColumns().find(c => c.key === key);
-}
-// Does this column's value get copied onto a new task card when the source task/entry
-// is carried forward, or when a recurring plan is created / materializes a new instance?
-// Defaults to true (matches the app's original behavior) unless explicitly turned off.
-function columnCarriesForward(key) {
-  const col = getColumnByKey(key);
-  return !col || col.carryForward !== false;
-}
-// Build the project/module/nature/ticket/customFields to seed onto a new carried-forward
-// or recurring task instance, honoring each column's "Carry fwd / Recurring" flag. A field
-// whose column has the flag off is left blank on the new instance even though the source
-// task/entry had a value — lets each field opt in/out of propagating forward independently.
-// `entry` is the most recent log entry for the source task (may be null), `task` is the
-// source task object itself (may be null when only a past log entry remains).
-function buildCarriedFields(entry, task) {
-  const pick = (key) => columnCarriesForward(key)
-    ? ((entry && entry[key]) || (task && task[key]) || '')
-    : '';
-  const project = pick('project');
-  const module  = pick('module');
-  const nature  = pick('nature');
-  const ticket  = pick('ticket');
-
-  const sourceCustom = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
-  const customFields = {};
-  Object.keys(sourceCustom).forEach(key => {
-    if (columnCarriesForward(key)) customFields[key] = sourceCustom[key];
-  });
-  // description/remark are canonical top-level fields on a finalized entry (see §18) —
-  // prefer that value over whatever draft copy happened to be sitting in customFields,
-  // but still respect the flag: skip (and strip any draft) when carryForward is off.
-  if (columnCarriesForward('description')) {
-    if (entry && entry.description) customFields.description = entry.description;
-  } else {
-    delete customFields.description;
-  }
-  if (columnCarriesForward('remark')) {
-    if (entry && entry.remark) customFields.remark = entry.remark;
-  } else {
-    delete customFields.remark;
-  }
-  return { project, module, nature, ticket, customFields };
 }
 // Format a date value (ISO YYYY-MM-DD string) according to a column's chosen dateFormat.
 function formatCustomDate(isoStr, dateFormat) {
@@ -2395,20 +1691,19 @@ function getEntryValueForColumn(e, task, key) {
       return Math.ceil(secs / 60);
     }
     case 'status':       return e.taskStatus || (e.endTs ? 'Completed' : (task ? task.status : ''));
-    case 'remark':       return richTextToPlain(e.remark || '');
+    case 'remark':       return e.remark || '';
     default: {
       // Custom column: stored under e.customFields[key]
       const raw = (e.customFields && e.customFields[key]) || '';
       const colDef = getColumnByKey(key);
       if (colDef && colDef.type === 'date' && raw) return formatCustomDate(raw, colDef.dateFormat);
-      if (colDef && colDef.type === 'textarea' && raw) return richTextToPlain(raw);
       return raw;
     }
   }
 }
 // Export/copy value differs only for 'description': uses the actual typed description, not the task name
 function getExportValueForColumn(e, task, key) {
-  if (key === 'description') return richTextToPlain(e.description || '');
+  if (key === 'description') return e.description || '';
   return getEntryValueForColumn(e, task, key);
 }
 
@@ -2454,7 +1749,6 @@ function startTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
   if (isFutureTask(task)) return; // future-dated tasks have no actions until their date
-  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
 
   // Validate heading
   if (!task.heading.trim()) {
@@ -2472,11 +1766,7 @@ function startTask(id) {
     taskId: id, heading: task.heading.trim(),
     project: task.project, module: task.module,
     nature: task.nature, ticket: task.ticket || '',
-    // Seed from any draft already typed on the Task Card (via updateTaskCustomField,
-    // stored in task.customFields) before Start was pressed, rather than always blank —
-    // this is the same top-level field the Popup/Log Table/Export read (see §18).
-    description: (task.customFields && task.customFields.description) || '',
-    remark: (task.customFields && task.customFields.remark) || '',
+    description: '', // filled at completion
     employee: userName,
     startTs: Date.now(), endTs: null, durationSecs: null,
     customFields: { ...(task.customFields || {}) }
@@ -2494,7 +1784,6 @@ function startTask(id) {
 function pauseTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
-  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
   if (task.segmentStart !== null) { task.accumulatedMs += Date.now()-task.segmentStart; task.segmentStart=null; }
   task.status = 'paused';
   clearInterval(intervals[id]); delete intervals[id];
@@ -2504,7 +1793,6 @@ function pauseTask(id) {
 function resumeTask(id) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
-  if (isPastTask(task)) return; // past-dated tasks are read-only except for marking complete
   pauseOthersExcept(id);
   task.status = 'running';
   task.segmentStart = Date.now();
@@ -2578,7 +1866,7 @@ function openCompleteModal(id) {
   const setFieldVisibility = (fieldId, labelId, col, requiredSuffix) => {
     const fieldEl = document.getElementById(fieldId);
     const labelEl = document.getElementById(labelId);
-    if (fieldEl) fieldEl.style.display = (col && col.showInCompletePopup === false) ? 'none' : '';
+    if (fieldEl) fieldEl.style.display = (col && col.visible === false) ? 'none' : '';
     if (labelEl && col) labelEl.innerHTML = esc(col.label) + (requiredSuffix ? ' <span class="req">*</span>' : '');
   };
   setFieldVisibility('cm-project-field', 'cm-project-label', projCol, true);
@@ -2621,7 +1909,7 @@ function openCompleteModal(id) {
   }, 500);
 
   document.getElementById('complete-modal').classList.remove('hidden');
-  setTimeout(() => focusFieldInput('cm-description'), 80);
+  setTimeout(() => { const d = document.getElementById('cm-description'); if (d && d.focus) d.focus(); }, 80);
 }
 
 function closeCompleteModal() {
@@ -2672,7 +1960,7 @@ function editLogEntry(globalIdx) {
   const setFieldVisibility = (fieldId, labelId, col, requiredSuffix) => {
     const fieldEl = document.getElementById(fieldId);
     const labelEl = document.getElementById(labelId);
-    if (fieldEl) fieldEl.style.display = (col && col.showInCompletePopup === false) ? 'none' : '';
+    if (fieldEl) fieldEl.style.display = (col && col.visible === false) ? 'none' : '';
     if (labelEl && col) labelEl.innerHTML = esc(col.label) + (requiredSuffix ? ' <span class="req">*</span>' : '');
   };
   setFieldVisibility('cm-project-field', 'cm-project-label', projCol, true);
@@ -2713,7 +2001,7 @@ function editLogEntry(globalIdx) {
   document.getElementById('cm-timer-label').textContent = 'Time tracked';
 
   document.getElementById('complete-modal').classList.remove('hidden');
-  setTimeout(() => focusFieldInput('cm-description'), 80);
+  setTimeout(() => { const d = document.getElementById('cm-description'); if (d && d.focus) d.focus(); }, 80);
 }
 
 
@@ -2898,13 +2186,6 @@ function submitComplete() {
       // Sync task.accumulatedMs if task still exists
       const rt = tasks.find(t => t.id === editEntry.taskId);
       if (rt && editEntry.durationSecs) rt.accumulatedMs = editEntry.durationSecs * 1000;
-      // description/remark are mirrored onto task.customFields for the Task Card (see §18);
-      // keep that mirror in sync so editing the entry here doesn't leave a stale card draft.
-      if (rt) {
-        if (!rt.customFields) rt.customFields = {};
-        rt.customFields.description = desc;
-        rt.customFields.remark = remark;
-      }
     }
     pendingEditIdx = null;
     document.querySelector('#complete-modal .modal-title').innerHTML =
@@ -2927,127 +2208,36 @@ function submitComplete() {
     ? adjMins * 60
     : Math.floor(task.accumulatedMs / 1000);
 
-  // If a multi-select (dropdown list, multi-select) field has more than one value
-  // checked, offer to split this completion into a separate log entry per value —
-  // each getting an even share of the total effort minutes — instead of logging one
-  // entry with every checked value combined into that field.
-  //
-  // Look at every multi-select column, not just the custom ones collected into
-  // customValues above. Built-in fields (Project, Nature, Module, Ticket, Status,
-  // Description, Remark) each have their own dedicated popup element (id 'cm-<key>')
-  // that's re-rendered to match the column's configured type by renderCmField every
-  // time the popup opens — including as a multi-select checkbox panel if that's what
-  // the column is set to — so a multi-valued Project selection lives at that element's
-  // .value, not in customFields. Prefer that live element's value for every column;
-  // only fall back to the entry's/task's already-saved value (customFields for custom
-  // columns) when no popup element exists at all — i.e. a custom multi-select column
-  // configured to appear on the Task Card only (showInCompletePopup:false).
-  const openEntry = [...logEntries].reverse().find(e => e.taskId===id && e.endTs===null);
-  const multiFieldsToSplit = getConfigurableColumns()
-    .filter(c => c.type === 'multilist')
-    .map(c => {
-      const el = document.getElementById('cm-' + c.key) || document.getElementById('cm-custom-' + c.key);
-      const raw = el ? el.value : getEntryValueForColumn(openEntry || {}, task, c.key);
-      return { key: c.key, values: String(raw || '').split(/[\/,]/).map(s => s.trim()).filter(Boolean) };
-    })
-    .filter(f => f.values.length > 1);
-
-  // Write a single split value for `key` onto a log entry, mirroring the same
-  // key → storage mapping getEntryValueForColumn/getExportValueForColumn already use:
-  // built-in fields live at the top level of the entry, everything else lives in
-  // entry.customFields.
-  const setEntryFieldValue = (entryObj, key, val) => {
-    switch (key) {
-      case 'project': entryObj.project = val; break;
-      case 'module':  entryObj.module = val; break;
-      case 'nature':  entryObj.nature = val; break;
-      case 'ticket':  entryObj.ticket = val; break;
-      case 'status':  entryObj.taskStatus = val; break;
-      case 'remark':  entryObj.remark = val; break;
-      case 'description': entryObj.description = val; break;
-      default:
-        if (!entryObj.customFields) entryObj.customFields = {};
-        entryObj.customFields[key] = val;
-    }
-  };
-
-  // Finishes marking the task complete. `splitFields`, when given, is the list of
-  // multi-select fields (each with 2+ checked values) to split the completion across —
-  // one duplicate log entry per combination of their values, with effort minutes divided
-  // evenly and every other field (project/ticket/description/other custom values/etc.)
-  // duplicated unchanged. Pass null/empty to log a single entry exactly as before.
-  const finalizeMarkComplete = (splitFields) => {
-    task.status = 'done';
-    task.accumulatedMs = totalSecs * 1000; // sync so reopen uses adjusted time
-    task.heading = heading;
-    task.project = project; task.nature = nature;
-    task.module = module; task.ticket = ticket;
-    if (!task.customFields) task.customFields = {};
-    Object.assign(task.customFields, customValues);
-    task.customFields.description = desc;
-    task.customFields.remark = remark;
-    const entry = openEntry;
-    if (entry) {
-      entry.endTs = customEnd || Date.now();
-      if (customStart) entry.startTs = customStart;
-      // If custom time was used, deduct that window from break
-      if (customStart && customEnd) deductFromBreak(customStart, customEnd);
-      entry.heading = heading;
-      entry.project = project; entry.module = module;
-      entry.nature = nature; entry.ticket = ticket;
-      entry.taskStatus = status;
-      entry.description = desc;
-      entry.remark = remark;
-      if (!entry.customFields) entry.customFields = {};
-      Object.assign(entry.customFields, customValues);
-
-      if (splitFields && splitFields.length) {
-        // Cartesian product of every splitting field's checked values — one entry per
-        // combination (e.g. 2 values in field A × 3 in field B = 6 entries).
-        const combos = splitFields.reduce((acc, f) => {
-          const next = [];
-          acc.forEach(soFar => f.values.forEach(v => next.push({ ...soFar, [f.key]: v })));
-          return next;
-        }, [{}]);
-        const n = combos.length;
-        const baseSecs = Math.floor(totalSecs / n);
-        let remainder = totalSecs - baseSecs * n; // spread any leftover minute(s) across the first few entries
-
-        combos.forEach((combo, i) => {
-          const share = baseSecs + (remainder > 0 ? 1 : 0);
-          if (remainder > 0) remainder--;
-          // First combo reuses the entry already being completed; the rest are pushed
-          // as fresh duplicates so every field carries over except the split field(s).
-          const target = i === 0 ? entry : { ...entry, customFields: { ...entry.customFields } };
-          target.durationSecs = share;
-          Object.entries(combo).forEach(([key, val]) => setEntryFieldValue(target, key, val));
-          if (i > 0) logEntries.push(target);
-        });
-      } else {
-        entry.durationSecs = totalSecs;
-      }
-    }
-    closeCompleteModal();
-    saveState();
-    // Auto-remove completed card from task list
-    const doneRow = document.getElementById('row-' + id);
-    if (doneRow) doneRow.remove();
-    updateEmptyState();
-    updateLogPanel();
-  };
-
-  if (multiFieldsToSplit.length > 0) {
-    showConfirmChoice(
-      'Split into multiple entries?',
-      'One or more multi-select fields have more than one value checked. Split this completion into a separate log entry per value, dividing the effort minutes evenly across them? Choose "No" to log it as a single entry with all checked values combined, same as before.',
-      () => finalizeMarkComplete(multiFieldsToSplit),
-      () => finalizeMarkComplete(null),
-      'Split',
-      "No, keep as one"
-    );
-  } else {
-    finalizeMarkComplete(null);
+  task.status = 'done';
+  task.accumulatedMs = totalSecs * 1000; // sync so reopen uses adjusted time
+  task.heading = heading;
+  task.project = project; task.nature = nature;
+  task.module = module; task.ticket = ticket;
+  if (!task.customFields) task.customFields = {};
+  Object.assign(task.customFields, customValues);
+  const entry = [...logEntries].reverse().find(e => e.taskId===id && e.endTs===null);
+  if (entry) {
+    entry.endTs = customEnd || Date.now();
+    if (customStart) entry.startTs = customStart;
+    entry.durationSecs = totalSecs;
+    // If custom time was used, deduct that window from break
+    if (customStart && customEnd) deductFromBreak(customStart, customEnd);
+    entry.heading = heading;
+    entry.project = project; entry.module = module;
+    entry.nature = nature; entry.ticket = ticket;
+    entry.taskStatus = status;
+    entry.description = desc;
+    entry.remark = remark;
+    if (!entry.customFields) entry.customFields = {};
+    Object.assign(entry.customFields, customValues);
   }
+  closeCompleteModal();
+  saveState();
+  // Auto-remove completed card from task list
+  const doneRow = document.getElementById('row-' + id);
+  if (doneRow) doneRow.remove();
+  updateEmptyState();
+  updateLogPanel();
 }
 
 // ── Continue an "In Progress" task tomorrow (manual, button-triggered) ───────
@@ -3110,9 +2300,11 @@ function confirmCarryForward() {
   if (!task && !entry) { closeCarryForwardModal(); return; }
 
   const heading = (entry && entry.heading) || (task && task.heading) || '';
-  // project/module/nature/ticket/customFields (incl. description/remark) are copied
-  // across only for columns with the "Carry fwd / Recurring" flag on — see buildCarriedFields().
-  const { project, module, nature, ticket, customFields } = buildCarriedFields(entry, task);
+  const project = (entry && entry.project) || (task && task.project) || '';
+  const nature  = (entry && entry.nature)  || (task && task.nature)  || '';
+  const module  = (entry && entry.module)  || (task && task.module)  || '';
+  const ticket  = (entry && entry.ticket)  || (task && task.ticket)  || '';
+  const customFields = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
 
   const [yy, mm, dd] = chosenDateStr.split('-').map(Number);
   const w = (typeof getWorkHours === 'function') ? getWorkHours() : { startH: 9, startM: 30 };
@@ -3234,11 +2426,11 @@ function confirmMakeRecurring() {
   const includeWeekends = document.getElementById('mr-include-weekends').checked;
 
   const heading = (entry && entry.heading) || (task && task.heading) || '';
-  // project/module/nature/ticket/customFields (incl. description/remark) are copied
-  // onto the plan only for columns with the "Carry fwd / Recurring" flag on — every
-  // instance the plan later materializes inherits this same filtered set (see
-  // buildCarriedFields() and materializeRecurringTasksUpTo()).
-  const { project, module, nature, ticket, customFields } = buildCarriedFields(entry, task);
+  const project = (entry && entry.project) || (task && task.project) || '';
+  const nature  = (entry && entry.nature)  || (task && task.nature)  || '';
+  const module  = (entry && entry.module)  || (task && task.module)  || '';
+  const ticket  = (entry && entry.ticket)  || (task && task.ticket)  || '';
+  const customFields = { ...((entry && entry.customFields) || (task && task.customFields) || {}) };
 
   const planId = ++recurringPlanIdCounter;
   const plan = {
@@ -3352,12 +2544,6 @@ function reopenTask(taskId) {
   const entry = [...logEntries].reverse().find(e => e.taskId === taskId && e.endTs !== null);
   if (entry && entry.durationSecs !== null) {
     task.accumulatedMs = entry.durationSecs * 1000;
-    // Pull the entry's canonical (top-level) description/remark back onto the task so the
-    // reopened Task Card shows the value that was actually finalized in the Complete popup,
-    // not whatever draft was last typed on the card before completion (see §18).
-    if (!task.customFields) task.customFields = {};
-    task.customFields.description = entry.description || '';
-    task.customFields.remark = entry.remark || '';
     // Re-open the log entry so live elapsed contributes to working hours
     entry.endTs = null;
     entry.durationSecs = null;
@@ -3395,7 +2581,7 @@ function reopenTask(taskId) {
 function confirmDeleteLogEntry(globalIdx) {
   const e = logEntries[globalIdx];
   if (!e) return;
-  const label = richTextToPlain(e.description) || e.heading || 'this entry';
+  const label = e.description || e.heading || 'this entry';
   showConfirm('Delete log entry?', '"' + label.slice(0, 60) + (label.length > 60 ? '…' : '') + '" will be permanently removed.', () => {
     const taskId = e.taskId;
     logEntries.splice(globalIdx, 1);
@@ -3406,136 +2592,6 @@ function confirmDeleteLogEntry(globalIdx) {
     if (row) row.remove();
     saveState(); updateEmptyState(); updateLogPanel();
   });
-}
-
-// ── Transfer effort minutes between two log entries ────────────────────────────
-// An entry is transferable if it's completed (durationSecs fixed) OR its task is
-// merely paused (accumulatedMs is stable, just not finalized yet). A running task's
-// time is still ticking live, so it's excluded until stopped or paused.
-let pendingTransferIdx = null;
-
-function getEntryTransferSecs(entry) {
-  if (!entry) return null;
-  if (entry.durationSecs !== null) return entry.durationSecs;
-  const task = tasks.find(t => t.id === entry.taskId);
-  if (task && task.status === 'paused') return liveElapsedSecs(task);
-  return null;
-}
-
-function applyTransferDelta(entry, deltaSecs) {
-  const task = tasks.find(t => t.id === entry.taskId);
-  if (entry.durationSecs !== null) {
-    entry.durationSecs = Math.max(0, entry.durationSecs + deltaSecs);
-    if (task) task.accumulatedMs = entry.durationSecs * 1000;
-  } else if (task) {
-    task.accumulatedMs = Math.max(0, task.accumulatedMs + deltaSecs * 1000);
-  }
-}
-
-function openTransferMinutesModal(globalIdx) {
-  const entry = logEntries[globalIdx];
-  if (!entry) return;
-  const srcSecs = getEntryTransferSecs(entry);
-  if (srcSecs === null) {
-    showConfirm('Task still running', 'This entry is still running live, so it has no fixed effort yet. Pause or complete the task before transferring its minutes.', () => {}, 'OK');
-    return;
-  }
-  const selDate = getSelectedDate ? getSelectedDate() : todayStr();
-
-  const candidates = logEntries
-    .map((e, i) => ({ e, i, secs: getEntryTransferSecs(e) }))
-    .filter(({ e, i, secs }) => i !== globalIdx && secs !== null && entryMatchesDate(e, selDate));
-
-  if (candidates.length === 0) {
-    showConfirm('No entries to transfer to', 'There are no other completed or paused entries on this date to transfer minutes to.', () => {}, 'OK');
-    return;
-  }
-
-  pendingTransferIdx = globalIdx;
-  const srcMins = Math.ceil(srcSecs / 60);
-  const srcLabel = entry.heading || richTextToPlain(entry.description) || 'Untitled task';
-
-  document.getElementById('tm-source-name').textContent = srcLabel;
-  document.getElementById('tm-source-mins').textContent = srcMins;
-
-  const select = document.getElementById('tm-target-select');
-  select.innerHTML = candidates.map(({ e, i, secs }) => {
-    const label = e.heading || richTextToPlain(e.description) || 'Untitled task';
-    const mins = Math.ceil(secs / 60);
-    return '<option value="' + i + '">' + esc(label.slice(0, 50)) + ' (' + mins + ' min)</option>';
-  }).join('');
-
-  const minsInput = document.getElementById('tm-minutes');
-  minsInput.value = '';
-  minsInput.max = srcMins;
-  minsInput.classList.remove('invalid');
-  document.getElementById('tm-hint').textContent = 'Max ' + srcMins + ' min available from this entry.';
-  document.getElementById('tm-preview').textContent = '';
-
-  document.getElementById('transfer-minutes-modal').classList.remove('hidden');
-  setTimeout(() => { if (minsInput.focus) minsInput.focus(); }, 80);
-}
-
-function closeTransferMinutesModal() {
-  document.getElementById('transfer-minutes-modal').classList.add('hidden');
-  pendingTransferIdx = null;
-}
-
-function updateTransferMinutesPreview() {
-  if (pendingTransferIdx === null) return;
-  const entry = logEntries[pendingTransferIdx];
-  if (!entry) return;
-  const select = document.getElementById('tm-target-select');
-  const target = logEntries[parseInt(select.value, 10)];
-  const minsInput = document.getElementById('tm-minutes');
-  minsInput.classList.remove('invalid');
-
-  const srcMins = Math.ceil(getEntryTransferSecs(entry) / 60);
-  let mins = parseInt(minsInput.value, 10) || 0;
-  if (mins > srcMins) mins = srcMins;
-
-  const preview = document.getElementById('tm-preview');
-  const tgtSecs = target ? getEntryTransferSecs(target) : null;
-  if (tgtSecs === null || mins <= 0) { preview.textContent = ''; return; }
-  const tgtMins = Math.ceil(tgtSecs / 60);
-  preview.textContent = 'After transfer: source entry ' + (srcMins - mins) + ' min · target entry ' + (tgtMins + mins) + ' min.';
-}
-
-function confirmTransferMinutes() {
-  if (pendingTransferIdx === null) return;
-  const entry = logEntries[pendingTransferIdx];
-  if (!entry) { closeTransferMinutesModal(); return; }
-
-  const select = document.getElementById('tm-target-select');
-  const target = logEntries[parseInt(select.value, 10)];
-  if (!target) { closeTransferMinutesModal(); return; }
-
-  const minsInput = document.getElementById('tm-minutes');
-  const srcSecs = getEntryTransferSecs(entry);
-  const tgtSecs = getEntryTransferSecs(target);
-  if (srcSecs === null || tgtSecs === null) { closeTransferMinutesModal(); return; }
-
-  const srcMins = Math.ceil(srcSecs / 60);
-  let mins = parseInt(minsInput.value, 10) || 0;
-
-  if (mins <= 0) { minsInput.classList.add('invalid'); minsInput.focus(); return; }
-  if (mins > srcMins) mins = srcMins;
-
-  const secsToMove = mins * 60;
-  applyTransferDelta(entry, -secsToMove);
-  applyTransferDelta(target, secsToMove);
-
-  // The log table re-renders from updateLogPanel(), but paused task cards only
-  // redraw their timer text at render time (they don't tick like running ones),
-  // so refresh both affected cards directly to reflect the new accumulatedMs now.
-  if (typeof renderRow === 'function') {
-    if (document.getElementById('row-' + entry.taskId)) renderRow(entry.taskId);
-    if (document.getElementById('row-' + target.taskId)) renderRow(target.taskId);
-  }
-
-  saveState();
-  updateLogPanel();
-  closeTransferMinutesModal();
 }
 
 function confirmDeleteTask(id) {
@@ -3580,17 +2636,6 @@ function updateTaskField(id, field, val) {
 }
 
 // Update a custom (user-configured) column's value on a task, keyed by column key.
-// NOTE (single-source-of-truth fix — see APP_ARCHITECTURE.md §18): 'description' and
-// 'remark' are BUILT-IN columns that render through this same generic Task Card path
-// (they are not in CORE_TASK_FIELD_KEYS), but every other reader — openCompleteModal,
-// editLogEntry, submitComplete, getEntryValueForColumn, getExportValueForColumn — treats
-// them as hand-built TOP-LEVEL log-entry properties (entry.description / entry.remark),
-// not entry.customFields.description / entry.customFields.remark. Writing them into
-// customFields here (as any ordinary custom column would be) silently created a second,
-// never-read copy of the value, which is why a value typed on the Task Card only ever
-// showed up on the Task Card itself. These two keys are special-cased to write to the
-// same top-level fields everything else reads, so there is exactly one live value.
-const ENTRY_TOPLEVEL_MIRROR_KEYS = ['description', 'remark'];
 function updateTaskCustomField(id, colKey, val) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
@@ -3598,12 +2643,8 @@ function updateTaskCustomField(id, colKey, val) {
   task.customFields[colKey] = val;
   const openEntry = [...logEntries].reverse().find(e => e.taskId === id && e.endTs === null);
   if (openEntry) {
-    if (ENTRY_TOPLEVEL_MIRROR_KEYS.includes(colKey)) {
-      openEntry[colKey] = val;
-    } else {
-      if (!openEntry.customFields) openEntry.customFields = {};
-      openEntry.customFields[colKey] = val;
-    }
+    if (!openEntry.customFields) openEntry.customFields = {};
+    openEntry.customFields[colKey] = val;
   }
   saveState();
   updateLogTable();
@@ -3634,30 +2675,6 @@ function taskDateStr(task) {
 }
 function isFutureTask(task) {
   return taskDateStr(task) > todayStr();
-}
-function isPastTask(task) {
-  return taskDateStr(task) < todayStr();
-}
-// Past-dated tasks are locked to read-only history — the user can no longer click
-// Pause on them (see renderRow). So if a task is still "running" once its date is
-// no longer today (left running overnight, or the app was closed mid-task), force
-// it into "paused" here, banking real elapsed time exactly like a manual pause
-// would. Cheap to run on every render; only touches tasks that actually need it.
-function enforcePastDateAutoPause() {
-  let changed = false;
-  tasks.forEach(task => {
-    if (task.status === 'running' && isPastTask(task)) {
-      if (task.segmentStart !== null) {
-        task.accumulatedMs += Date.now() - task.segmentStart;
-        task.segmentStart = null;
-      }
-      task.status = 'paused';
-      clearInterval(intervals[task.id]);
-      delete intervals[task.id];
-      changed = true;
-    }
-  });
-  if (changed) saveState();
 }
 
 // Build the HTML for a single configurable column's input, for use on the task card
@@ -3692,182 +2709,12 @@ function buildDynamicFieldInput(col, idAttr, value, onChangeExpr, disabledAttr, 
     return `<input id="${idAttr}" class="meta-input" type="date" ${disabledAttr}
       value="${esc(value || '')}" onchange="${onChangeExpr}" />`;
   }
-  if (col.type === 'textarea' || multiline) {
-    // Rich text editor — covers every field whose input type is textarea, system or
-    // custom (Description, Remark, or any user-added "Text Area" column), plus any field
-    // rendered with the legacy `multiline` hint. See buildRichTextInput for details.
-    return buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, placeholder);
+  if (multiline) {
+    return `<textarea id="${idAttr}" class="meta-input" ${disabledAttr} placeholder="${esc(placeholder || '')}"
+      oninput="${onChangeExpr}" style="min-height:60px;resize:vertical;width:100%">${esc(value || '')}</textarea>`;
   }
   return `<input id="${idAttr}" class="meta-input" type="text" ${disabledAttr} placeholder="${esc(placeholder || '')}"
     value="${esc(value || '')}" oninput="${onChangeExpr}" />`;
-}
-
-// ── Plain-text multi-line editor for `type: 'textarea'` fields ─────────────────
-// A lightweight contenteditable-based editor used for every textarea-typed field, system
-// (Description, Remark) or custom, wherever it's rendered (task card, Complete/Edit popup).
-// Field content is ALWAYS treated and stored as plain text — no bold/italic/lists, no HTML
-// fragment persisted anywhere. The only thing preserved beyond raw characters is line breaks,
-// so multi-line typing/pasting (e.g. from Excel cells or other docs) keeps its line structure.
-// Contenteditable (rather than a plain <textarea>) is still used only so the field can
-// auto-grow/scroll consistently with the rest of the UI, not to support any formatting.
-//
-// Entries saved by an earlier version of this app that DID store a rich-HTML fragment (bold,
-// bulleted/numbered lists, etc.) are handled read-only-once: the first time such a value is
-// loaded into the editor it is flattened to plain text (tags dropped, list items prefixed
-// with "• ", line breaks kept) via richTextToPlain — so old formatting is not preserved, but
-// nothing renders as raw HTML tags either. Saving the field again after that always writes
-// plain text.
-//
-// Follows the same hidden-input + visible-surface pattern already used for the multi-select
-// dropdown above: a hidden <input> (idAttr) holds the canonical value so every existing
-// caller that reads `document.getElementById(idAttr).value` (submitComplete, updateTaskField,
-// updateTaskCustomField, Excel import matching, etc.) keeps working with zero changes, while
-// a visible contenteditable surface (idAttr + '-trigger') is what the user actually types
-// into. The '-trigger' suffix also matches the existing invalid-state lookup convention
-// (see submitComplete's check() and updateTaskField) so required-field validation styling
-// keeps working unmodified.
-
-// Heuristic: does this stored value look like an HTML fragment left over from the old rich
-// text editor (paragraphs/breaks/lists/bold/italic), as opposed to a plain-text value that
-// merely happens to contain a stray '<' or '>'?
-function rteLooksLikeHtml(v) {
-  return /<\/?(p|div|br|ul|ol|li|b|strong|i|em)(\s[^>]*)?>/i.test(v);
-}
-// Plain text → escaped HTML for display inside the contenteditable surface, preserving line
-// breaks as <br> (the only "structure" this editor ever renders).
-function rtePlainToHtml(v) {
-  return esc(v).replace(/\r\n|\r|\n/g, '<br>');
-}
-// One-way flatten of an old rich-HTML fragment down to plain text: list items get a "• "
-// prefix, block/line boundaries become real newlines, every tag is otherwise dropped (its
-// text content kept). Plain-text values pass through unchanged.
-function richTextToPlain(html) {
-  const v = html == null ? '' : String(html);
-  if (!v || !rteLooksLikeHtml(v)) return v;
-  const root = document.createElement('div');
-  root.innerHTML = v;
-  root.querySelectorAll('li').forEach(li => { li.insertAdjacentText('afterbegin', '• '); li.insertAdjacentText('beforeend', '\n'); });
-  root.querySelectorAll('p, div, br').forEach(el => el.insertAdjacentText('afterend', '\n'));
-  return (root.textContent || '').replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
-}
-// Compute the editor's initial inner HTML from a stored value: always plain text, always
-// rendered through rtePlainToHtml. A value from the old rich editor is flattened first via
-// richTextToPlain so no HTML tag is ever interpreted as markup here.
-function rteInitialContent(value) {
-  const v = value == null ? '' : String(value);
-  if (!v) return '';
-  return rtePlainToHtml(richTextToPlain(v));
-}
-
-function buildRichTextInput(col, idAttr, value, onChangeExpr, disabledAttr, placeholder) {
-  // Force Enter to insert a plain <br> rather than wrapping in <p>/<div> — keeps the
-  // editor's DOM to text nodes + <br> only, matching what it stores.
-  try { document.execCommand('defaultParagraphSeparator', false, 'br'); } catch (e) {}
-  const isDisabled = !!(disabledAttr && String(disabledAttr).trim());
-  const editorId = idAttr + '-trigger';
-  const initialHtml = rteInitialContent(value);
-  // Rows comes from Master Field Configuration (col.rows); DEFAULT_TEXTAREA_ROWS covers
-  // columns/older saved configs created before the Rows setting existed. No hardcoded
-  // height here — the actual pixel height is computed by the .rte-editor CSS rule from
-  // this row count (see the --rte-rows custom property).
-  const rows = (col && col.rows > 0) ? col.rows : DEFAULT_TEXTAREA_ROWS;
-  const changeExpr = (onChangeExpr || '').replace(/this\.value/g, `document.getElementById('${idAttr}').value`);
-  return `<div class="rte-wrap">
-    <input type="hidden" id="${idAttr}" value="${esc(value || '')}" />
-    <div id="${editorId}" class="rte-editor" contenteditable="${isDisabled ? 'false' : 'true'}"
-      style="--rte-rows:${rows}"
-      data-placeholder="${esc(placeholder || '')}"
-      oninput="rteSync('${idAttr}'); ${changeExpr}"
-      onblur="rteSync('${idAttr}')"
-      onpaste="rtePaste(event, '${idAttr}')">${initialHtml}</div>
-  </div>`;
-}
-function rteIsEditorEmpty(editor) { return !editor.textContent.trim(); }
-// Sync the visible editor's content into the canonical hidden input as PLAIN TEXT (line
-// breaks preserved, everything else discarded) — never store the editor's innerHTML — and
-// clear any leftover empty markup (a stray <br>) once the user has deleted everything, so
-// the placeholder reappears correctly.
-function rteSync(idAttr) {
-  const editor = document.getElementById(idAttr + '-trigger');
-  const hidden = document.getElementById(idAttr);
-  if (!editor || !hidden) return;
-  if (rteIsEditorEmpty(editor)) {
-    if (editor.innerHTML !== '') editor.innerHTML = '';
-    hidden.value = '';
-  } else {
-    hidden.value = richTextToPlain(editor.innerHTML) || editor.textContent;
-    editor.classList.remove('invalid');
-  }
-}
-// Paste is always forced to plain text — any rich formatting (bold, lists, fonts, colors,
-// etc.) from the clipboard is discarded. Only newlines are preserved, so multi-line pastes
-// (e.g. from Excel cells or other docs) still break into separate lines rather than
-// collapsing into one.
-function rtePaste(evt, idAttr) {
-  evt.preventDefault();
-  const cb = evt.clipboardData || window.clipboardData;
-  const text = cb ? cb.getData('text/plain') : '';
-  const fragment = rtePlainToHtml(text);
-  document.execCommand('insertHTML', false, fragment || '');
-  rteSync(idAttr);
-}
-// Focus the interactive surface of a field built by buildDynamicFieldInput — the
-// contenteditable '-trigger' for rich text fields, or the element itself otherwise.
-function focusFieldInput(idAttr) {
-  const trigger = document.getElementById(idAttr + '-trigger');
-  const el = trigger || document.getElementById(idAttr);
-  if (el && el.focus) el.focus();
-}
-
-// Config-driven task-card fields: every column with Field Visibility → Task Card enabled
-// renders here automatically, in configured order, using its saved type/list/format — adding
-// a new task-card field (built-in or custom) never requires touching this function. Project,
-// Nature, and Module keep their historical required-asterisk and layout classes; Module and
-// Ticket keep their historical placeholders. System-managed columns (see isSystemManagedColumn)
-// are skipped since they have no freely-editable per-task value to bind to.
-const CORE_TASK_FIELD_KEYS = ['project', 'nature', 'module', 'ticket'];
-const TASK_CARD_REQUIRED_KEYS = ['project', 'nature', 'module'];
-const TASK_CARD_PLACEHOLDERS = { module: 'e.g. Scanner Integration', ticket: 'e.g. NAV-1234' };
-
-function renderTaskCardFields(task, id, dis) {
-  return getTaskCardColumns()
-    .filter(c => !isSystemManagedColumn(c))
-    .map(c => {
-      const isCore = CORE_TASK_FIELD_KEYS.includes(c.key);
-      // Core fields (project/nature/module/ticket) live directly on the task object, matching
-      // every other place in the app (startTask, resumeTask, Complete popup, etc.) that reads
-      // task.project/nature/module/ticket. Everything else — built-in (description, remark) or
-      // user-added custom columns — is stored in task.customFields, keyed by column key.
-      const value = isCore ? task[c.key] : ((task.customFields && task.customFields[c.key]) || '');
-      const onChangeExpr = isCore
-        ? `updateTaskField(${id},'${c.key}',this.value)`
-        : `updateTaskCustomField(${id},'${c.key}',this.value)`;
-      const cssKey = isCore ? c.key : 'custom';
-      const wideClass = c.type === 'textarea' ? ' meta-field-wide' : '';
-      const isTextarea = c.type === 'textarea';
-      const isExpanded = isTextarea && expandedTaskCardFields.has(id + ':' + c.key);
-      const collapsedClass = isTextarea && !isExpanded ? ' tc-field-collapsed' : '';
-      const collapseToggle = isTextarea
-        ? `<button type="button" class="meta-collapse-toggle${isExpanded ? ' expanded' : ''}"
-             onclick="toggleTaskCardFieldCollapse(${id},'${c.key}')"
-             title="${isExpanded ? 'Collapse' : 'Expand'} ${esc(c.label)}"><i class="ti ti-chevron-down"></i></button>`
-        : '';
-      const required = TASK_CARD_REQUIRED_KEYS.includes(c.key) ? ' <span class="req">*</span>' : '';
-      const placeholder = TASK_CARD_PLACEHOLDERS[c.key] || '';
-      return `<div class="meta-field meta-field-${cssKey}${wideClass}${collapsedClass}">
-        <span class="meta-label">${esc(c.label)}${required}${collapseToggle}</span>
-        ${buildDynamicFieldInput(c, `meta-${c.key}-${id}`, value, onChangeExpr, dis, placeholder)}
-      </div>`;
-    }).join('');
-}
-
-// Expand/collapse a textarea-type task-card field (Description, Remark, custom Text Area
-// columns). Re-renders just that task's card so the toggle takes effect immediately.
-function toggleTaskCardFieldCollapse(id, key) {
-  const k = id + ':' + key;
-  if (expandedTaskCardFields.has(k)) expandedTaskCardFields.delete(k);
-  else expandedTaskCardFields.add(k);
-  renderRow(id);
 }
 
 // Toggle a multi-select checkbox dropdown panel open/closed, closing any other open ones.
@@ -3917,22 +2764,12 @@ function renderRow(id) {
   const {status} = task;
   const isDone=status==='done', isRunning=status==='running', isPaused=status==='paused';
   const isFuture = isFutureTask(task);
-  const isPast = isPastTask(task);
-  container.className = 'task-card'+(isRunning?' running':isPaused?' paused':isDone?' done':'')+(isFuture?' future-task':'')+(isPast?' past-task':'');
+  container.className = 'task-card'+(isRunning?' running':isPaused?' paused':isDone?' done':'')+(isFuture?' future-task':'');
 
   let actionBtns = '';
   if (isFuture) {
     // No timer actions for future-dated tasks — just a planned indicator
     actionBtns = `<span class="future-badge" title="Available on ${taskDateStr(task)}"><i class="ti ti-calendar-time"></i> Planned</span>`;
-  } else if (isPast) {
-    // Past-dated tasks are read-only history: no start/pause/resume, only completing
-    // an already-running/paused task is allowed so the day's log can be closed out.
-    if (isRunning || isPaused)
-      actionBtns = `<button class="btn-icon btn-done" onclick="openCompleteModal(${id})" title="Mark done"><i class="ti ti-check"></i></button>`;
-    else if (isDone)
-      actionBtns = `<button class="btn-icon" disabled style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-circle-check"></i></button>`;
-    else
-      actionBtns = `<span class="future-badge" title="Past date — this task was never started"><i class="ti ti-lock"></i> Locked</span>`;
   } else {
     if (status==='idle')
       actionBtns = `<button class="btn-icon btn-start" onclick="startTask(${id})" title="Start timer"><i class="ti ti-player-play"></i></button>`;
@@ -3950,9 +2787,6 @@ function renderRow(id) {
   // Show module/ticket on card only (project & nature shown, no description on card)
   container.innerHTML = `
     <div class="task-top">
-      <div class="task-drag-handle" draggable="true" ondragstart="taskDragStart(event, ${id})" ondragend="taskDragEnd(event)" title="Drag to reorder">
-        <i class="ti ti-grip-vertical"></i>
-      </div>
       <input id="inp-${id}" class="task-input" type="text" placeholder="Task / feature name…"
         value="${esc(task.heading)}" ${dis}
         oninput="updateTaskField(${id},'heading',this.value)"
@@ -3966,7 +2800,29 @@ function renderRow(id) {
       </div>
     </div>
     <div class="task-meta">
-      ${renderTaskCardFields(task, id, dis)}
+      ${getColumnByKey('project').showInTaskCard !== false ? `<div class="meta-field meta-field-project">
+        <span class="meta-label">${esc(getColumnByKey('project').label)} <span class="req">*</span></span>
+        ${buildDynamicFieldInput(getColumnByKey('project'), `meta-project-${id}`, task.project, `updateTaskField(${id},'project',this.value)`, dis)}
+      </div>` : ''}
+      ${getColumnByKey('nature').showInTaskCard !== false ? `<div class="meta-field meta-field-nature">
+        <span class="meta-label">${esc(getColumnByKey('nature').label)} <span class="req">*</span></span>
+        ${buildDynamicFieldInput(getColumnByKey('nature'), `meta-nature-${id}`, task.nature, `updateTaskField(${id},'nature',this.value)`, dis)}
+      </div>` : ''}
+      ${getColumnByKey('module').showInTaskCard !== false ? `<div class="meta-field meta-field-module">
+        <span class="meta-label">${esc(getColumnByKey('module').label)} <span class="req">*</span></span>
+        ${buildDynamicFieldInput(getColumnByKey('module'), `meta-module-${id}`, task.module, `updateTaskField(${id},'module',this.value)`, dis, 'e.g. Scanner Integration')}
+      </div>` : ''}
+      ${getColumnByKey('ticket').showInTaskCard !== false ? `<div class="meta-field meta-field-ticket">
+        <span class="meta-label">${esc(getColumnByKey('ticket').label)}</span>
+        ${buildDynamicFieldInput(getColumnByKey('ticket'), `meta-ticket-${id}`, task.ticket, `updateTaskField(${id},'ticket',this.value)`, dis, 'e.g. NAV-1234')}
+      </div>` : ''}
+      ${getTaskCardColumns().filter(isDynamicPopupColumn).map(c => {
+        const val = (task.customFields && task.customFields[c.key]) || '';
+        return `<div class="meta-field meta-field-custom">
+          <span class="meta-label">${esc(c.label)}</span>
+          ${buildDynamicFieldInput(c, `meta-${c.key}-${id}`, val, `updateTaskCustomField(${id},'${c.key}',this.value)`, dis)}
+        </div>`;
+      }).join('')}
     </div>
     <div class="validation-msg" id="val-msg-${id}">
       <i class="ti ti-alert-circle"></i> Project, Nature of Task and Module are required before starting.
@@ -3974,74 +2830,7 @@ function renderRow(id) {
   `;
 }
 
-// ── Drag & drop task reordering ─────────────────────────────────────────────────
-// Only the small grip handle is draggable (not the whole card), so dragging never
-// conflicts with selecting/editing text in the card's inputs. The dragged element
-// is the handle, but we drag the whole card as the drag image and move the whole
-// card element around live during dragover; the array order is reconciled from
-// the final DOM order on drop.
-let _dragTaskId = null;
-
-function taskDragStart(e, id) {
-  _dragTaskId = id;
-  const card = document.getElementById('row-' + id);
-  if (!card) return;
-  e.dataTransfer.effectAllowed = 'move';
-  try { e.dataTransfer.setData('text/plain', String(id)); } catch (err) {}
-  try { e.dataTransfer.setDragImage(card, 20, 20); } catch (err) {}
-  // Add the class on the next tick so the browser has already captured the drag image
-  setTimeout(() => card.classList.add('dragging'), 0);
-}
-
-function taskDragEnd(e) {
-  const card = document.getElementById('row-' + _dragTaskId);
-  if (card) card.classList.remove('dragging');
-  _dragTaskId = null;
-}
-
-// Finds the card the cursor is currently closest to (by vertical midpoint) so the
-// dragged card can be live-repositioned before/after it as the pointer moves.
-function _dragAfterElement(container, y) {
-  const cards = [...container.querySelectorAll('.task-card:not(.dragging)')];
-  return cards.reduce((closest, card) => {
-    const box = card.getBoundingClientRect();
-    const offset = y - box.top - box.height / 2;
-    if (offset < 0 && offset > closest.offset) return { offset, element: card };
-    return closest;
-  }, { offset: -Infinity, element: null }).element;
-}
-
-function taskListDragOver(e) {
-  if (_dragTaskId == null) return;
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  const list = document.getElementById('task-list');
-  const dragging = document.getElementById('row-' + _dragTaskId);
-  if (!dragging) return;
-  const afterEl = _dragAfterElement(list, e.clientY);
-  if (afterEl == null) list.appendChild(dragging);
-  else if (afterEl !== dragging) list.insertBefore(dragging, afterEl);
-}
-
-// Reconciles the `tasks` array to match the card order shown in the DOM after a
-// drop. Only the slots currently occupied by visible cards are reassigned, so
-// tasks from other dates (interleaved in the underlying array) keep their
-// original positions untouched.
-function taskListDrop(e) {
-  if (_dragTaskId == null) return;
-  e.preventDefault();
-  const list = document.getElementById('task-list');
-  const orderedIds = [...list.querySelectorAll('.task-card[id^="row-"]')].map(el => parseInt(el.id.replace('row-', '')));
-  const idSet = new Set(orderedIds);
-  const slots = [];
-  tasks.forEach((t, i) => { if (idSet.has(t.id)) slots.push(i); });
-  const idToTask = new Map(tasks.map(t => [t.id, t]));
-  slots.forEach((slotIdx, i) => { tasks[slotIdx] = idToTask.get(orderedIds[i]); });
-  saveState();
-}
-
 function renderList() {
-  enforcePastDateAutoPause();
   const list = document.getElementById('task-list');
   const selDate = getSelectedDate();
   const today = todayStr();
@@ -4108,135 +2897,12 @@ function updateEmptyState() {
 
 // ── Collapsible log table ──────────────────────────────────────────────────────
 let logTableExpanded = false;
-let fsChipTimer = null;
-
 function toggleLogTable() {
   // Only allow expand/collapse when viewing today's log
   if (getSelectedDate() !== todayStr()) return;
   logTableExpanded = !logTableExpanded;
   applyLogTableState();
 }
-
-let _logFullscreenSim = false;
-
-function _fsRequest(el) {
-  const fn = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
-  return fn ? fn.call(el) : null;
-}
-function _fsExit() {
-  const fn = document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen;
-  return fn ? fn.call(document) : null;
-}
-function _fsElement() {
-  return document.fullscreenElement || document.webkitFullscreenElement || null;
-}
-// iPhone Safari and Chrome (both WebKit) don't support the Fullscreen API
-// on non-video elements at all, so feature-detect rather than just trying
-// and catching — there's nothing to catch, the method is simply absent.
-function _fsSupported() {
-  const el = document.documentElement;
-  return !!(el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen);
-}
-
-// The browser's native Fullscreen API promotes the fullscreen element to a
-// "top layer" that paints above everything else in the page, regardless of
-// z-index or DOM order. Any modal, popup, or tooltip that lives outside the
-// fullscreen element ends up rendered behind it and can't be seen or clicked.
-// Fix: move ALL such floating elements inside the fullscreen element while
-// it's active, remembering exactly where each one came from so it can be
-// moved back to its original spot afterward.
-const FS_PORTAL_IDS = [
-  'appTooltip',            // custom tooltip
-  'task-search-overlay',   // Ctrl+Shift+F search
-  'complete-modal',
-  'carry-forward-modal',
-  'make-recurring-modal',
-  'manage-recurring-modal',
-  'transfer-minutes-modal',
-  'email-preview-modal',
-  'masters-modal',
-  'weekend-prompt-overlay',
-  'csv-modal',
-  'confirm-overlay',
-  'username-prompt-overlay',
-  'tour-backdrop',
-  'tour-bubble'
-];
-let _fsPortalMoved = [];
-
-function _moveOverlayIntoFullscreen() {
-  const panel = document.getElementById('log-panel');
-  if (!panel) return;
-  FS_PORTAL_IDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el || el.parentElement === panel) return;
-    _fsPortalMoved.push({ el, parent: el.parentElement, next: el.nextSibling });
-    panel.appendChild(el);
-  });
-}
-function _restoreOverlayPosition() {
-  // Restore in reverse insertion order so each element's recorded
-  // "next sibling" reference is still valid at the moment we use it.
-  for (let i = _fsPortalMoved.length - 1; i >= 0; i--) {
-    const { el, parent, next } = _fsPortalMoved[i];
-    if (!parent) continue;
-    if (next && next.parentElement === parent) {
-      parent.insertBefore(el, next);
-    } else {
-      parent.appendChild(el);
-    }
-  }
-  _fsPortalMoved = [];
-}
-
-async function toggleLogFullscreen() {
-  const panel = document.getElementById("log-panel");
-  const btn = document.getElementById("log-fullscreen-btn");
-  const icon = btn.querySelector("i");
-
-  if (!_fsSupported()) {
-    // CSS-simulated fullscreen fallback (iPhone Safari/Chrome).
-    _logFullscreenSim = !_logFullscreenSim;
-    if (_logFullscreenSim) {
-      panel.classList.add("fullscreen", "fullscreen-sim");
-      document.body.classList.add("log-fullscreen");
-      icon.className = "ti ti-minimize";
-      _moveOverlayIntoFullscreen();
-      showFsChip();
-    } else {
-      panel.classList.remove("fullscreen", "fullscreen-sim");
-      document.body.classList.remove("log-fullscreen");
-      icon.className = "ti ti-maximize";
-      _restoreOverlayPosition();
-      const chip = document.getElementById("fs-action-chip");
-      if (chip) chip.classList.remove("show");
-    }
-    return;
-  }
-
-  if (!_fsElement()) {
-    try {
-      await _fsRequest(panel);
-      panel.classList.add("fullscreen");
-      document.body.classList.add("log-fullscreen");
-      icon.className = "ti ti-minimize";
-      _moveOverlayIntoFullscreen();
-    } catch (err) {
-      // Native request rejected (e.g. blocked outside a direct user
-      // gesture) — fall back to the CSS-simulated mode instead of failing
-      // silently.
-      _logFullscreenSim = true;
-      panel.classList.add("fullscreen", "fullscreen-sim");
-      document.body.classList.add("log-fullscreen");
-      icon.className = "ti ti-minimize";
-      _moveOverlayIntoFullscreen();
-      showFsChip();
-    }
-  } else {
-    await _fsExit();
-  }
-}
-
 function applyLogTableState() {
   const isToday = getSelectedDate() === todayStr();
   // Past dates always show expanded; today defaults collapsed
@@ -4251,270 +2917,19 @@ function applyLogTableState() {
   if (icon) icon.style.visibility = isToday ? 'visible' : 'hidden';
 }
 
-function showFsChip() {
-    const chip = document.getElementById("fs-action-chip");
-    if (!chip || !_isLogFullscreenActive()) return;
-
-    chip.classList.add("show");
-
-    clearTimeout(fsChipTimer);
-
-    fsChipTimer = setTimeout(() => {
-        chip.classList.remove("show");
-    }, 2500);
-}
-
-  function openFloatingDatePicker(){
-
-  const picker=document.getElementById("log-date-input");
-
-  try{
-
-      picker.showPicker();
-
-  }catch{
-
-      picker.click();
-
-  }
-}
-
-// Sorts log entries for display only — click-to-sort, not persisted, and never
-// mutates logEntries itself. Reuses getEntryValueForColumn so the sort key always
-// matches what's actually shown in the cell (existing per-column value logic is
-// untouched).
-function sortLogEntriesForDisplay(entries) {
-  if (!logTableSortCol) return entries;
-  const key = logTableSortCol;
-  const dir = logTableSortDir;
-  return entries.slice().sort((a, b) => {
-    const taskA = tasks.find(t => t.id === a.taskId);
-    const taskB = tasks.find(t => t.id === b.taskId);
-    let av, bv;
-    if (key === 'date') { av = a.startTs; bv = b.startTs; }
-    else if (key === 'effort') { av = getEntryValueForColumn(a, taskA, 'effort'); bv = getEntryValueForColumn(b, taskB, 'effort'); }
-    else { av = String(getEntryValueForColumn(a, taskA, key) || '').toLowerCase(); bv = String(getEntryValueForColumn(b, taskB, key) || '').toLowerCase(); }
-    if (av < bv) return dir === 'asc' ? -1 : 1;
-    if (av > bv) return dir === 'asc' ? 1 : -1;
-    return 0;
-  });
-}
-
-// Sensible starting widths, mirroring the Dashboard's per-table defaultWidths map for its
-// known columns. Task Logger columns are dynamic (custom columns can be added via Master
-// Settings), so unknown keys fall back to a width based on the column's type.
-const LOG_TABLE_DEFAULT_WIDTHS = {
-  date: 100, employee: 130, project: 130, module: 150, nature: 120,
-  ticket: 120, description: 260, effort: 90, status: 110, remark: 180
-};
-function defaultLogColumnWidth(c) {
-  if (LOG_TABLE_DEFAULT_WIDTHS[c.key]) return LOG_TABLE_DEFAULT_WIDTHS[c.key];
-  if (c.type === 'date') return 110;
-  if (c.type === 'list' || c.type === 'multilist') return 130;
-  if (c.type === 'textarea') return 220;
-  return 150; // generic text fallback for custom columns
-}
-
-// Builds/updates the <colgroup> to match the currently visible columns. Every column gets
-// an explicit width — the user's persisted width if they've resized it, otherwise a sensible
-// default — because table-layout:fixed splits *unset* columns evenly rather than sizing them
-// to content, which without a default left every unresized column looking the same width.
-function buildLogTableColgroup(cols, isPresentDay, isFutureDay) {
-  const table = document.getElementById('log-table');
-  const thead = table && table.querySelector(':scope > thead');
-  if (!table || !thead) return;
-  let colgroup = table.querySelector(':scope > colgroup');
-  if (!colgroup) {
-    colgroup = document.createElement('colgroup');
-    table.insertBefore(colgroup, thead);
-  }
-  colgroup.innerHTML = cols.map(c => {
-    const w = logTableColWidths[c.key] || defaultLogColumnWidth(c);
-    return `<col data-col="${c.key}" style="width:${w}px">`;
-  }).join('') + `<col data-col="__actions" style="width:${logActionsColWidth(isPresentDay, isFutureDay)}px">`;
-}
-
-// Builds the header row with sort/pin/resize affordances per column.
-function buildLogTheadRow(cols, isPresentDay, isFutureDay) {
-  const theadRow = document.getElementById('log-thead-row');
-  if (!theadRow) return;
-  theadRow.innerHTML = cols.map(c => {
-    const arrow = logTableSortCol === c.key ? (logTableSortDir === 'asc' ? '▲' : '▼') : '';
-    return `<th class="log-th-sortable" data-col="${c.key}">${esc(c.label)}` +
-      `<span class="col-sort-arrow">${arrow}</span>` +
-      `<button type="button" class="col-pin-icon" data-col="${c.key}" title="Pin column">${LOG_TABLE_PIN_ICON_SVG}</button>` +
-      `<span class="col-resize-handle"></span></th>`;
-  }).join('') + `<th data-col="__actions" style="width:${logActionsColWidth(isPresentDay, isFutureDay)}px">` +
-    `<span class="log-actions-th-inner">` +
-      `<span class="log-actions-th-label">${logActionsCollapsed ? '' : 'Action'}</span>` +
-      `<button type="button" class="log-actions-collapse-btn" onclick="toggleLogActionsColumn()" ` +
-        `title="${logActionsCollapsed ? 'Expand action column' : 'Collapse action column'}">` +
-        `<i class="ti ti-chevron-${logActionsCollapsed ? 'left' : 'right'}"></i>` +
-      `</button>` +
-    `</span></th>`;
-}
-
-// Re-applies sticky left/right offsets for pinned columns, using the widths currently
-// on screen. Called after every render and after every resize drag.
-function applyLogTableColumnPins() {
-  const table = document.getElementById('log-table');
-  const theadRow = document.getElementById('log-thead-row');
-  if (!table || !theadRow) return;
-  const order = Array.from(theadRow.querySelectorAll(':scope > th')).map(th => th.dataset.col).filter(Boolean);
-  const widthOf = (key) => {
-    if (logTableColWidths[key]) return logTableColWidths[key];
-    const th = theadRow.querySelector(':scope > th[data-col="' + key + '"]');
-    return th ? th.offsetWidth : 100;
-  };
-  let leftAcc = 0;
-  const leftOffset = {};
-  order.forEach(key => {
-    if (logTableColPinned[key] === 'left') { leftOffset[key] = leftAcc; leftAcc += widthOf(key); }
-  });
-  // The Action column is always sticky-right (handled via CSS), so any user-pinned-right
-  // columns must stack to the left of it rather than starting from the table edge.
-  let rightAcc = widthOf('__actions');
-  const rightOffset = {};
-  for (let i = order.length - 1; i >= 0; i--) {
-    const key = order[i];
-    if (key === '__actions') continue;
-    if (logTableColPinned[key] === 'right') { rightOffset[key] = rightAcc; rightAcc += widthOf(key); }
-  }
-  order.forEach((key, idx) => {
-    const dir = logTableColPinned[key];
-    const isLastLeft = dir === 'left' && order.slice(idx + 1).every(k => logTableColPinned[k] !== 'left');
-    const isFirstRight = dir === 'right' && order.slice(0, idx).every(k => logTableColPinned[k] !== 'right');
-    const cells = table.querySelectorAll('th[data-col="' + key + '"], td[data-col="' + key + '"]');
-    cells.forEach(cell => {
-      cell.style.left = '';
-      cell.style.right = '';
-      cell.classList.remove('pinned-col', 'pinned-col-edge-left', 'pinned-col-edge-right');
-      if (dir === 'left') {
-        cell.style.left = leftOffset[key] + 'px';
-        cell.classList.add('pinned-col');
-        if (isLastLeft) cell.classList.add('pinned-col-edge-left');
-      } else if (dir === 'right') {
-        cell.style.right = rightOffset[key] + 'px';
-        cell.classList.add('pinned-col');
-        if (isFirstRight) cell.classList.add('pinned-col-edge-right');
-      }
-    });
-  });
-}
-
-function updateLogPinIcon(icon, key) {
-  const dir = logTableColPinned[key];
-  icon.classList.remove('pin-left', 'pin-right');
-  if (dir === 'left') { icon.classList.add('pin-left'); icon.title = 'Pinned left — click to pin right instead'; }
-  else if (dir === 'right') { icon.classList.add('pin-right'); icon.title = 'Pinned right — click to unpin'; }
-  else { icon.title = 'Click to pin this column to the left'; }
-}
-function cycleLogColumnPin(key) {
-  if (logTableColPinned[key] === 'left') logTableColPinned[key] = 'right';
-  else if (logTableColPinned[key] === 'right') delete logTableColPinned[key];
-  else logTableColPinned[key] = 'left';
-  ltSaveObj(LOG_TABLE_PINNED_KEY, logTableColPinned);
-  applyLogTableColumnPins();
-  const headerIcon = document.querySelector('#log-thead-row .col-pin-icon[data-col="' + key + '"]');
-  if (headerIcon) updateLogPinIcon(headerIcon, key);
-}
-
-// Wires sort clicks, pin-icon clicks, and resize-handle dragging. Called after every
-// header rebuild since the header DOM is regenerated each render (columns can change
-// at runtime via Master Settings, unlike the Dashboard's static column sets).
-function wireLogTableColumnInteractions() {
-  const table = document.getElementById('log-table');
-  const theadRow = document.getElementById('log-thead-row');
-  if (!table || !theadRow) return;
-
-  theadRow.querySelectorAll(':scope > th.log-th-sortable').forEach(th => {
-    th.addEventListener('click', (e) => {
-      if (e.target.closest('.col-resize-handle') || e.target.closest('.col-pin-icon')) return;
-      const key = th.dataset.col;
-      if (logTableSortCol === key) { logTableSortDir = logTableSortDir === 'asc' ? 'desc' : 'asc'; }
-      else { logTableSortCol = key; logTableSortDir = (key === 'effort' || key === 'date') ? 'desc' : 'asc'; }
-      updateLogTable();
-    });
-  });
-
-  theadRow.querySelectorAll(':scope > th .col-pin-icon').forEach(icon => {
-    const key = icon.dataset.col;
-    updateLogPinIcon(icon, key);
-    icon.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      cycleLogColumnPin(key);
-    });
-  });
-
-  theadRow.querySelectorAll(':scope > th .col-resize-handle').forEach(handle => {
-    handle.addEventListener('click', e => e.stopPropagation());
-    handle.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const th = handle.closest('th');
-      const key = th.dataset.col;
-      const startX = e.clientX;
-      const startWidth = logTableColWidths[key] || th.offsetWidth;
-      handle.classList.add('active');
-      function onMove(ev) {
-        const newWidth = Math.max(50, startWidth + (ev.clientX - startX));
-        logTableColWidths[key] = newWidth;
-        const colEl = table.querySelector(':scope > colgroup col[data-col="' + key + '"]');
-        if (colEl) colEl.style.width = newWidth + 'px';
-        applyLogTableColumnPins();
-      }
-      function onUp() {
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
-        handle.classList.remove('active');
-        ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths);
-      }
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
-    });
-    handle.addEventListener('touchstart', (e) => {
-      e.stopPropagation();
-      const th = handle.closest('th');
-      const key = th.dataset.col;
-      const startX = e.touches[0].clientX;
-      const startWidth = logTableColWidths[key] || th.offsetWidth;
-      handle.classList.add('active');
-      function onMove(ev) {
-        const newWidth = Math.max(50, startWidth + (ev.touches[0].clientX - startX));
-        logTableColWidths[key] = newWidth;
-        const colEl = table.querySelector(':scope > colgroup col[data-col="' + key + '"]');
-        if (colEl) colEl.style.width = newWidth + 'px';
-        applyLogTableColumnPins();
-      }
-      function onUp() {
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onUp);
-        handle.classList.remove('active');
-        ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths);
-      }
-      document.addEventListener('touchmove', onMove, { passive: true });
-      document.addEventListener('touchend', onUp);
-    }, { passive: true });
-  });
-}
-
 function updateLogTable() {
   const tbody = document.getElementById('log-tbody');
   const theadRow = document.getElementById('log-thead-row');
   if (!tbody) return;
   const selDate = getSelectedDate ? getSelectedDate() : todayStr();
-  const todayForActions = todayStr();
-  const isPresentDay = selDate === todayForActions;
-  const isFutureDay = selDate > todayForActions;
-  const isPastDay = selDate < todayForActions;
-  const filtered = sortLogEntriesForDisplay(logEntries.filter(e => entryMatchesDate(e, selDate)));
+  const filtered = logEntries.filter(e => entryMatchesDate(e, selDate));
   const cols = getVisibleLogColumns();
 
   // Render header row dynamically from configured columns (locked columns keep their
   // fixed labels; configurable columns use the user's renamed label if set).
-  buildLogTableColgroup(cols, isPresentDay, isFutureDay);
-  buildLogTheadRow(cols, isPresentDay, isFutureDay);
+  if (theadRow) {
+    theadRow.innerHTML = cols.map(c => `<th>${esc(c.label)}</th>`).join('') + '<th style="width:36px"></th>';
+  }
 
   tbody.innerHTML = filtered.map(e => {
     const task = tasks.find(t=>t.id===e.taskId);
@@ -4523,70 +2938,42 @@ function updateLogTable() {
 
     const cells = cols.map(c => {
       if (c.key === 'description') {
-        const descVal = e.heading || (isRunning ? '— pending on completion —' : '');
-        const effortDescVal = richTextToPlain(e.description || '').trim();
-        const hoverVal = effortDescVal ? (descVal + '\n\n— Task progress / Effort description —\n' + effortDescVal) : descVal;
-        return `<td class="td-desc" data-col="${c.key}" title="${esc(hoverVal)}">${esc(descVal)}</td>`;
+        return `<td class="td-desc">${esc(e.heading || (isRunning ? '— pending on completion —' : ''))}</td>`;
       }
       if (c.key === 'remark') {
-        const remarkVal = richTextToPlain(e.remark || '');
-        return `<td class="td-desc" data-col="${c.key}" title="${esc(remarkVal)}">${esc(remarkVal)}</td>`;
+        return `<td class="td-desc">${esc(e.remark || '')}</td>`;
       }
       if (c.key === 'effort') {
-        const minsVal = e.durationSecs!==null ? Math.ceil(e.durationSecs/60) : (task ? Math.ceil(liveElapsedSecs(task)/60) : '—');
-        const minsCell = e.durationSecs!==null ? `<span class="cell-dur">${minsVal}</span>` : minsVal;
-        return `<td data-col="${c.key}" title="${minsVal}">${minsCell}</td>`;
+        const minsCell = e.durationSecs!==null
+          ? `<span class="cell-dur">${Math.ceil(e.durationSecs/60)}</span>`
+          : (task ? Math.ceil(liveElapsedSecs(task)/60) : '—');
+        return `<td>${minsCell}</td>`;
       }
       if (c.key === 'status') {
-        return `<td data-col="${c.key}" title="${esc(statusText)}">${esc(statusText)}</td>`;
+        return `<td>${esc(statusText)}</td>`;
       }
-      const colVal = getEntryValueForColumn(e, task, c.key);
-      return `<td data-col="${c.key}" title="${esc(colVal)}">${esc(colVal)}</td>`;
+      return `<td>${esc(getEntryValueForColumn(e, task, c.key))}</td>`;
     }).join('');
 
     const rowTask = tasks.find(t => t.id === e.taskId);
     const linkedPlan = (rowTask && rowTask.recurringPlanId) ? recurringPlans.find(p => p.id === rowTask.recurringPlanId && p.active) : null;
-    const rowIdx = logEntries.indexOf(e);
 
-    // Same action buttons regardless of collapsed/expanded state — collapsed mode just
-    // tucks them behind a single "more actions" toggle instead of showing them inline.
-    const actionButtonsHtml =
-        ((!isFutureDay) ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+rowIdx+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : '')
-      + (isPresentDay
-            ? '<button class="btn-icon" onclick="openTransferMinutesModal('+rowIdx+')" title="Transfer minutes to another task" style="border-color:var(--purple-mid);color:var(--purple-dark)"><i class="ti ti-transfer"></i></button>'
-            : '')
-      + ((!isFutureDay)
-            ? '<button class="btn-icon" id="continue-'+e.taskId+'" onclick="continueTomorrow('+e.taskId+')" title="Add this task to another day" style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-calendar-plus"></i></button>'
-            : '')
-      + ((isPresentDay && statusText!=='In Progress')
-            ? '<button class="btn-icon" onclick="reopenTask('+e.taskId+')" title="Reopen task" style="border-color:var(--amber-mid);color:var(--amber-dark)"><i class="ti ti-refresh"></i></button>'
-            : '')
-      + ((!isFutureDay)
-            ? (linkedPlan
-                ? '<button class="btn-icon" onclick="openManageRecurringModal('+linkedPlan.id+')" title="Manage recurring plan" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'
-                : '<button class="btn-icon" onclick="openMakeRecurringModal('+e.taskId+')" title="Make this a recurring daily task" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>')
-            : '')
-      + (isPresentDay ? '<button class="btn-icon btn-delete" onclick="confirmDeleteLogEntry('+rowIdx+')" title="Delete entry"><i class="ti ti-trash"></i></button>' : '');
-
-    const actionsCellHtml = logActionsCollapsed
-      ? `<td data-col="__actions" class="log-actions-collapsed-cell">
-          <button type="button" class="btn-icon log-actions-toggle" onclick="toggleLogRowActionsMenu(event, ${rowIdx})" title="Actions"><i class="ti ti-dots-vertical"></i></button>
-          <div class="log-actions-menu hidden" id="log-actions-menu-${rowIdx}">
-            <div class="actions" style="display:flex;gap:4px">${actionButtonsHtml}</div>
-          </div>
-        </td>`
-      : `<td data-col="__actions">
-          <div style="display:flex;flex-direction:row;align-items:center;gap:4px">${actionButtonsHtml}</div>
-        </td>`;
-
-    return `<tr data-entry-ts="${e.startTs}">
+    return `<tr>
       ${cells}
-      ${actionsCellHtml}
+      <td>
+        <div style="display:flex;flex-direction:row;align-items:center;gap:4px">
+        ${selDate === todayStr() ? '<button class="btn-icon btn-edit" onclick="editLogEntry('+logEntries.indexOf(e)+')" title="Edit entry"><i class="ti ti-pencil"></i></button>' : ''}
+        ${statusText==='In Progress'
+            ? '<button class="btn-icon" id="continue-'+e.taskId+'" onclick="continueTomorrow('+e.taskId+')" title="Add this task to another day" style="border-color:var(--blue-mid);color:var(--blue-dark)"><i class="ti ti-calendar-plus"></i></button>'
+            : (selDate === todayStr() ? '<button class="btn-icon" onclick="reopenTask('+e.taskId+')" title="Reopen task" style="border-color:var(--amber-mid);color:var(--amber-dark)"><i class="ti ti-refresh"></i></button>' : '')}
+        ${linkedPlan
+            ? '<button class="btn-icon" onclick="openManageRecurringModal('+linkedPlan.id+')" title="Manage recurring plan" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'
+            : '<button class="btn-icon" onclick="openMakeRecurringModal('+e.taskId+')" title="Make this a recurring daily task" style="border-color:var(--green-mid);color:var(--green-dark)"><i class="ti ti-repeat"></i></button>'}
+        ${selDate === todayStr() ? '<button class="btn-icon btn-delete" onclick="confirmDeleteLogEntry('+logEntries.indexOf(e)+')" title="Delete entry"><i class="ti ti-trash"></i></button>' : ''}
+        </div>
+      </td>
     </tr>`;
   }).join('');
-
-  wireLogTableColumnInteractions();
-  applyLogTableColumnPins();
 }
 
 function updateLogPanel() {
@@ -4647,7 +3034,7 @@ function switchTab(tab) {
 // ── Columns tab: configure log table / task card columns ───────────────────
 function renderColumnsTabHTML() {
   const cols = getLogColumns();
-  const TYPE_LABELS = { text: 'Text', textarea: 'Text Area', list: 'Dropdown list', multilist: 'Dropdown list (multi-select)', date: 'Date' };
+  const TYPE_LABELS = { text: 'Text', list: 'Dropdown list', multilist: 'Dropdown list (multi-select)', date: 'Date' };
   const DATE_FORMAT_PRESETS = ['DD-MM-YYYY','YYYY-MM-DD','MM-DD-YYYY','DD/MM/YYYY','MM/DD/YYYY'];
   // Date and Effort can't be deleted — the timer/duration math depends on these existing —
   // but they can still be renamed, reordered, and (for Date) have their format changed.
@@ -4674,11 +3061,6 @@ function renderColumnsTabHTML() {
           </select>
           ${isCustomFormat ? `<input class="master-add-input" style="padding:4px 8px;font-size:12px;width:120px" value="${esc(c.dateFormat)}"
             onchange="changeColumnDateFormat('${c.key}', this.value)" placeholder="e.g. DD.MM.YYYY" />` : ''}` : ''}
-          ${c.type === 'textarea' ? `<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-secondary)" title="How many rows tall this field starts at (Task Card, Edit Popup, Completed Popup). Longer content scrolls inside the field instead of growing it.">
-            Rows
-            <input type="number" min="1" max="30" step="1" class="master-add-input" style="padding:4px 6px;font-size:12px;width:52px"
-              value="${(c.rows > 0) ? c.rows : DEFAULT_TEXTAREA_ROWS}" onchange="changeColumnRows('${c.key}', this.value)" />
-          </label>` : ''}
           ${(c.type === 'list' || c.type === 'multilist') ? `<select class="meta-select" style="font-size:12px;padding:4px 6px;width:auto" onchange="changeColumnListSource('${c.key}', this.value)">
             <option value="">— choose list —</option>
             ${listOptions.map(lk => `<option value="${lk}" ${c.listSource===lk?'selected':''}>${listLabel(lk)}</option>`).join('')}
@@ -4688,9 +3070,8 @@ function renderColumnsTabHTML() {
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:${isSystemManagedColumn(c)?'default':'pointer'}"
-          title="${isSystemManagedColumn(c) ? 'Managed automatically — not shown as a task card input' : 'Show this column as an input on the task card'}">
-          <input type="checkbox" ${c.showInTaskCard!==false?'checked':''} ${isSystemManagedColumn(c)?'disabled':''} onchange="toggleColumnContext('${c.key}','showInTaskCard')" />
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:pointer" title="Show this column as an input on the task card">
+          <input type="checkbox" ${c.showInTaskCard!==false?'checked':''} onchange="toggleColumnContext('${c.key}','showInTaskCard')" />
           Task card
         </label>
         <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:pointer" title="Show this column in the log table (and exports/CSV)">
@@ -4701,11 +3082,6 @@ function renderColumnsTabHTML() {
           <input type="checkbox" ${c.showInCompletePopup!==false?'checked':''} onchange="toggleColumnContext('${c.key}','showInCompletePopup')" />
           Complete popup
         </label>
-        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary);cursor:${isSystemManagedColumn(c)?'default':'pointer'}"
-          title="${isSystemManagedColumn(c) ? 'Not applicable — this field is managed automatically, not carried onto new tasks' : 'When carrying a task forward, or creating/materializing a recurring plan, copy this field\'s value onto the new task card'}">
-          <input type="checkbox" ${c.carryForward!==false?'checked':''} ${isSystemManagedColumn(c)?'disabled':''} onchange="toggleColumnContext('${c.key}','carryForward')" />
-          Carry fwd / Recurring
-        </label>
         ${!UNDELETABLE_KEYS.includes(c.key) ? `<button class="btn-icon btn-delete" onclick="confirmDeleteColumn('${c.key}')" title="Delete column"><i class="ti ti-trash"></i></button>` : `<span style="font-size:10px;color:var(--text-tertiary)" title="Required for timer/duration tracking">required</span>`}
       </div>
     </div>`;
@@ -4714,10 +3090,7 @@ function renderColumnsTabHTML() {
   return `
     <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
       Drag rows to reorder, rename any column's label, choose its input type, and show/hide it in
-      the log table, task card, and Complete popup. "Carry fwd / Recurring" controls a separate
-      thing — whether that field's value gets copied onto the new task card when you carry a task
-      forward or when a recurring plan is created or generates a new instance; leave it unchecked
-      to have that field start blank instead. Date and Effort can't be deleted since the
+      the log table, task card, and Complete popup. Date and Effort can't be deleted since the
       timer depends on them, but every other column — including Status — can be renamed, retyped,
       or removed. Changes apply to exports and CSV import mapping too.
     </div>
@@ -4726,7 +3099,6 @@ function renderColumnsTabHTML() {
       <input class="master-add-input" id="new-column-label" placeholder="New column name…" style="flex:1" onkeydown="if(event.key==='Enter') addCustomColumn()" />
       <select class="meta-select" id="new-column-type" style="width:auto">
         <option value="text">Text</option>
-        <option value="textarea">Text Area</option>
         <option value="list">Dropdown list</option>
         <option value="multilist">Dropdown list (multi-select)</option>
         <option value="date">Date</option>
@@ -5108,7 +3480,6 @@ function changeColumnType(key, newType) {
   const oldListSource = col.listSource;
   col.type = newType;
   if (newType === 'date' && !col.dateFormat) col.dateFormat = 'YYYY-MM-DD';
-  if (newType === 'textarea' && !(col.rows > 0)) col.rows = DEFAULT_TEXTAREA_ROWS;
   if (newType !== 'list' && newType !== 'multilist') {
     col.listSource = undefined;
     cleanupOrphanedList(oldListSource, key);
@@ -5135,19 +3506,6 @@ function changeColumnDateFormat(key, format) {
   col.dateFormat = (format === '__custom__') ? 'DD.MM.YYYY' : format;
   saveState();
   if (needsRerender) renderMastersContent();
-  refreshAfterColumnConfigChange();
-}
-
-// Update a TextArea column's configured Rows (Master Field Configuration). This is the only
-// place col.rows is set from user input — buildRichTextInput reads it to size the editor
-// everywhere the column renders (Task Card, Edit Popup, Completed Popup). Clamped to a
-// sane minimum so a cleared/invalid input can't collapse the editor to zero/negative height.
-function changeColumnRows(key, rows) {
-  const col = getColumnByKey(key);
-  if (!col) return;
-  const n = parseInt(rows, 10);
-  col.rows = (Number.isFinite(n) && n >= 1) ? n : DEFAULT_TEXTAREA_ROWS;
-  saveState();
   refreshAfterColumnConfigChange();
 }
 
@@ -5235,9 +3593,8 @@ function addCustomColumn() {
   const existingKeys = getLogColumns().map(c => c.key);
   while (existingKeys.includes(key)) { key = baseKey + '_' + (++n); }
 
-  const newCol = { key, label, visible: true, type, builtIn: false, carryForward: true };
+  const newCol = { key, label, visible: true, type, builtIn: false };
   if (type === 'date') newCol.dateFormat = 'DD-MM-YYYY';
-  if (type === 'textarea') newCol.rows = DEFAULT_TEXTAREA_ROWS;
   if (type === 'list' || type === 'multilist') {
     newCol.listSource = key; // each new list column gets its own dedicated master list
     if (!masters.customLists[key]) masters.customLists[key] = [];
@@ -5364,32 +3721,13 @@ function listItemDragEnd(e) {
 // ── Confirm ───────────────────────────────────────────────────────────────────
 function showConfirm(title,msg,cb,yesLabel='Delete') {
   confirmCallback=cb;
-  confirmNoCallback=null;
   document.getElementById('confirm-title').textContent=title;
   document.getElementById('confirm-msg').textContent=msg;
   document.getElementById('confirm-yes-btn').textContent=yesLabel;
-  document.getElementById('confirm-yes-btn').className='btn btn-danger';
-  const noBtnReset = document.getElementById('confirm-no-btn');
-  if (noBtnReset) noBtnReset.textContent = 'Cancel';
   document.getElementById('confirm-overlay').classList.remove('hidden');
 }
-// Like showConfirm, but "No" is a meaningful choice rather than a plain dismiss — it
-// runs noCb too. Used for prompts where declining should still do something (e.g. "log
-// this as one entry instead" rather than just closing the dialog and doing nothing).
-function showConfirmChoice(title, msg, yesCb, noCb, yesLabel='Yes', noLabel='No') {
-  confirmCallback = yesCb;
-  confirmNoCallback = noCb;
-  document.getElementById('confirm-title').textContent = title;
-  document.getElementById('confirm-msg').textContent = msg;
-  const yesBtn = document.getElementById('confirm-yes-btn');
-  yesBtn.textContent = yesLabel;
-  yesBtn.className = 'btn btn-primary';
-  const noBtn = document.getElementById('confirm-no-btn');
-  if (noBtn) noBtn.textContent = noLabel;
-  document.getElementById('confirm-overlay').classList.remove('hidden');
-}
-function confirmYes() { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmCallback){confirmCallback();} confirmCallback=null; confirmNoCallback=null; }
-function confirmNo()  { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmNoCallback){confirmNoCallback();} confirmCallback=null; confirmNoCallback=null; }
+function confirmYes() { document.getElementById('confirm-overlay').classList.add('hidden'); if(confirmCallback){confirmCallback();confirmCallback=null;} }
+function confirmNo()  { document.getElementById('confirm-overlay').classList.add('hidden'); confirmCallback=null; }
 // ── Copy log to clipboard (data rows only, tab-separated) ───────────────────
 function copyLog() {
   const selDate = getSelectedDate();
@@ -5405,7 +3743,7 @@ function copyLog() {
         return Math.ceil(secs/60);
       }
       return getExportValueForColumn(e, task, c.key);
-    }).map(tsvEscape).join('\t');
+    }).join('\t');
   });
 
   const text = rows.join('\n');
@@ -5504,8 +3842,8 @@ function openMailModal() {
   });
 
   // Build plain text body for mailto
-  const plainHeader = headerRow.map(tsvEscape).join('\t');
-  const plainRows   = dataRows.map(r => r.map(tsvEscape).join('\t'));
+  const plainHeader = headerRow.join('\t');
+  const plainRows   = dataRows.map(r => r.join('\t'));
   const plainTable  = [plainHeader, ...plainRows].join('\n');
   const plainBody   = resolveSimpleTokens(rawBody).replace('{log_table}', plainTable);
 
@@ -5625,7 +3963,7 @@ async function _copyTableToClipboard(headerRow, selectedRows) {
   ).join('');
 
   const tableHtml = `<html><body><!--StartFragment--><table style="border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0"><thead>${thead}</thead><tbody>${tbody}</tbody></table><!--EndFragment--></body></html>`;
-  const tsv = [headerRow, ...selectedRows].map(r => r.map(tsvEscape).join('\t')).join('\n');
+  const tsv = [headerRow, ...selectedRows].map(r => r.join('\t')).join('\n');
 
   await navigator.clipboard.write([
     new ClipboardItem({
@@ -5656,19 +3994,8 @@ async function copyEmailTableFromPreview() {
 
 // ── Data: Backup / Restore / Cleanup ──────────────────────────────────────────
 function exportBackup() {
-  // Per-date weekend "working day?" overrides are stored under dynamically-named
-  // keys (ttl_weekend_YYYY-MM-DD), one per date the user was prompted — collect
-  // all of them so a restore doesn't lose this history.
-  const weekendOverrides = {};
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const k = localStorage.key(i);
-      if (k && k.indexOf('ttl_weekend_') === 0) weekendOverrides[k.slice('ttl_weekend_'.length)] = localStorage.getItem(k);
-    }
-  } catch (e) {}
-
   const backup = {
-    _version: 2,
+    _version: 1,
     _exported: new Date().toISOString(),
     tasks,
     logEntries,
@@ -5678,11 +4005,7 @@ function exportBackup() {
     recurringPlans,
     recurringPlanIdCounter,
     userName,
-    breakData: getBreakData(),
-    theme: getStoredTheme(),
-    logTableColWidths,
-    logTableColPinned,
-    weekendOverrides
+    breakData: getBreakData()
   };
   const json = JSON.stringify(backup, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -5722,14 +4045,6 @@ function importBackup(event) {
       recurringPlanIdCounter  = b.recurringPlanIdCounter  ?? recurringPlanIdCounter;
       if (b.userName) userName = b.userName;
       if (b.breakData) saveBreakData(b.breakData);
-      if (b.theme) setTheme(b.theme);
-      if (b.logTableColWidths) { logTableColWidths = b.logTableColWidths; ltSaveObj(LOG_TABLE_WIDTHS_KEY, logTableColWidths); }
-      if (b.logTableColPinned) { logTableColPinned = b.logTableColPinned; ltSaveObj(LOG_TABLE_PINNED_KEY, logTableColPinned); }
-      if (b.weekendOverrides) {
-        Object.keys(b.weekendOverrides).forEach(dateStr => {
-          try { localStorage.setItem('ttl_weekend_' + dateStr, b.weekendOverrides[dateStr]); } catch (e) {}
-        });
-      }
       saveState();
       // Re-render everything
       renderAll();
@@ -5874,7 +4189,7 @@ function renderSearchResults() {
       e.ticket  ? `<span style="background:var(--amber-bg,#fff8e1);color:var(--amber-dark,#795900);border:1px solid var(--amber-mid,#f0b400);border-radius:10px;font-size:10px;padding:1px 7px">#${highlight(e.ticket)}</span>` : '',
       e.project ? `<span style="font-size:11px;color:var(--text-secondary)">${highlight(e.project)}</span>` : '',
     ].filter(Boolean).join(' ');
-    return `<div class="search-result-item" data-date="${entryDate}" onclick="jumpToDate('${entryDate}', ${e.startTs})" data-idx="${i}">
+    return `<div class="search-result-item" data-date="${entryDate}" onclick="jumpToDate('${entryDate}')" data-idx="${i}">
       <div class="search-result-date">${dateLabel}</div>
       <div class="search-result-body">
         <div class="search-result-heading">${highlight(e.heading) || '<span style="color:var(--text-tertiary);font-style:italic">Untitled</span>'}</div>
@@ -5892,25 +4207,10 @@ function clearSearchKeywords() {
   document.getElementById('task-search-input').focus();
 }
 
-function jumpToDate(dateStr, entryTs) {
+function jumpToDate(dateStr) {
   const inp = document.getElementById('log-date-input');
   if (inp) { inp.value = dateStr; onDateChange(); }
   closeSearch();
-  if (entryTs != null) highlightLogEntry(entryTs);
-}
-
-// Expands the log table (in case it was collapsed on today's date) and
-// scrolls to + flashes the row for the entry that was clicked in search.
-function highlightLogEntry(entryTs) {
-  logTableExpanded = true;
-  updateLogPanel();
-  requestAnimationFrame(() => {
-    const row = document.querySelector('#log-tbody tr[data-entry-ts="' + entryTs + '"]');
-    if (!row) return;
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    row.classList.add('log-row-highlight');
-    setTimeout(() => row.classList.remove('log-row-highlight'), 2200);
-  });
 }
 
 function searchKeyNav(e) {
@@ -5969,7 +4269,7 @@ function escHtml(str) {
 }
 
 
-// ── CSV / Excel Export / Import ────────────────────────────────────────────────
+// ── CSV Export / Import ───────────────────────────────────────────────────────
 function openCSVModal() {
   const today = todayStr();
   // Default from: first day of current month
@@ -5986,16 +4286,6 @@ function openCSVModal() {
 function csvEscape(val) {
   const s = String(val == null ? '' : val);
   if (s.includes(',') || s.includes('"') || s.includes('\n'))
-    return '"' + s.replace(/"/g, '""') + '"';
-  return s;
-}
-// Same quoting rule as csvEscape, for the tab-delimited text used by Copy Log and the
-// Mail preview's clipboard copy. Without this, a multi-line remark/description (or a
-// bulleted/numbered list, which renders as newline-separated bullet lines) splits into
-// extra rows instead of staying in one cell when pasted into Excel.
-function tsvEscape(val) {
-  const s = String(val == null ? '' : val);
-  if (s.includes('\t') || s.includes('"') || s.includes('\n'))
     return '"' + s.replace(/"/g, '""') + '"';
   return s;
 }
@@ -6034,38 +4324,6 @@ function exportCSV() {
   a.href = url; a.download = 'effort-log-' + (from||'all') + '-to-' + (to||'all') + '.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-// Same date-range filtering + column set as exportCSV(), but written as a single-
-// sheet .xlsx workbook via SheetJS instead of a CSV blob.
-function exportLogExcel() {
-  const from = document.getElementById('csv-from').value;
-  const to   = document.getElementById('csv-to').value;
-  const rows = logEntries.filter(e => entryInDateRange(e, from, to));
-  if (rows.length === 0) { alert('No entries found for the selected date range.'); return; }
-
-  const cols = getVisibleLogColumns();
-  const headers = cols.map(c => c.label);
-  const dataRows = rows.map(e => {
-    const task = tasks.find(t => t.id === e.taskId);
-    return cols.map(c => {
-      if (c.key === 'effort') {
-        const secs = e.durationSecs != null ? e.durationSecs : (task ? liveElapsedSecs(task) : 0);
-        return Math.ceil(secs / 60);
-      }
-      return getExportValueForColumn(e, task, c.key);
-    });
-  });
-
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([headers, ...dataRows]);
-  ws['!cols'] = headers.map((h, i) => {
-    const vals = [h, ...dataRows.map(r => String(r[i] || ''))];
-    const max = Math.min(40, Math.max(...vals.map(v => v.length)));
-    return { wch: max + 2 };
-  });
-  XLSX.utils.book_append_sheet(wb, ws, 'Effort Log');
-  XLSX.writeFile(wb, 'effort-log-' + (from||'all') + '-to-' + (to||'all') + '.xlsx');
 }
 
 function handleCSVDrop(e) {
@@ -6127,121 +4385,14 @@ function parseCSVDocument(text) {
   return rows.filter(r => r.some(f => f !== ''));
 }
 
-// ── Attendance time helpers (CSV import: Start/End Work Time + Working Hours) ──
-// Parses a clock-time value like "09:00", "17:30", or "5:30 PM" into minutes since
-// midnight. Returns null (never throws) for anything unparseable, so a single bad
-// cell doesn't stop the rest of the import.
-function parseClockTimeToMinutes(raw) {
-  if (raw == null) return null;
-  const s = String(raw).trim();
-  if (!s) return null;
-  const m = s.match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?$/);
-  if (!m) return null;
-  let h = parseInt(m[1], 10);
-  const min = parseInt(m[2], 10);
-  if (isNaN(h) || isNaN(min) || min > 59) return null;
-  const ampm = m[3] ? m[3].toLowerCase() : null;
-  if (ampm) {
-    if (h < 1 || h > 12) return null;
-    if (ampm === 'pm' && h < 12) h += 12;
-    if (ampm === 'am' && h === 12) h = 0;
-  } else if (h > 23) return null;
-  return h * 60 + min;
-}
-
-// Parses a "Working Hours" duration value in any of several common shapes into total
-// minutes (minute precision): "8h", "8h 30m", "8h15m", "8:30", "8.5", or a plain
-// number (treated as hours if <= 24, otherwise as minutes). Returns null if the
-// value can't be understood.
-function parseDurationToMinutes(raw) {
-  if (raw == null) return null;
-  const s = String(raw).trim();
-  if (!s) return null;
-  let m = s.match(/^(\d+(?:\.\d+)?)\s*h(?:ours?)?\s*(?:(\d+)\s*m(?:in(?:utes)?)?)?$/i);
-  if (m) {
-    const hoursPart = Math.round(parseFloat(m[1]) * 60);
-    const minsPart = m[2] ? parseInt(m[2], 10) : 0;
-    return hoursPart + minsPart;
-  }
-  m = s.match(/^(\d+)\s*m(?:in(?:utes)?)?$/i);
-  if (m) return parseInt(m[1], 10);
-  m = s.match(/^(\d{1,2}):(\d{2})$/);
-  if (m) return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
-  m = s.match(/^\d+(?:\.\d+)?$/);
-  if (m) {
-    const n = parseFloat(s);
-    return Math.round(n <= 24 ? n * 60 : n);
-  }
-  return null;
-}
-
-// Automatic Break Time calculation for imported attendance rows:
-//   Total Time = End Work Time - Start Work Time (minute precision, overnight-safe)
-//   Break Time = Total Time - Working Hours, floored at 0, never negative.
-// Returns null (meaning "don't touch Break Time for this row") if any of the three
-// inputs is missing or unparseable, rather than throwing — so incomplete/invalid
-// rows still import normally, just without a computed break value.
-function calculateBreakMinutes(startStr, endStr, workingHoursStr) {
-  const startMin = parseClockTimeToMinutes(startStr);
-  const endMin = parseClockTimeToMinutes(endStr);
-  const workingMin = parseDurationToMinutes(workingHoursStr);
-  if (startMin == null || endMin == null || workingMin == null) return null;
-  let totalMin = endMin - startMin;
-  if (totalMin < 0) totalMin += 24 * 60; // overnight shift support
-  let breakMin = totalMin - workingMin;
-  if (breakMin < 0) breakMin = 0; // working hours >= total time → no break, never negative
-  return breakMin;
-}
-
-// Entry point for both the file picker and drag & drop. Reads the file as text
-// (CSV) or binary (Excel) depending on its extension, parses it into a common
-// "array of row arrays" shape, then hands off to importParsedRows() so the rest
-// of the import pipeline (column mapping, validation, dedupe) is shared between
-// both formats.
 function processCSVFile(file) {
-  const name = (file.name || '').toLowerCase();
-  const isExcel = name.endsWith('.xlsx') || name.endsWith('.xls');
-  const prev = document.getElementById('csv-import-preview');
   const reader = new FileReader();
-
-  if (isExcel) {
-    reader.onload = ev => {
-      try {
-        const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        // raw:false gives formatted/display strings (matching how CSV values arrive)
-        // rather than raw numbers/dates, so downstream parsing logic stays identical.
-        const allRows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' })
-          .map(r => r.map(v => String(v == null ? '' : v).trim()))
-          .filter(r => r.some(f => f !== ''));
-        importParsedRows(allRows);
-      } catch (err) {
-        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing Excel file: ${escHtml(err.message)}</span>`;
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    reader.onload = ev => {
-      try {
-        const allRows = parseCSVDocument(ev.target.result);
-        importParsedRows(allRows);
-      } catch (err) {
-        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing CSV: ${escHtml(err.message)}</span>`;
-      }
-    };
-    reader.readAsText(file);
-  }
-}
-
-// Shared import pipeline: maps the uploaded header row to known columns, validates,
-// converts each data row into a log entry, and skips out-of-range/duplicate rows.
-// `allRows` is an array of rows, each row an array of field strings — the same
-// shape whether it came from CSV text parsing or an Excel sheet.
-function importParsedRows(allRows) {
+  reader.onload = ev => {
     const from = document.getElementById('csv-import-from').value;
     const to   = document.getElementById('csv-import-to').value;
     const prev = document.getElementById('csv-import-preview');
     try {
+      const allRows = parseCSVDocument(ev.target.result);
       if (allRows.length === 0) throw new Error('Empty file');
       const header = allRows[0].map(h => h.trim().replace(/^"|"$/g,''));
       const dataRows = allRows.slice(1); // each is already an array of field values
@@ -6262,71 +4413,18 @@ function importParsedRows(allRows) {
         status:      ['Status'],
         remark:      ['Remarks','Remark','Notes','Note']
       };
-      // Normalize a header/alias for matching: case-insensitive, and ignore spaces,
-      // underscores and hyphens so e.g. "Ticket #", "ticket_#" and "Ticket-#" all match.
-      const normalizeHeader = (s) => String(s == null ? '' : s).toLowerCase().replace(/[\s_-]+/g, '');
-      const normHeader = header.map(normalizeHeader);
-
       const cols = getLogColumns(); // all columns, locked + configurable + custom, in configured order
       const col = {}; // colKey -> header index, or -1 if not found in the uploaded file
       cols.forEach(c => {
         const aliases = [c.label, ...(LEGACY_ALIASES[c.key] || [])];
         col[c.key] = -1;
         for (const a of aliases) {
-          const idx = normHeader.indexOf(normalizeHeader(a));
+          const idx = header.findIndex(h => h.toLowerCase() === a.toLowerCase());
           if (idx >= 0) { col[c.key] = idx; break; }
         }
       });
-
-      // Attendance/time-tracking columns (Start/End Work Time, Working Hours, Break Time)
-      // aren't part of the app's built-in column set, so they're detected directly against
-      // the uploaded header rather than through the `cols`/`col` mapping above.
-      const TIME_TRACKING_ALIASES = {
-        startWorkTime: ['Start Work Time', 'Start Time', 'Time In', 'Clock In'],
-        endWorkTime:   ['End Work Time', 'End Time', 'Time Out', 'Clock Out'],
-        workingHours:  ['Working Hours', 'Work Hours', 'Worked Hours', 'Hours Worked'],
-        breakTime:     ['Break Time', 'Break', 'Break Duration']
-      };
-      const findHeaderIndex = (aliases) => {
-        for (const a of aliases) {
-          const idx = normHeader.indexOf(normalizeHeader(a));
-          if (idx >= 0) return idx;
-        }
-        return -1;
-      };
-      const idxStartWorkTime = findHeaderIndex(TIME_TRACKING_ALIASES.startWorkTime);
-      const idxEndWorkTime   = findHeaderIndex(TIME_TRACKING_ALIASES.endWorkTime);
-      const idxWorkingHours  = findHeaderIndex(TIME_TRACKING_ALIASES.workingHours);
-      const idxBreakTime     = findHeaderIndex(TIME_TRACKING_ALIASES.breakTime);
-      const hasAttendanceTimeColumns = idxStartWorkTime >= 0 && idxEndWorkTime >= 0 && idxWorkingHours >= 0;
-      // Find any column the user already has configured for Break Time — matched by its
-      // current LABEL against the same aliases used for the file header, not by whether the
-      // uploaded file itself happens to contain a Break Time column. Most attendance imports
-      // only carry Start/End Work Time + Working Hours (no Break Time column in the file at
-      // all), so requiring idxBreakTime to be found in the file would miss an existing
-      // "Break Time" column entirely and strand the computed value under a duplicate key.
-      const existingBreakCol = cols.find(c => TIME_TRACKING_ALIASES.breakTime.some(a => normalizeHeader(a) === normalizeHeader(c.label)));
-      const breakTimeColKey = existingBreakCol ? existingBreakCol.key : 'breakTime';
-      // If no column currently owns that key (the common case: the file has Start/End Work
-      // Time + Working Hours but no separate Break Time header of its own, and no matching
-      // column was configured beforehand), the computed value has nowhere to render/export/
-      // persist. Auto-create a "Break Time" log column so imported rows actually show the
-      // calculated break instead of it being silently dropped into a key nothing displays.
-      if (hasAttendanceTimeColumns && !existingBreakCol) {
-        getLogColumns().push({ key: breakTimeColKey, label: 'Break Time', visible: true, type: 'text', builtIn: false });
-      }
-
-      // Required columns are the ones the app cannot function without (date/effort).
-      // Report any that are missing by name instead of silently importing broken rows.
-      const missingRequired = cols.filter(c => c.essential && col[c.key] === -1).map(c => c.label);
-      if (missingRequired.length) {
-        prev.innerHTML = `<span style="color:var(--red-mid)">✗ Missing required column${missingRequired.length>1?'s':''}: ${missingRequired.map(esc).join(', ')}</span>`;
-        return;
-      }
-
-      let imported = 0, skipped = 0, failed = 0;
-      dataRows.forEach((vals, rowIdx) => {
-       try {
+      let imported = 0, skipped = 0;
+      dataRows.forEach(vals => {
         const getVal = (key) => (col[key] >= 0 ? (vals[col[key]] || '') : '');
         const dateStr = getVal('date');
 
@@ -6345,9 +4443,8 @@ function importParsedRows(allRows) {
           startTs = new Date(yr, mo, dy, 9, 0).getTime();
           iso = yr + '-' + String(mo+1).padStart(2,'0') + '-' + String(dy).padStart(2,'0');
         } else {
-          // Unparseable date: don't silently substitute today's date (that would
-          // corrupt the imported record's date). Treat as a row-level failure.
-          throw new Error('Row ' + (rowIdx + 2) + ': unrecognized date "' + dateStr + '"');
+          startTs = Date.now();
+          iso = dateStr; // fallback, won't match range checks below if malformed
         }
 
         if (from && iso < from) { skipped++; return; }
@@ -6375,48 +4472,26 @@ function importParsedRows(allRows) {
         cols.filter(c => !c.builtIn && !['date','employee','effort','status'].includes(c.key)).forEach(c => {
           entry.customFields[c.key] = getVal(c.key);
         });
-        // Automatic Break Time: only computed when the row actually has all three source
-        // fields (Start Work Time, End Work Time, Working Hours). An unparseable/missing
-        // value on any of them just leaves Break Time untouched for this row rather than
-        // failing the whole row — the rest of the entry still imports normally.
-        if (hasAttendanceTimeColumns) {
-          const breakMins = calculateBreakMinutes(
-            vals[idxStartWorkTime], vals[idxEndWorkTime], vals[idxWorkingHours]
-          );
-          if (breakMins != null) {
-            entry.customFields[breakTimeColKey] = String(breakMins);
-          }
-        }
-        // Skip duplicates. Match on date+project+description+duration, plus employee
-        // and ticket so distinct records that share the same task/description/duration
-        // on the same day (e.g. different people, or different tickets) aren't wrongly
-        // treated as the same record and dropped.
+        // Skip duplicates (same date+project+description+duration)
         const isDupe = logEntries.some(e =>
           e.project === entry.project &&
           e.description === entry.description &&
           e.durationSecs === entry.durationSecs &&
-          e.employee === entry.employee &&
-          (e.ticket || '') === (entry.ticket || '') &&
           entryMatchesDate(e, iso)
         );
         if (isDupe) { skipped++; return; }
         logEntries.push(entry);
         imported++;
-       } catch (rowErr) {
-        // Validate each row independently: one bad row (bad date, etc.) is counted
-        // as failed and import continues with the remaining rows.
-        failed++;
-       }
       });
 
       saveState(); updateLogPanel();
-      const parts = [`<span style="color:var(--green-dark)">✓ Imported ${imported} entries</span>`];
-      if (skipped) parts.push(`<span style="color:var(--text-tertiary)">${skipped} skipped — out of range or duplicate</span>`);
-      if (failed)  parts.push(`<span style="color:var(--red-mid)">${failed} row${failed>1?'s':''} failed validation</span>`);
-      prev.innerHTML = parts.join(' &middot; ');
+      prev.innerHTML = `<span style="color:var(--green-dark)">✓ Imported ${imported} entries</span>` +
+        (skipped ? ` <span style="color:var(--text-tertiary)">(${skipped} skipped — out of range or duplicate)</span>` : '');
     } catch(err) {
-      prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing file: ${escHtml(err.message)}</span>`;
+      prev.innerHTML = `<span style="color:var(--red-mid)">✗ Error parsing CSV: ${err.message}</span>`;
     }
+  };
+  reader.readAsText(file);
 }
 
 function parseCSVLine(line) {
@@ -6681,30 +4756,6 @@ function updateTodayBadge() {
 function getSelectedDate() {
   const inp = document.getElementById('log-date-input');
   return inp ? inp.value : todayStr();
-}
-
-// Opens the fullscreen chip's date picker pre-filled with the currently
-// selected date, so it reflects reality instead of always starting blank.
-function openFsDatePicker() {
-  const fsInp = document.getElementById('fs-date-input');
-  if (!fsInp) return;
-  fsInp.value = getSelectedDate();
-  try {
-    fsInp.showPicker();
-  } catch {
-    fsInp.click();
-  }
-}
-
-// Picking a date from the fullscreen chip should behave exactly like
-// picking one from the main date selector — update it and re-render the
-// log/task data for that date, all without leaving fullscreen.
-function onFsDateChange(value) {
-  if (!value) return;
-  const mainInp = document.getElementById('log-date-input');
-  if (!mainInp) return;
-  mainInp.value = value;
-  onDateChange();
 }
 
 function entryMatchesDate(entry, dateStr) {
@@ -6989,10 +5040,7 @@ function applyTheme(theme) {
 }
 
 function setTheme(theme) {
-  try { 
-    localStorage.setItem('ttl_theme', theme);
-    setTimeout(updateFsChipThemeIcon, 0);
- } catch (e) {}
+  try { localStorage.setItem('ttl_theme', theme); } catch (e) {}
   applyTheme(theme);
 }
 
@@ -7001,26 +5049,6 @@ function cycleTheme() {
   const current = getStoredTheme();
   const next = order[(order.indexOf(current) + 1) % order.length];
   setTheme(next);
-}
-
-function updateFsChipThemeIcon() {
-  
-    const icon = document.querySelector("#fs-action-chip button:nth-child(2) i");
-    if (!icon) return;
-
-    switch (getStoredTheme()) {
-        case "light":
-            icon.className = "ti ti-sun";
-            break;
-
-        case "dark":
-            icon.className = "ti ti-moon";
-            break;
-
-        case "system":
-            icon.className = "ti ti-device-desktop"; // or ti-device-laptop
-            break;
-    }
 }
 
 function initTheme() {
@@ -7187,75 +5215,6 @@ function positionBubble(el, pos) {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && !document.getElementById('tour-backdrop').classList.contains('hidden')) endTour();
-
-  if(
-      e.key === "Escape" &&
-      document.getElementById("log-panel").classList.contains("fullscreen")
-  ){
-      toggleLogFullscreen();
-  }
-});
-
-function _onFullscreenChange() {
-
-  const panel = document.getElementById("log-panel");
-  const btn = document.getElementById("log-fullscreen-btn");
-  const chip = document.getElementById("fs-action-chip");
-
-  if (!panel || !btn) return;
-
-  const icon = btn.querySelector("i");
-
-  if (_fsElement()) {
-
-      panel.classList.add("fullscreen");
-      document.body.classList.add("log-fullscreen");
-      icon.className = "ti ti-minimize";
-      _moveOverlayIntoFullscreen();
-
-      if (chip) showFsChip();
-
-  } else if (!_logFullscreenSim) {
-
-      panel.classList.remove("fullscreen");
-      document.body.classList.remove("log-fullscreen");
-      icon.className = "ti ti-maximize";
-      _restoreOverlayPosition();
-
-      if (chip) chip.classList.remove("show");
-
-  }
-
-}
-// Standard event, plus the older WebKit-prefixed one still used by some
-// Safari versions when the Fullscreen API IS available (e.g. iPad/macOS).
-document.addEventListener("fullscreenchange", _onFullscreenChange);
-document.addEventListener("webkitfullscreenchange", _onFullscreenChange);
-
-function _isLogFullscreenActive() {
-  return !!_fsElement() || _logFullscreenSim;
-}
-
-// Distance from the bottom edge (in px) within which the chip is revealed —
-// matches the zone the chip actually sits in, so it doesn't pop up on every
-// mouse movement across the whole screen.
-const FS_CHIP_TRIGGER_ZONE = 120;
-
-function _nearBottomEdge(clientY) {
-  return typeof clientY === "number" && (window.innerHeight - clientY) <= FS_CHIP_TRIGGER_ZONE;
-}
-
-document.addEventListener("mousemove", (e) => {
-    if (_isLogFullscreenActive() && _nearBottomEdge(e.clientY)) showFsChip();
-});
-
-document.addEventListener("touchstart", (e) => {
-    const y = e.touches && e.touches[0] ? e.touches[0].clientY : undefined;
-    if (_isLogFullscreenActive() && _nearBottomEdge(y)) showFsChip();
-});
-
-document.addEventListener("wheel", () => {
-    if (_isLogFullscreenActive()) showFsChip();
 });
 </script>
 
