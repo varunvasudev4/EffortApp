@@ -1884,12 +1884,14 @@ function loadState() {
     if (rp) { try { recurringPlans = JSON.parse(rp) || []; } catch(e) { recurringPlans = []; } }
     if (rpCounter) recurringPlanIdCounter = parseInt(rpCounter) || 0;
     if (t) tasks = JSON.parse(t);
-    if (l) {
-      const allEntries = JSON.parse(l);
+
+    //Turened off history automatic cleaning
+    // if (l) {
+      // const allEntries = JSON.parse(l);
       // Keep only last 3 months
-      const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
-      logEntries = allEntries.filter(e => e.startTs >= cutoff);
-    }
+      // const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+      // logEntries = allEntries.filter(e => e.startTs >= cutoff);
+    // }
     if (counter) taskIdCounter = parseInt(counter) || 0;
     if (importCounter) importIdCounter = parseInt(importCounter) || 0;
     if (m) {
